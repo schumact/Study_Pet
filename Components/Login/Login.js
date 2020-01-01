@@ -1,18 +1,33 @@
 import React, { Component } from 'react';
 import { TextInput, Text, View, Button, Alert } from 'react-native';
-import Oval from '../Misc/Oval';
 import styles from "../Misc/Styles.js";
 import Aux from "../../hoc/auxiliary";
 
 // TODO create state object later and include these values
-const stub_username = ""; 
-const stub_password = "";
 
 function Separator () {
     return <View style={styles.seperator}></View>;
 }
 
 export default class Login extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            username: "",
+            password:""
+        };
+    }
+
+    onChangeUsernameText = (text) =>
+    {
+        this.setState({username: text});
+    }
+
+    onChangePasswordText = (text) =>
+    {
+        this.setState({password:text})
+    }
+
     render() {
         return (
             <Aux>
@@ -23,24 +38,26 @@ export default class Login extends Component {
                     <Text>Username</Text>
                     <TextInput 
                         style={styles.textInp}
-                        value={stub_username}>
+                        value={this.state.username}
+                        onChangeText={this.onChangeUsernameText}>
                     </TextInput>
                     <Separator/>
                     <Text>Password</Text>
                     <TextInput 
                         style={styles.textInp}
-                        value={stub_password}>
+                        value={this.state.password}
+                        onChangeText={this.onChangePasswordText}
+                        secureTextEntry={true}>
                     </TextInput>
                     <Separator/>
                     <View style={styles.login_btn_comp}>
                         <Button
                             title="Login"
                             color="#80ffbf"
-                            s
                         />
-                </View> 
-                <Separator/>
-                <Text><Text style={styles.link}>Forgot your password?</Text></Text>
+                    </View> 
+                    <Separator/>
+                    <Text><Text style={styles.link}>Forgot your password?</Text></Text>
                 </View>
                 <View style={{flex:1, flexDirection: 'column', justifyContent: 'center',
                  alignItems: "center", backgroundColor: "#ff6666"}}>
