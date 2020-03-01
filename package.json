@@ -8,15 +8,22 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "expo": "^35.0.0",
-    "mongodb-stitch-browser-sdk": "^4.7.1",
-    "react": "16.8.3",
-    "react-dom": "16.8.3",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-35.0.0.tar.gz",
-    "react-native-web": "^0.11.7"
+    "expo": "~36.0.0",
+    "i": "^0.3.6",
+    "mongodb-stitch-browser-sdk": "^4.8.0",
+    "mongodb-stitch-react-native-sdk": "^4.8.0",
+    "npm": "^6.14.1",
+    "prop-types": "^15.7.2",
+    "react": "~16.9.0",
+    "react-dom": "~16.9.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
+    "react-native-datepicker": "^1.7.2",
+    "react-native-error-boundary": "^1.1.0",
+    "react-native-web": "~0.11.7"
   },
   "devDependencies": {
-    "babel-preset-expo": "^7.0.0"
+    "babel-preset-expo": "~8.0.0",
+    "@babel/core": "^7.0.0"
   },
   "private": true
 }

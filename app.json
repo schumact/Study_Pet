@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "Study Pet",
-    "slug": "study_buddy",
+    "name": "Blank Template",
+    "slug": "purrsistent_pet",
     "privacy": "public",
-    "sdkVersion": "35.0.0",
+    "sdkVersion": "36.0.0",
     "platforms": [
       "ios",
       "android",
