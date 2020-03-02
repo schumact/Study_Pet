@@ -8,7 +8,7 @@ export default function DashBoard() {
     const {currentUser} = useStitchAuth();
     return (
         <View style={styles.container}>
-            <Text> Navbar should be placed up here </Text>
+            <Text> Navbar should be placed up here  NavBar component in Layout.Navbar</Text>
             <Text> My goals should be underneath navbar in Goals component! </Text>
             <Goals>
 

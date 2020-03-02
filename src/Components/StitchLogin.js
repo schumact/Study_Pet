@@ -20,6 +20,7 @@ export default function StitchLogin() {
       isCreatingAcc ?
       <AccountCreation/>
           :
+          // This could probably be its own component
           <View style={styles.container}>
               <View style={{flex: 1, alignItems: "center"}}>
                   <Text>PLACE PURRSISTENT PET LOGO HERE</Text>
