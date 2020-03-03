@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, FlatList } from 'react-native';
 import {useStitchAuth} from "./StitchAuth";
 import GoalItem from "./GoalItem";
+import TouchableOpacity from "react-native-web/src/exports/TouchableOpacity";
 
 export default function Goals() {
     // these goals will be retrieved from db. There should be some sort of ORM ability from data in db
@@ -14,8 +15,8 @@ export default function Goals() {
 
     // TODO pull this info from db and populate state. Look at useEffect
     const [goals, setGoals] = useState([
-        {title: "title 1", id: "1"},
-        {title: "title 2", id: "2"},
+        {title: "goal 1", status: "DueToday", id: "1"},
+        {title: "goal 2", status: "InProgress", id: "2"},
     ]);
 
     // use useEffect to fetch goals from db
@@ -33,13 +34,13 @@ export default function Goals() {
     // and put them in this container
     const {currentUser} = useStitchAuth();
     return (
-            <View style={styles.container}>
+            <View>
                 <Text> Here are my fake goals for now! </Text>
                 <FlatList
                     keyExtractor={item => item.id}
                     data={goals}
                     renderItem={({item}) => (
-                        <Text>{item.title}</Text>
+                        <GoalItem item={item}/>
                     )}
                 />
             </View>
@@ -51,5 +52,5 @@ const styles = StyleSheet.create({
         flex:1,
         paddingTop: 40,
         paddingHorizontal: 20
-    },
+    }
 });
