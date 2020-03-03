@@ -1,81 +1,78 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
-import DatePick from "./Util/DatePick";
+import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity } from 'react-native';
+import DatePick from "../Util/DatePick";
 
 // TODO Right now everything is being set manually through props
 // When goals are grabbed from the db, values that GoalItem
 // components use will have to be set differently.
 
-export default function GoalItem(props) {
+export default function GoalItem({item}) {
     // may not be able to set this up right if all
     // goals are being supplied directly from db.
     // my only thought is that the stitch function
     // would need to handle setting props.style based
     // on certain conditions
-    let style;
-    switch (props.style) {
+    let goalStyle;
+    switch (item.status) {
         case "DueToday":
-            style = styles.DueToday;
+            goalStyle = styles.DueToday;
             break;
         case "InProgress":
-            style = styles.DueToday;
+            goalStyle = styles.DueToday;
             break;
         case "Completed":
-            style = styles.DueToday;
+            goalStyle = styles.DueToday;
             break;
         case "Suspended":
-            style = styles.DueToday;
+            goalStyle = styles.DueToday;
             break;
     }
 
 
     return (
-            <View style={style}>
-                {/*  Design for how a goal should look still needs to be made.
-                This will be largely dependent on whatever the schema for a
-                goal looks like in mongo
-                A goal should have:
-                Title:
-                Description:
-                Start Date:
-                Due Date:
+        <TouchableOpacity style={goalStyle}>
+            <Text>{item.title}</Text>
+        </TouchableOpacity>
+    )
 
-                Maybe different type of goals so that you can add child goals.
-                ***NOTE Epic component should do this. Unless more customization is needed
-                there may not need to be different types of goals
-                */}
-                {/* TODO if a user clicks a button to edit, make all the textInput components editable=true*/}
-                <Text> Title: </Text>
-                <TextInput style={styles.InputBoxes} editable={false}> {props.title}</TextInput>
-                <Text> Description: </Text>
-                <TextInput style={styles.InputBoxes} editable={false}> {props.description}</TextInput>
-                {/* TODO Assuming DatePicker will fail and will need tweaking*/}
-                <Text> Start Date: </Text>
-                <DatePick startDate = {props.startDate}/>
-                {/* <TextInput style={styles.InputBoxes} editable={false}> {props.startDate}</TextInput> */}
-                <Text> Due Date: </Text>
-                <DatePick endDate = {props.endDate}/>
-                {/*  <TextInput style={styles.InputBoxes} editable={false}> {props.dueDate}</TextInput>  */}
-                {/* TODO Importance value? Something to weight the importance of goal. Add it? Don't need it?*/}
-            </View>
-        )
 }
 
 const styles = StyleSheet.create({
     DueToday: {
-        flex: 1,
-        backgroundColor: 'blue'
+        backgroundColor: "#ff6347",
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingTop: 20,
+        paddingBottom: 20,
+        marginTop: 10,
+        textAlign: "center"
     },
     InProgress: {
-        flex: 2
+        backgroundColor: "#6495ed",
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingTop: 20,
+        paddingBottom: 20,
+        marginTop: 10,
+        textAlign: "center"
     },
     Completed: {
-        flex: 3,
-        backgroundColor: "green"
+        backgroundColor: "#90ee90",
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingTop: 20,
+        paddingBottom: 20,
+        marginTop: 10,
+        textAlign: "center"
     },
     Suspended: {
-        flex: 4,
-        backgroundColor: "red"
+        backgroundColor: "#dc143c",
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingTop: 20,
+        paddingBottom: 20,
+        marginTop: 10,
+        textAlign: "center"
     },
     InputBoxes: {
         height: 40,
