@@ -34,7 +34,7 @@ export function logoutCurrentUser() {
   return app.auth.logoutUserWithId(user.id);
 }
 
-export function CreateAcouunt(email, password){
+export function CreateAccount(email, password){
   // Creates an account
 
   //const emailPasswordClient = app.auth.getProviderClient(app.auth.getProviderClient()UserPasswordAuthProviderClient.factory);
@@ -46,6 +46,4 @@ export function CreateAcouunt(email, password){
 
       .then(() => console.log("Successfully sent account confirmation email!"))
       .catch(err => console.error("Error registering new user:", err));
-
-  emailPasswordClient.confirmUser()
 }
