@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, Button, FlatList } from 'react-native';
+import { StyleSheet, Text, View, FlatList } from 'react-native';
 import {useStitchAuth} from "./StitchAuth";
 import GoalItem from "./GoalItem";
 
@@ -14,8 +14,8 @@ export default function Goals() {
 
     // TODO pull this info from db and populate state. Look at useEffect
     const [goals, setGoals] = useState([
-        {title: "title 1", description:"desc1", startDate:"2020-03-01", endDate:"2020-03-20", id: "1"},
-        {title: "title 2", description:"desc2", startDate:"2020-03-04", endDate:"2020-03-25", id: "2"},
+        {title: "title 1", id: "1"},
+        {title: "title 2", id: "2"},
     ]);
 
     // use useEffect to fetch goals from db
@@ -25,23 +25,23 @@ export default function Goals() {
         console.log("Fetching goals from db and using them to set state.")
     });
 
+    // TODO Need some sort of function to grab all goals
+    // from db and for each goal, have a value set specifying
+    // the type of goal. The names should match with the key names
+    // in styles object in ./GoalItem.js . Grab x amount of goals,
+    // create component for each goal, add them in a list
+    // and put them in this container
     const {currentUser} = useStitchAuth();
     return (
             <View style={styles.container}>
-                    {/* TODO Need some sort of function to grab all goals
-                      from db and for each goal, have a value set specifying
-                      the type of goal. The names should match with the key names
-                      in styles object in ./GoalItem.js . Grab x amount of goals,
-                      create component for each goal, add them in a list
-                      and put them in this container*/}
                 <Text> Here are my fake goals for now! </Text>
-                {/*<FlatList*/}
-                {/*    keyExtractor={(item) => item.id}*/}
-                {/*    data={goals}*/}
-                {/*    renderItem={({item}) => (*/}
-                {/*        item.title*/}
-                {/*    )}*/}
-                {/*/>*/}
+                <FlatList
+                    keyExtractor={item => item.id}
+                    data={goals}
+                    renderItem={({item}) => (
+                        <Text>{item.title}</Text>
+                    )}
+                />
             </View>
         )
 };
