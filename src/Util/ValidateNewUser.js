@@ -4,11 +4,17 @@ export default function validateNewUser(creds) {
     const isValidPassword = verifyPassword(creds.password, creds.reEnterPassword);
     if (isValidUserName && isValidEmail)
     {
-        if (isValidPassword) {return true;}
-        else {alert("The supplied passwords didn't match or weren't a minimum of 8 characters.");}
+        if (isValidPassword) {
+            return [true];
+        }
+        else {
+            return [false, "The supplied passwords didn't match or weren't a minimum of 8 characters."];
+        }
     }
-    else {alert("Please make sure that you are using a valid email address and that your username is at minimum" +
-        " 5 characters long");}
+    else {
+        return [false, "Please make sure that you are using a valid email address" +
+        " and that your username is at minimum 5 characters long"];
+    }
 };
 
 const verifyPassword = (password1, password2) => {
@@ -25,7 +31,8 @@ const verifyUsername = (username) => {
 
 const verifyEmail = (email) => {
     // TODO put some regex or something here and return bool
-    return true;
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
 };
 
 const isPasswordStrong = (password) => {

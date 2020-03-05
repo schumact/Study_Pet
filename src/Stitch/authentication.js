@@ -1,5 +1,6 @@
 import { AnonymousCredential, UserPasswordAuthProviderClient, UserPasswordCredential } from "mongodb-stitch-browser-sdk";
 import { app } from "./app.js";
+import {sendEmail} from '../Util/Emailer';
 
 export function loginAnonymous() {
   // Allow users to log in anonymously
@@ -37,13 +38,13 @@ export function logoutCurrentUser() {
 export function CreateAccount(email, password){
   // Creates an account
 
-  //const emailPasswordClient = app.auth.getProviderClient(app.auth.getProviderClient()UserPasswordAuthProviderClient.factory);
-  const emailPasswordClient = Stitch.defaultAppClient.auth
-      .getProviderClient(UserPasswordAuthProviderClient.factory);
+  const emailPasswordClient = app.auth.getProviderClient(UserPasswordAuthProviderClient.factory);
+  // const emailPasswordClient = Stitch.defaultAppClient.auth
+  //     .getProviderClient(UserPasswordAuthProviderClient.factory);
 
 
   emailPasswordClient.registerWithEmail(email, password)
 
-      .then(() => console.log("Successfully sent account confirmation email!"))
+      .then(async () => await sendEmail())
       .catch(err => console.error("Error registering new user:", err));
 }

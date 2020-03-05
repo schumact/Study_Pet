@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import { useStitchAuth } from "./StitchAuth";
 import { StyleSheet, Text, View, Button, TextInput} from 'react-native';
-import {CreateAcouunt} from "../Stitch/authentication";
 import AccountCreation from "./AccountCreation";
 
 StitchLogin.propTypes = {};

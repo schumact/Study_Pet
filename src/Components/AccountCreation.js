@@ -8,12 +8,14 @@ export default function AccountCreation() {
     const [creds, UpdateCreds] = useState({email: "", username: "", password: "", reEnterPassword: ""});
 
     const createAccountHandler = () => {
-        let isValidInfo = validateNewUser(creds);
+        let [isValidInfo, errorMSG] = validateNewUser(creds);
         if (isValidInfo)
         {
             // TODO add request to create account. Remove this alert statement
-            alert("Sending you an email now! Delete this message later")
+            alert("Sending you an email now! Delete this message later");
+            CreateAccount(creds.email, creds.password);
         }
+        else { alert(errorMSG);}
     };
 
     return (
@@ -25,14 +27,14 @@ export default function AccountCreation() {
             <Text style={{marginTop: 10, fontWeight: 'bold', color: "#708090"}}>Username:</Text>
             <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 2, marginBottom: 10}}
-                maxLength={20}
+                maxLength={30}
                 onChangeText={text => UpdateCreds({...creds, username: text})}
                 value={creds.username}
             />
             <Text style={{marginTop: 10, fontWeight: 'bold', color: "#708090"}}>Email:</Text>
             <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 2, marginBottom: 10}}
-                maxLength={20}
+                maxLength={50}
                 onChangeText={text => UpdateCreds({...creds, email: text})}
                 value={creds.email}
             />
@@ -52,8 +54,7 @@ export default function AccountCreation() {
                 secureTextEntry={true}
                 value={creds.reEnterPassword}
             />
-            <Button title="Create Account" onPress={() => { createAccountHandler()
-            }}/>
+            <Button title="Create Account" onPress={() => { createAccountHandler()}}/>
         </View>
     )
 };
