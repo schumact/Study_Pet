@@ -36,15 +36,11 @@ export function logoutCurrentUser() {
 }
 
 export function CreateAccount(email, password){
-  // Creates an account
-
   const emailPasswordClient = app.auth.getProviderClient(UserPasswordAuthProviderClient.factory);
   // const emailPasswordClient = Stitch.defaultAppClient.auth
   //     .getProviderClient(UserPasswordAuthProviderClient.factory);
 
-
   emailPasswordClient.registerWithEmail(email, password)
-
       .then(async () => await sendEmail())
       .catch(err => console.error("Error registering new user:", err));
 }
