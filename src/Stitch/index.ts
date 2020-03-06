@@ -1,4 +1,4 @@
-import { app } from "./app";
+import { stitchApp } from "./StitchApp";
 import { items } from "./mongodb";
 import {
   loginAnonymous,
@@ -7,5 +7,5 @@ import {
   getCurrentUser,
 } from "./authentication";
 
-export { app, items };
+export { stitchApp, items };
 export { loginAnonymous, logoutCurrentUser, hasLoggedInUser, getCurrentUser };

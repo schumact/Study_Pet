@@ -6,11 +6,19 @@ import {
   logoutCurrentUser,
   getCurrentUser,
   LoginUser
-} from "./../stitch/authentication";
+} from "./authentication";
+
+interface Props {
+  // TODO some values should go here eventually like user_id, login state. I think
+  actions: any  // seems right to me?
+}
 
 // Create a React Context that lets us expose and access auth state
 // without passing props through many levels of the component tree
-const StitchAuthContext = React.createContext();
+
+// https://fettblog.eu/typescript-react/context/ has info on types with default context
+// https://stackoverflow.com/questions/56496624/typescript-for-react-createcontext-and-usecontext
+const StitchAuthContext = React.createContext<Partial<Props>>({});  // we don't need a default but ts complains if there is none
 
 // Create a React Hook that lets us get data from our auth context
 export function useStitchAuth() {
@@ -23,7 +31,7 @@ export function useStitchAuth() {
 
 // Create a component that controls auth state and exposes it via
 // the React Context we created.
-export function StitchAuthProvider(props) {
+export function StitchAuthProvider(props:any) {
   const [authState, setAuthState] = React.useState({
     isLoggedIn: hasLoggedInUser(),
     currentUser: getCurrentUser(),
@@ -64,7 +72,7 @@ export function StitchAuthProvider(props) {
   // for certain how to register a user. which needs to be done
   // first before using LoginUser function.
   // TODO Remove "Stub" part from func name once working
-  const handleUserLoginStub = async(username, password) => {
+  const handleUserLoginStub = async(username:string, password:string) => {
     const { isLoggedIn } = authState;
     if (!isLoggedIn) {
       console.log("logging in");
