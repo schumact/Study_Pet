@@ -69,5 +69,4 @@ const AccountCreation: React.FC = () => {
     )
 };
 
-
 export default AccountCreation;

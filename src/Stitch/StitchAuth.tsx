@@ -1,4 +1,5 @@
 import React from "react";
+import {StitchUser} from 'mongodb-stitch-browser-sdk';
 import PropTypes from "prop-types";
 import {
   hasLoggedInUser,
@@ -18,7 +19,8 @@ interface Props {
 
 // https://fettblog.eu/typescript-react/context/ has info on types with default context
 // https://stackoverflow.com/questions/56496624/typescript-for-react-createcontext-and-usecontext
-const StitchAuthContext = React.createContext<Partial<Props>>({});  // we don't need a default but ts complains if there is none
+// TODO still unsure what this context is going to look like. change type from "any" to something else later
+const StitchAuthContext:React.Context<any> = React.createContext<Partial<Props>>({});  // we don't need a default but ts complains if there is none
 
 // Create a React Hook that lets us get data from our auth context
 export function useStitchAuth() {
@@ -72,11 +74,13 @@ export function StitchAuthProvider(props:any) {
   // for certain how to register a user. which needs to be done
   // first before using LoginUser function.
   // TODO Remove "Stub" part from func name once working
-  const handleUserLoginStub = async(username:string, password:string) => {
+  const handleUserLoginStub = async (username:string, password:string) => {
     const { isLoggedIn } = authState;
     if (!isLoggedIn) {
       console.log("logging in");
-      const loggedInUser = await LoginUser(username, password);
+      // should return a stitch user, although an exception could also be thrown
+      const loggedInUser:any = await LoginUser(username, password).catch((err:any) =>
+      {console.log(`login failed with error: ${err}`)});
       setAuthState({
         ...authState,
         isLoggedIn: true,
