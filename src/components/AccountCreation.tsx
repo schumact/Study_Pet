@@ -1,6 +1,9 @@
 import React, {useState} from "react";
 import {CreateAccount} from "../Stitch/authentication";
 import validateNewUser from "../Util/ValidateNewUser";
+import {IonButton, IonBackButton} from '@ionic/react';
+import './AccountCreation.css';
+
 
 const AccountCreation: React.FC = () => {
 
@@ -26,45 +29,55 @@ const AccountCreation: React.FC = () => {
 
     return (
         <div>
-            <h1>PLACE PURRSISTENT PET LOGO HERE</h1>
-            <p style={{fontWeight: 'bold', color: "#1e90ff", fontStyle: "italic", fontSize: 25}}>
-                Welcome to Purrsistent Pet!</p>
-            <p style={{marginTop: 20}}> Please fill out your account information. </p>
-            <p style={{marginTop: 10, fontWeight: 'bold', color: "#708090"}}>Username:</p>
-            <input
-                style={{height: 40, borderColor: 'gray', borderWidth: 2, marginBottom: 10}}
-                maxLength={30}
-                onChange={(text) =>
-                    UpdateCreds({...creds, username: text.currentTarget.value})}
-                value={creds.username}
-            />
-            <p style={{marginTop: 10, fontWeight: 'bold', color: "#708090"}}>Email:</p>
-            <input
-                style={{height: 40, borderColor: 'gray', borderWidth: 2, marginBottom: 10}}
-                maxLength={50}
-                onChange={(text) =>
-                    UpdateCreds({...creds, email: text.currentTarget.value})}
-                value={creds.email}
-            />
-            <p style={{fontWeight: 'bold', color: "#708090"}}>Password:</p>
-            <input
-                style={{height: 40, borderColor: 'gray', borderWidth: 2, marginBottom: 10}}
-                maxLength={20}
-                onChange={(text) =>
-                    UpdateCreds({...creds, password: text.currentTarget.value})}
-                type="password"
-                value={creds.password}
-            />
-            <p style={{marginTop: 10, fontWeight: 'bold', color: "#708090"}}>Re-enter Password:</p>
-            <input
-                style={{height: 40, borderColor: 'gray', borderWidth: 2, marginBottom: 20}}
-                maxLength={20}
-                onChange={(text) =>
-                    UpdateCreds({...creds, reEnterPassword: text.currentTarget.value})}
-                type="password"
-                value={creds.reEnterPassword}
-            />
-            <button title="Create Account" onClick={() => { createAccountHandler()}}/>
+            <IonBackButton defaultHref="/account"/>
+            <div className="container">
+                <h1>PLACE PURRSISTENT PET LOGO HERE</h1>
+                <p style={{fontWeight: 'bold', color: "#1e90ff", fontStyle: "italic", fontSize: 25}}>
+                    Welcome to Purrsistent Pet!</p>
+                <p style={{marginTop: 20}}> Please fill out your account information. </p>
+                <p style={{marginBottom: 10}}> You'll be using your email for login. </p>
+                <input
+                    className="input_style"
+                    maxLength={30}
+                    onChange={(text) =>
+                        UpdateCreds({...creds, username: text.currentTarget.value})}
+                    value={creds.username}
+                    placeholder="Username"
+                />
+                <input
+                    className="input_style"
+                    maxLength={50}
+                    onChange={(text) =>
+                        UpdateCreds({...creds, email: text.currentTarget.value})}
+                    value={creds.email}
+                    placeholder="Email"
+                />
+                <input
+                    className="input_style"
+                    maxLength={20}
+                    onChange={(text) =>
+                        UpdateCreds({...creds, password: text.currentTarget.value})}
+                    type="password"
+                    value={creds.password}
+                    placeholder="Password"
+                />
+                <input
+                    className="input_style"
+                    maxLength={20}
+                    onChange={(text) =>
+                        UpdateCreds({...creds, reEnterPassword: text.currentTarget.value})}
+                    type="password"
+                    value={creds.reEnterPassword}
+                    placeholder="Re-enter Password"
+                />
+                <div style={{marginTop: 10}}>
+                    <IonButton
+                        color="primary"
+                        shape="round"
+                        onClick={() => { createAccountHandler()}}> Create Account
+                    </IonButton>
+                </div>
+            </div>
         </div>
     )
 };
