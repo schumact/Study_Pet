@@ -55,7 +55,7 @@ const Login: React.FC = () => {
                 {/* TODO Switch actions.handleAnonymousLogin() to action.handleUserLoginStub() once auth is working
               Will have to pop up some sort of alert for wrong password here as well if incorrect. If valid user,
               App component will use isLoggedIn and change the component off of the current StitchLogin()*/}
-                <div className="sub_container">
+                <div style={{margin: "0 0 20px 0", width: "70%"}}>
                     <IonButton
                         shape="round"
                         expand="block"

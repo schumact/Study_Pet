@@ -70,10 +70,10 @@ const AccountCreation: React.FC = () => {
                     value={creds.reEnterPassword}
                     placeholder="Re-enter Password"
                 />
-                <div style={{marginTop: 10}}>
+                <div style={{marginTop: 10, width: "70%"}}>
                     <IonButton
-                        color="primary"
                         shape="round"
+                        expand="block"
                         onClick={() => { createAccountHandler()}}> Create Account
                     </IonButton>
                 </div>
