@@ -1,6 +1,6 @@
 import React from "react";
-import {StitchUser} from 'mongodb-stitch-browser-sdk';
 import PropTypes from "prop-types";
+
 import {
   hasLoggedInUser,
   loginAnonymous,
@@ -8,6 +8,7 @@ import {
   getCurrentUser,
   LoginUser
 } from "./authentication";
+
 
 interface Props {
   // TODO some values should go here eventually like user_id, login state. I think
@@ -74,19 +75,26 @@ export function StitchAuthProvider(props:any) {
   // for certain how to register a user. which needs to be done
   // first before using LoginUser function.
   // TODO Remove "Stub" part from func name once working
-  const handleUserLoginStub = async (username:string, password:string) => {
+  const handleUserLogin = async (email:string, password:string) => {
     const { isLoggedIn } = authState;
     if (!isLoggedIn) {
       console.log("logging in");
       // should return a stitch user, although an exception could also be thrown
-      const loggedInUser:any = await LoginUser(username, password).catch((err:any) =>
-      {console.log(`login failed with error: ${err}`)});
-      setAuthState({
-        ...authState,
-        isLoggedIn: true,
-        currentUser: loggedInUser,
+      const loggedInUser = await LoginUser(email, password).catch((err) =>
+      {
+        console.log(`Login failed with error: ${err}`);
+        // return err;
       });
+      if (loggedInUser) {
+        console.log("logging in user");
+        setAuthState({
+          ...authState,
+          isLoggedIn: true,
+          currentUser: loggedInUser,
+        });
+      }
     }
+    else {console.log("already logged in")}
   };
 
   // Use useMemo to improve performance by eliminating some re-renders
@@ -96,7 +104,7 @@ export function StitchAuthProvider(props:any) {
       const value = {
         isLoggedIn,
         currentUser,
-        actions: { handleAnonymousLogin, handleLogout, handleUserLoginStub },
+        actions: { handleLogout, handleUserLogin },
       };
       return value;
     },

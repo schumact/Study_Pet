@@ -1,10 +1,17 @@
 import React from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import Login from '../components/Login';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton } from '@ionic/react';
 import './Account.css';
+import {useStitchAuth} from "../Stitch/StitchAuth";
+import Login from "./Login";
 
 const Account: React.FC = () => {
+    const {
+        isLoggedIn,
+        actions: {handleLogout},
+    } = useStitchAuth();
+
     return (
+        isLoggedIn ?
         <IonPage>
             <IonHeader>
                 <IonToolbar>
@@ -17,9 +24,12 @@ const Account: React.FC = () => {
                         <IonTitle size="large">Account</IonTitle>
                     </IonToolbar>
                 </IonHeader>
-                <Login/>
+                <p> Component should go here with maybe an ion card with the user's account info.
+                    Possibly some user stats.</p>
+                <IonButton onClick={() => handleLogout()}>Log out</IonButton>
             </IonContent>
-        </IonPage>
+        </IonPage>:
+            <Login/>
     );
 };
 

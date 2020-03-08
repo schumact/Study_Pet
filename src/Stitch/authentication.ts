@@ -8,9 +8,9 @@ export const loginAnonymous = (): Promise<StitchUser> => {
 };
 
 // Not working yet. Documentation is down.
-export const LoginUser = (username:string, password:string):Promise<StitchUser> => {
+export const LoginUser = (email:string, password:string):Promise<StitchUser> => {
   // login a user with a username and pass
-  const credential:UserPasswordCredential = new UserPasswordCredential(username, password);
+  const credential:UserPasswordCredential = new UserPasswordCredential(email, password);
   return stitchApp.auth.loginWithCredential(credential)
       // Returns a promise that resolves to the authenticated user
       // .then((authedUser:StitchUser) => console.log(`successfully logged in with id: ${authedUser.id}`))
