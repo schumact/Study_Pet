@@ -3,6 +3,7 @@ import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react
 import ExploreContainer from '../components/ExploreContainer';
 import './Home.css';
 import GoalItem from './../components/GoalItem';
+import DateTimePicker from "../components/DateTimePicker";
 
 const Home: React.FC = () => {
     return (
@@ -18,7 +19,8 @@ const Home: React.FC = () => {
                         <IonTitle size="large">Home</IonTitle>
                     </IonToolbar>
                 </IonHeader>
-                <GoalItem title="my hardcoded goal" description="my hardcoded description"/>
+                {/*<GoalItem title="my hardcoded goal" description="my hardcoded description"/>*/}
+                <DateTimePicker startDate={true}/>
             </IonContent>
         </IonPage>
     );

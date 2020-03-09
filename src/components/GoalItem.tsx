@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {useStitchAuth} from "../Stitch/StitchAuth";
 import {IonButton, IonAlert, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent} from '@ionic/react';
 import './GoalItem.css';
-import {Link} from 'react-router-dom'
+import {Link} from 'react-router-dom';
 
 type GoalProps = {
     title:string,
