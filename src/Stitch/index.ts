@@ -1,5 +1,5 @@
 import { stitchApp } from "./StitchApp";
-import { items } from "./mongodb";
+import { items } from "./mongoClient";
 import {
   loginAnonymous,
   logoutCurrentUser,

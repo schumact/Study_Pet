@@ -1,5 +1,6 @@
-import React from "react";
+import React, {Provider} from "react";
 import PropTypes from "prop-types";
+import {StitchUser} from 'mongodb-stitch-browser-sdk';
 
 import {
   hasLoggedInUser,
@@ -9,10 +10,21 @@ import {
   LoginUser
 } from "./authentication";
 
+interface actions {
+  handleLogout: () => void;
+  handleUserLogin: (email:string, password:string) => void
+}
+
+
+export interface authInfo {
+  isLoggedIn:boolean;
+  currentUser: StitchUser;
+  actions: actions,
+}
 
 interface Props {
   // TODO some values should go here eventually like user_id, login state. I think
-  actions: any  // seems right to me?
+  authInfo: authInfo
 }
 
 // Create a React Context that lets us expose and access auth state
@@ -21,7 +33,7 @@ interface Props {
 // https://fettblog.eu/typescript-react/context/ has info on types with default context
 // https://stackoverflow.com/questions/56496624/typescript-for-react-createcontext-and-usecontext
 // TODO still unsure what this context is going to look like. change type from "any" to something else later
-const StitchAuthContext:React.Context<any> = React.createContext<Partial<Props>>({});  // we don't need a default but ts complains if there is none
+export const StitchAuthContext:React.Context<any> = React.createContext<Partial<Props>>({});  // we don't need a default but ts complains if there is none
 
 // Create a React Hook that lets us get data from our auth context
 export function useStitchAuth() {

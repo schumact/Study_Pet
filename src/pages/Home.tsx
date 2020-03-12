@@ -4,6 +4,7 @@ import ExploreContainer from '../components/ExploreContainer';
 import './Home.css';
 import GoalItem from './../components/GoalItem';
 import DateTimePicker from "../components/DateTimePicker";
+import TestGoal from "../components/TestGoalSubmit";
 
 const Home: React.FC = () => {
     return (
@@ -20,7 +21,8 @@ const Home: React.FC = () => {
                     </IonToolbar>
                 </IonHeader>
                 {/*<GoalItem title="my hardcoded goal" description="my hardcoded description"/>*/}
-                <DateTimePicker startDate={true}/>
+                {/*<DateTimePicker startDate={true}/>*/}
+                <TestGoal/>
             </IonContent>
         </IonPage>
     );
