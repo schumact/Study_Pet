@@ -1,32 +1,48 @@
 import React, {useState} from 'react';
 import {IonItem, IonLabel, IonDatetime} from '@ionic/react';
+import {IGoal} from "../Stitch/StitchGoals";
+import {DATE_ENUMS} from "../Util/Enums";
 
 interface DateProps {
-    setDate: (updatedDate:string | undefined) => void;
+    setDate: (goal: Partial<IGoal>) => void;
+    goalState: Partial<IGoal> | undefined,
+    dateType: string
 }
 
 const DateTimePicker: React.FC<DateProps> = (props) => {
     const d = new Date();
     const strDate = d.toISOString();
-    const [startDate, setStartDate] = useState<string>(strDate.slice(0, strDate.length - 1));
+    const formattedStartDate = strDate.slice(0, strDate.length - 1);
     const [selectedDate, setSelectedDate] = useState<string>(d.toString().slice(-1));
-    // const [startDate, setStartDate] = useState<string>('2012-12-15T13:47:20.789');
-    // const [endDate, setEndDate] = useState<string>(end.toString());
-    // const [selectedDate, setSelectedDate] = useState<string>('2012-12-15T13:47:20.789');
 
     return (
+        props.dateType === DATE_ENUMS.start ?
+        <IonItem>
+            <IonLabel>{props.dateType}</IonLabel>
+            <IonDatetime
+                placeholder="Select Date"
+                name="start"
+                min={formattedStartDate}
+                value={selectedDate}
+                max="2025"
+                onIonChange={e => {
+                    setSelectedDate(e.detail.value!);
+                    props.setDate({...props.goalState, startDate:e.detail.value!});
+                }}
+            />
+        </IonItem> :
             <IonItem>
-                <IonLabel>YYYY MM DD</IonLabel>
-                <IonDatetime displayFormat="YYYY MM DD"
-                             placeholder="Select Date"
-                             name="start"
-                             min={startDate}
-                             value={selectedDate}
-                             max="2025"
-                             onIonChange={e => {
-                                 setSelectedDate(e.detail.value!);
-                                 props.setDate(e.detail.value!);
-                             }}
+                <IonLabel>{props.dateType}</IonLabel>
+                <IonDatetime
+                    placeholder="Select Date"
+                    name="start"
+                    min={formattedStartDate}
+                    value={selectedDate}
+                    max="2025"
+                    onIonChange={e => {
+                        setSelectedDate(e.detail.value!);
+                        props.setDate({...props.goalState, endDate:e.detail.value!});
+                    }}
                 />
             </IonItem>
     )

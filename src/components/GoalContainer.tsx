@@ -11,7 +11,6 @@ interface IGoalsList {
 
 
 const GoalContainer: React.FC = () => {
-
     const userInfo:authInfo = useContext(StitchAuthContext);
     const [goals, setGoals] = useState<IGoalsList>();
 
@@ -26,6 +25,9 @@ const GoalContainer: React.FC = () => {
 
     return (
         <IonContent>
+            <div style={{display:"flex", justifyContent:"center"}}>
+                <p style={{ fontWeight:"bold", fontSize: "20px"}}>My Goals</p>
+            </div>
             <GoalItem/>
         </IonContent>
     );

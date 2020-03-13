@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import {IonButton, IonContent} from '@ionic/react';
-import {IGoal, IActualTestGoal, insertGoal, insertTestGoal} from "../Stitch/StitchGoals";
+import {IGoal, insertGoal} from "../Stitch/StitchGoals";
 import {StitchAuthContext} from "../Stitch/StitchAuth";
 import {authInfo} from "../Stitch/StitchAuth";
 
@@ -13,18 +13,13 @@ const TestGoal:React.FC = () => {
         endDate: "2020-03-11",
         startDate: "2020-03-10",
         isComplete: true,
-        owner_id: userInfo.currentUser.id
-    };
-
-    const actualTestGoal:IActualTestGoal = {
-        goalTitle: "Here here goal",
-        owner_id: userInfo.currentUser.id
+        owner_id: userInfo.currentUser.id,
+        points: 2
     };
 
     return (
         <IonContent>
             <IonButton onClick={() => insertGoal(testGoal)}> Add Test Goal </IonButton>
-            <IonButton onClick={() => insertTestGoal(actualTestGoal)}> Add Actual Test Test Goal </IonButton>
         </IonContent>
     )
 };

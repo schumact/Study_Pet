@@ -1,13 +1,13 @@
-import React from 'react';
-import {IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
+import React, {useState} from 'react';
+import {IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonModal} from '@ionic/react';
 import './Home.css';
 import GoalItem from './../components/GoalItem';
-import TestGoal from "../components/TestGoalSubmit";
 import GoalContainer from "../components/GoalContainer";
-import DateTimePicker from "../components/DateTimePicker";
 import AddGoal from "../components/AddGoal";
 
 const Home: React.FC = () => {
+    const [showModal, setShowModal] = useState<boolean>(false);
+
     return (
         <IonPage>
             <IonHeader>
@@ -21,11 +21,21 @@ const Home: React.FC = () => {
                         <IonTitle size="large">Home</IonTitle>
                     </IonToolbar>
                 </IonHeader>
-                {/*<IonButton onClick={}>*/}
-                {/*    New Goal*/}
-                {/*</IonButton>*/}
-                {/*<DateTimePicker startDate={true} dateValue={undefined}/>*/}
-                <AddGoal/>
+                <IonModal isOpen={showModal}>
+                    <AddGoal/>
+                    <IonButton
+                        color="danger"
+                        onClick={() => setShowModal(false)}
+                        expand="block">
+                        Close
+                    </IonButton>
+                </IonModal>
+                <br/>
+                <IonButton
+                    expand="block"
+                    onClick={() => setShowModal(true)}>
+                    Create New Goal!
+                </IonButton>
                 <GoalContainer/>
             </IonContent>
         </IonPage>
