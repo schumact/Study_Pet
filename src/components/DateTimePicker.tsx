@@ -1,43 +1,34 @@
-import React from 'react';
-import {IonItem, IonLabel, IonDatetime, IonContent} from '@ionic/react';
+import React, {useState} from 'react';
+import {IonItem, IonLabel, IonDatetime} from '@ionic/react';
 
 interface DateProps {
-    startDate?: boolean,
-    endDate?: boolean
+    setDate: (updatedDate:string | undefined) => void;
 }
 
-
 const DateTimePicker: React.FC<DateProps> = (props) => {
-    let d = new Date();
-    let month = ("0" + (d.getMonth() + 1)).slice(-2);  // 0 indexed
-    let day = ("0" + d.getDate()).slice(-2);
-    let year = d.getFullYear();
-    const startDateString:string = `${year}-${month}-${day}`.toString();
-    const endDateString:string = `${year + 10}-${month}-${day}`;
-
+    const d = new Date();
+    const strDate = d.toISOString();
+    const [startDate, setStartDate] = useState<string>(strDate.slice(0, strDate.length - 1));
+    const [selectedDate, setSelectedDate] = useState<string>(d.toString().slice(-1));
+    // const [startDate, setStartDate] = useState<string>('2012-12-15T13:47:20.789');
+    // const [endDate, setEndDate] = useState<string>(end.toString());
+    // const [selectedDate, setSelectedDate] = useState<string>('2012-12-15T13:47:20.789');
 
     return (
-        props.startDate?
-        <IonContent>
             <IonItem>
                 <IonLabel>YYYY MM DD</IonLabel>
                 <IonDatetime displayFormat="YYYY MM DD"
                              placeholder="Select Date"
                              name="start"
-                             min={startDateString}
+                             min={startDate}
+                             value={selectedDate}
+                             max="2025"
+                             onIonChange={e => {
+                                 setSelectedDate(e.detail.value!);
+                                 props.setDate(e.detail.value!);
+                             }}
                 />
             </IonItem>
-        </IonContent> :
-            <IonContent>
-                <IonItem>
-                    <IonLabel>MM DD YYYY</IonLabel>
-                    <IonDatetime displayFormat="YYYY MM DD"
-                                 placeholder="Select Date"
-                                 name="endDate"
-                                 max={endDateString}
-                    />
-                </IonItem>
-            </IonContent>
     )
 };
 

@@ -1,11 +1,12 @@
 import {mongodb} from "./StitchApp";
 
-export interface ITestGoal {
+export interface IGoal {
     goalTitle: string;
     goalDescription?: string;
     endDate: string;
     startDate: string;
-    owner_id:any
+    owner_id:any;
+    isComplete:boolean
     // not sure how user_id gets incorporated
 }
 
@@ -22,7 +23,6 @@ export interface IanotherCollection {
 
 const goalsCollection = mongodb.db("study_pet").collection("Goals");
 export const testGoalsCollection = mongodb.db("study_pet").collection("test_goal");
-const anotherCollection = mongodb.db("study_pet").collection("another_collection");
 
 
 // This is attempting to use as a stitch function
@@ -31,7 +31,7 @@ const anotherCollection = mongodb.db("study_pet").collection("another_collection
 //         .then(result => console.log(result));
 // };
 
-export const insertGoal = (goal:ITestGoal) => {
+export const insertGoal = (goal:IGoal) => {
     console.log(goal.owner_id);
     console.log(typeof goal.owner_id);
     // goal.owner_id = new BSON.ObjectId(goal.owner_id);
@@ -49,13 +49,6 @@ export const insertTestGoal = (goal:IActualTestGoal) => {
     console.log(goal.owner_id);
     console.log(typeof goal.owner_id);
     testGoalsCollection.insertOne(goal)
-        .then(result => console.log(`Successfully inserted item with _id: ${result.insertedId}`))
-        .catch(err => {console.error(`Failed to insert item: ${err.errorCodeName}`); console.error(`Error message: ${err.message}`)})
-};
-
-
-export const insertAnotherCollection = (goal:IanotherCollection) => {
-    anotherCollection.insertOne(goal)
         .then(result => console.log(`Successfully inserted item with _id: ${result.insertedId}`))
         .catch(err => {console.error(`Failed to insert item: ${err.errorCodeName}`); console.error(`Error message: ${err.message}`)})
 };

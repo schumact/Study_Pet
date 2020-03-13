@@ -1,5 +1,5 @@
-import React, {useState} from 'react'
-import DatePicker from 'react-native-datepicker'
+import React, {useState} from 'react';
+import DatePicker from 'react-native-datepicker';
 
 // TODO need to use props? to pass in date's retrieved for goal from db
 export default function MyDatePicker(props) {

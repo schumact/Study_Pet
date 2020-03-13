@@ -1,10 +1,11 @@
 import React from 'react';
-import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
+import {IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
 import './Home.css';
 import GoalItem from './../components/GoalItem';
-import DateTimePicker from "../components/DateTimePicker";
 import TestGoal from "../components/TestGoalSubmit";
+import GoalContainer from "../components/GoalContainer";
+import DateTimePicker from "../components/DateTimePicker";
+import AddGoal from "../components/AddGoal";
 
 const Home: React.FC = () => {
     return (
@@ -20,9 +21,12 @@ const Home: React.FC = () => {
                         <IonTitle size="large">Home</IonTitle>
                     </IonToolbar>
                 </IonHeader>
-                <GoalItem title="my hardcoded goal" description="my hardcoded description"/>
-                {/*<DateTimePicker startDate={true}/>*/}
-                {/*<TestGoal/>*/}
+                {/*<IonButton onClick={}>*/}
+                {/*    New Goal*/}
+                {/*</IonButton>*/}
+                {/*<DateTimePicker startDate={true} dateValue={undefined}/>*/}
+                <AddGoal/>
+                <GoalContainer/>
             </IonContent>
         </IonPage>
     );
