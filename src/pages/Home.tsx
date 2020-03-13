@@ -20,9 +20,9 @@ const Home: React.FC = () => {
                         <IonTitle size="large">Home</IonTitle>
                     </IonToolbar>
                 </IonHeader>
-                {/*<GoalItem title="my hardcoded goal" description="my hardcoded description"/>*/}
+                <GoalItem title="my hardcoded goal" description="my hardcoded description"/>
                 {/*<DateTimePicker startDate={true}/>*/}
-                <TestGoal/>
+                {/*<TestGoal/>*/}
             </IonContent>
         </IonPage>
     );

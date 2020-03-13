@@ -8,7 +8,7 @@ const TestGoal:React.FC = () => {
     const userInfo:authInfo = useContext(StitchAuthContext);
 
     const testGoal:ITestGoal = {
-        goalTitle: "Test Goal",
+        goalTitle: "random Goal",
         goalDescription: "Test Description",
         endDate: "2020-03-11",
         startDate: "2020-03-10",
