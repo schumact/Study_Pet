@@ -1,16 +1,11 @@
 import React, {useState, useEffect, useContext} from "react";
 import './GoalContainer.css';
-import {IGoal} from "../Stitch/StitchGoals";
 import GoalItem from "./GoalItem";
 import {selectAllGoals} from "../Stitch/StitchGoals";
-import {IonAlert, IonList} from "@ionic/react";
-import {INSERT_GOAL_RESULT} from "../Util/Enums";
+import {IonAlert} from "@ionic/react";
+import {FIND_GOAL_RESULT} from "../Util/Enums";
 
 // TODO see if I can get this to work with goals state object
-interface IGoalsList {
-    goalList: IGoal[],
-}
-
 
 const GoalContainer: React.FC = () => {
     const [goals, setGoals] = useState<any>();
@@ -34,10 +29,7 @@ const GoalContainer: React.FC = () => {
                     else
                     {
                         setGoals(JSON.stringify(res));
-                        var goalItems = res.map(currGoal => {
-                            console.log("here is the current goal" + currGoal);
-                            GoalItem(currGoal)
-                        });
+                        var goalItems = res.map(currGoal => GoalItem(currGoal));
                         setGoalItems(goalItems);
                     }
                 else
@@ -77,7 +69,7 @@ const GoalContainer: React.FC = () => {
             <div style={{display: "flex", justifyContent: "center"}}>
                 <p style={{fontWeight: "bold", fontSize: "20px"}}>My Goals</p>
             </div>
-            {/*<GoalItem/>*/}
+            {goalItemList}
         </div>
     );
 };

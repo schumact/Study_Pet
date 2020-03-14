@@ -5,10 +5,7 @@ import './GoalItem.css';
 import {IGoal} from "../Stitch/StitchGoals";
 
 export const GoalItem:React.FC<any> = (props:any) => {  // Going to need to set props to object that implements IGoal
-    // const userInfo: authInfo = useContext(StitchAuthContext);
-
-    console.log("Hello from goalitem");
-    console.log(props);
+   // TODO supply props to goalItem
     // const myGoal: IGoal = {
     //     goalTitle: "random Goal",
     //     goalDescription: "Test Description",
@@ -24,11 +21,10 @@ export const GoalItem:React.FC<any> = (props:any) => {  // Going to need to set 
                  button={true}
                  onClick={() => console.log("I'm tappable")}>
             <IonCardHeader>
-                <IonCardTitle>Title</IonCardTitle>
+                <IonCardTitle>{props.goalTitle}</IonCardTitle>
             </IonCardHeader>
             <IonCardContent>
-                {/*{myGoal.goalDescription}*/}
-                description
+                {props.goalDescription}
             </IonCardContent>
         </IonCard>
     )
