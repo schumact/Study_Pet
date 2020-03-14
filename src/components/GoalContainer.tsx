@@ -19,10 +19,10 @@ const GoalContainer: React.FC = () => {
         // return all goals to an array
         // map() items in goals array to GoalItem objects
         // set goals state with new array inheriting from IGoalsList
-        // console.log("use effect is this working");
-
-        try {
-            selectAllGoals().then(res => {
+        (async () => {
+            console.log("running");
+            try {
+                const res = await selectAllGoals();
                 if (res)
                     if (res.length === 0)
                         setEmptyGoals(true);
@@ -37,14 +37,12 @@ const GoalContainer: React.FC = () => {
                     setEmptyGoals(true);
                     setShowAlert1(true);
                 }
-            }).catch(err => {
-                console.log(`There was an error fetching goals. ${err}`)
-            });
-        } catch (e) {
-            if (e instanceof TypeError)
-                console.log("There was a type error. Excepted an array of goals");
-            console.log(e);
-        }
+            } catch (e) {
+                if (e instanceof TypeError)
+                    console.log("There was a type error. Excepted an array of goals");
+                console.log(e);
+            }
+        })();
     }, [goals, isEmptyGoals]);
 
 
