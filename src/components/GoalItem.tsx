@@ -4,10 +4,11 @@ import {IonCard, IonCardHeader, IonCardTitle, IonCardContent} from '@ionic/react
 import './GoalItem.css';
 import {IGoal} from "../Stitch/StitchGoals";
 
-
-export const GoalItem = () => {  // Going to need to set props to object that implements IGoal
+export const GoalItem:React.FC<any> = (props:any) => {  // Going to need to set props to object that implements IGoal
     const userInfo: authInfo = useContext(StitchAuthContext);
 
+    console.log("Hello from goalitem");
+    console.log(props);
     const myGoal: IGoal = {
         goalTitle: "random Goal",
         goalDescription: "Test Description",
@@ -19,7 +20,9 @@ export const GoalItem = () => {  // Going to need to set props to object that im
     };
 
     return (
-        <IonCard>
+        <IonCard type="button"
+                 button={true}
+                 onClick={() => console.log("I'm tappable")}>
             <IonCardHeader>
                 <IonCardTitle>{myGoal.goalTitle}</IonCardTitle>
             </IonCardHeader>

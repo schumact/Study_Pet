@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
 import {IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonModal} from '@ionic/react';
 import './Home.css';
-import GoalItem from './../components/GoalItem';
 import GoalContainer from "../components/GoalContainer";
 import AddGoal from "../components/AddGoal";
 
 const Home: React.FC = () => {
     const [showModal, setShowModal] = useState<boolean>(false);
+    // TODO do I need a goal successfully added state in here or something to make
+    // sure that the component rerenders on added goals. I want GoalContainer to rerender
 
     return (
         <IonPage>
@@ -22,7 +23,7 @@ const Home: React.FC = () => {
                     </IonToolbar>
                 </IonHeader>
                 <IonModal isOpen={showModal}>
-                    <AddGoal/>
+                    <AddGoal modalHandler={setShowModal}/>
                     <IonButton
                         color="danger"
                         onClick={() => setShowModal(false)}

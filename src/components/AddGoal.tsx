@@ -13,7 +13,7 @@ import './AddGoal.css';
 import {IGoal} from "../Stitch/StitchGoals";
 import DateTimePicker from "./DateTimePicker";
 import {insertGoal} from "../Stitch/StitchGoals";
-import {DATE_ENUMS} from "../Util/Enums";
+import {DATE_ENUMS, INSERT_GOAL_RESULT} from "../Util/Enums";
 
 
 function dateValidation(startDate: string | undefined, endDate: string | undefined):boolean {
@@ -41,7 +41,12 @@ function titleValidation(title:string | undefined):boolean {
     return isValid;
 }
 
-export const AddGoal = () => {  // Going to need to set props to object that implements IGoal
+interface INewGoal {
+    modalHandler: (isOpen: boolean) => void
+}
+
+
+export const AddGoal:React.FC<INewGoal> = (props:INewGoal) => {
     const userInfo: authInfo = useContext(StitchAuthContext);
     const [showAlert1, setShowAlert1] = useState(false);
     const [showAlert2, setShowAlert2] = useState(false);
@@ -49,7 +54,7 @@ export const AddGoal = () => {  // Going to need to set props to object that imp
     const [showAlert4, setShowAlert4] = useState(false);
     const [resultMessage, setResultMessage] = useState();
     const [goal, setGoal] = useState<Partial<IGoal>>({points: 1,
-        owner_id:userInfo.currentUser.id});
+        owner_id:userInfo.currentUser.id, isComplete: false});
 
     const createGoal = () => {
         // TODO add in a check to make sure that end date is after startDate
@@ -169,7 +174,12 @@ export const AddGoal = () => {  // Going to need to set props to object that imp
             />
             <IonAlert
                 isOpen={showAlert4}
-                onDidDismiss={() => setShowAlert4(false)}
+                onDidDismiss={() => {
+                    setShowAlert4(false);
+                    // close modal if the insert was successful
+                    if (resultMessage === INSERT_GOAL_RESULT.pass)
+                        props.modalHandler(false);
+                }}
                 header={resultMessage}
                 buttons={["OK"]}
             />
