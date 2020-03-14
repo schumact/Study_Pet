@@ -18,13 +18,14 @@ const GoalContainer: React.FC = () => {
     const [isEmptyGoals, setEmptyGoals] = useState<boolean>(false);
     const [goalItemList, setGoalItems] = useState<any>();
 
-    // TODO do something with props.goalList. It's an array of objects from mongo
+
     useEffect(() => {
         // query goals for a given user.
         // return all goals to an array
         // map() items in goals array to GoalItem objects
         // set goals state with new array inheriting from IGoalsList
         // console.log("use effect is this working");
+
         try {
             selectAllGoals().then(res => {
                 if (res)
@@ -34,7 +35,7 @@ const GoalContainer: React.FC = () => {
                     {
                         setGoals(JSON.stringify(res));
                         var goalItems = res.map(currGoal => {
-                            // console.log("here is the current goal" + currGoal);
+                            console.log("here is the current goal" + currGoal);
                             GoalItem(currGoal)
                         });
                         setGoalItems(goalItems);
