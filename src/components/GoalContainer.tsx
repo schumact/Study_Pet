@@ -2,8 +2,9 @@ import React, {useState, useEffect, useContext} from "react";
 import './GoalContainer.css';
 import GoalItem from "./GoalItem";
 import {selectAllGoals} from "../Stitch/StitchGoals";
-import {IonAlert} from "@ionic/react";
+import {IonAlert, IonNav} from "@ionic/react";
 import {FIND_GOAL_RESULT} from "../Util/Enums";
+import TestCom from "./TestCom";
 
 // TODO see if I can get this to work with goals state object
 
@@ -29,7 +30,13 @@ const GoalContainer: React.FC = () => {
                     else
                     {
                         setGoals(JSON.stringify(res));
-                        var goalItems = res.map(currGoal => GoalItem(currGoal));
+                        var goalItems = res.map((currGoal:any) => {
+                            // seems like a mess waiting to happen
+                            var newGoal = {title: currGoal.goalTitle, desc:currGoal.goalDescription,
+                                startDate:currGoal.startDate, endDate:currGoal.endDate, points:currGoal.points,
+                            owner_id: currGoal.owner_id, isComplete:currGoal.isComplete, key:currGoal._id.toString()};
+                            return GoalItem(newGoal);
+                        });
                         setGoalItems(goalItems);
                     }
                 else

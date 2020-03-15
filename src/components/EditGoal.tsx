@@ -1,5 +1,6 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {authInfo, StitchAuthContext} from "../Stitch/StitchAuth";
+import {dateValidation, titleValidation} from "../Util/GoalValidation";
 import {
     IonButton,
     IonList,
@@ -12,35 +13,34 @@ import {
 import './AddGoal.css';
 import {IGoal} from "../Stitch/StitchGoals";
 import DateTimePicker from "./DateTimePicker";
-import {insertGoal} from "../Stitch/StitchGoals";
-import {DATE_ENUMS, INSERT_GOAL_RESULT} from "../Util/Enums";
-import {dateValidation, titleValidation} from "../Util/GoalValidation";
+import {findGoal, updateGoal} from "../Stitch/StitchGoals";
+import {DATE_ENUMS, UPDATE_GOAL_RESULT} from "../Util/Enums";
+import { RouteComponentProps } from "react-router-dom";
 
-interface INewGoal {
-    modalHandler: (isOpen: boolean) => void
-}
+interface UserDetailPageProps extends RouteComponentProps<{
+    id: string;
+}> {}
 
-export const AddGoal:React.FC<INewGoal> = (props:INewGoal) => {
+export const EditGoal:React.FC<UserDetailPageProps> = ({match}) => {
     const userInfo: authInfo = useContext(StitchAuthContext);
     const [showAlert1, setShowAlert1] = useState(false);
     const [showAlert2, setShowAlert2] = useState(false);
     const [showAlert3, setShowAlert3] = useState(false);
     const [showAlert4, setShowAlert4] = useState(false);
     const [resultMessage, setResultMessage] = useState();
-    const [goal, setGoal] = useState<Partial<IGoal>>({points: 1,
-        owner_id:userInfo.currentUser.id, isComplete: false});
+    const [goal, setGoal] = useState<any>();
 
-    const createGoal = () => {
+    const UpdateGoal = () => {
         // TODO add in a check to make sure that end date is after startDate
         const areDatesValid = dateValidation(goal.startDate, goal.endDate);
         const isTitleValid = titleValidation(goal.goalTitle);
         if (areDatesValid && isTitleValid){
             // already validated points in render and description is optional
-            let result:Promise<string> = insertGoal(goal);
-            result.then(res => {
+            let result:any = updateGoal(match.params.id, goal);
+            result.then((res:any) => {
                 setResultMessage(res);
                 setShowAlert4(true);
-            }).catch(err => {
+            }).catch((err:any) => {
                 setResultMessage(err);
                 setShowAlert4(true);
             });
@@ -62,6 +62,14 @@ export const AddGoal:React.FC<INewGoal> = (props:INewGoal) => {
             setShowAlert1(true);
         }
     };
+
+    useEffect(() => {
+        (async () => {
+            const res = await findGoal(match.params.id);
+            if (res)
+                setGoal(JSON.stringify(res));
+        })();
+    });
 
     return (
         <IonList>
@@ -121,8 +129,8 @@ export const AddGoal:React.FC<INewGoal> = (props:INewGoal) => {
             <br/>
             <IonButton
                 expand="block"
-                onClick={() => createGoal()}>
-                Add Goal
+                onClick={() => UpdateGoal()}>
+                Edit Goal
             </IonButton>
             <IonAlert
                 isOpen={showAlert1}
@@ -151,8 +159,6 @@ export const AddGoal:React.FC<INewGoal> = (props:INewGoal) => {
                 onDidDismiss={() => {
                     setShowAlert4(false);
                     // close modal if the insert was successful
-                    if (resultMessage === INSERT_GOAL_RESULT.pass)
-                        props.modalHandler(false);
                 }}
                 header={resultMessage}
                 buttons={["OK"]}
@@ -161,4 +167,4 @@ export const AddGoal:React.FC<INewGoal> = (props:INewGoal) => {
     )
 };
 
-export default AddGoal;
+export default EditGoal;

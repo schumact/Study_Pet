@@ -1,5 +1,7 @@
 import {mongodb} from "./StitchApp";
-import {INSERT_GOAL_RESULT, FIND_GOAL_RESULT} from "../Util/Enums";
+import {INSERT_GOAL_RESULT, FIND_GOAL_RESULT, UPDATE_GOAL_RESULT, COMPLETE_GOAL_RESULT} from "../Util/Enums";
+import {BSON} from 'mongodb-stitch-browser-sdk';
+import {object} from "prop-types";
 
 export interface IGoal {
     goalTitle: string;
@@ -39,18 +41,74 @@ export const selectAllGoals = () => {
     return goals;
 };
 
-export const selectIncompleteGoals = (): void => {
-    var returnedGoals;
-    goalsCollection.find({isComplete: false})
+export const findGoal = (id:string) => {
+    const goal = goalsCollection.find({_id:id})
         .toArray()
         .then(res => {
-            console.log(res);
-            returnedGoals = res;
-            console.log("here");
-            console.log(typeof returnedGoals);
+            return res;
         })
         .catch(err => {
-            console.log(`${FIND_GOAL_RESULT}: ${err}`)
+            console.log(`${FIND_GOAL_RESULT}: ${err}`);
         });
+    return goal;
 };
 
+export const markGoalComplete = (id:string) => {
+    const update = {
+        "$set": {
+            "isComplete": true,
+        }
+    };
+    const options = { "upsert": false };
+    const result = goalsCollection.updateOne({_id:id}, update, options)
+        .then(res => {
+            const { matchedCount, modifiedCount } = res;
+            if(matchedCount && modifiedCount) {
+                console.log(COMPLETE_GOAL_RESULT.pass);
+            }
+            return res;
+        })
+        .catch(err => {
+            console.log(`${COMPLETE_GOAL_RESULT.fail}: ${err}`);
+        });
+    return result;
+};
+
+
+export const updateGoal = (id:string, goal:any) => {
+    const update = {
+        "$set": {
+            "goalTitle": goal.goalTitle,
+            "goalDescription": goal.goalDescription,
+            "startDate": goal.startDate,
+            "endDate": goal.endDate,
+            "points": goal.Points
+        }
+    };
+    const options = { "upsert": false };
+    const result = goalsCollection.updateOne({_id:id}, update, options)
+        .then(res => {
+            const { matchedCount, modifiedCount } = res;
+            if(matchedCount && modifiedCount) {
+                console.log(UPDATE_GOAL_RESULT.pass)
+            }
+            return res;
+        })
+        .catch(err => {
+            console.log(`${UPDATE_GOAL_RESULT.fail}: ${err}`);
+        });
+    return result;
+};
+
+// export const selectIncompleteGoals = (): void => {
+//     var returnedGoals;
+//     goalsCollection.find({isComplete: false})
+//         .toArray()
+//         .then(res => {
+//             returnedGoals = res;
+//         })
+//         .catch(err => {
+//             console.log(`${FIND_GOAL_RESULT}: ${err}`)
+//         });
+// };
+//

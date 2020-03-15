@@ -1,9 +1,8 @@
 import React, {useState} from "react";
 import {useStitchAuth} from "../Stitch/StitchAuth";
-import AccountCreation from "./AccountCreation";
 import {IonButton, IonAlert} from '@ionic/react';
 import './LoginUser.css';
-import {Link} from 'react-router-dom'
+import {Link} from 'react-router-dom';
 
 const LoginUser: React.FC = () => {
     //  My thought process here is that we need to get these creds
@@ -30,8 +29,7 @@ const LoginUser: React.FC = () => {
         handleUserLogin(email, password);
         // TODO find out how to access context here. If the user is not logged in,
         // display alert
-        if (!isLoggedIn)
-        {
+        if (!isLoggedIn) {
             setShowLoginAlert(true);
         }
         // if (err) {
@@ -40,9 +38,8 @@ const LoginUser: React.FC = () => {
     };
 
     return (
-        <div className="container">
+        <div className="test_container">
             <div className="title_container">
-                <p>PLACE PURRSISTENT PET LOGO HERE</p>
                 <p style={{fontWeight: 'bold', color: "#1e90ff", fontStyle: "italic", fontSize: 25}}>
                     Welcome to Purrsistent Pet!</p>
             </div>
@@ -80,6 +77,10 @@ const LoginUser: React.FC = () => {
                 <p style={{marginBottom: 10}}>Don't have an account?
                     <Link to={{pathname: "/sign_up"}}> Sign up</Link></p>
             </div>
+            <div>
+                <p style={{marginBottom: 10}}>
+                    <Link to={{pathname: "/sign_up"}}>Forgot your password?</Link></p>
+            </div>
             <IonAlert
                 isOpen={showLoginAlert}
                 onDidDismiss={() => setShowLoginAlert(false)}
@@ -91,5 +92,6 @@ const LoginUser: React.FC = () => {
         </div>
     );
 };
+
 
 export default LoginUser;
