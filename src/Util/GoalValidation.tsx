@@ -16,7 +16,7 @@ export const dateValidation = (startDate: string | undefined, endDate: string | 
 export const titleValidation = (title: string | undefined): boolean => {
     let isValid: boolean = false;
     if (title !== undefined) {
-        if (title.length >= 1 && title.length < 30)
+        if (title.length >= 1 && title.length < 51)
             isValid = true;
     }
     return isValid;

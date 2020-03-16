@@ -19,6 +19,7 @@ import {dateValidation, titleValidation} from "../Util/GoalValidation";
 interface INewGoal {
     modalHandler: (isOpen: boolean) => void
 }
+// TODO add in refresh for GoalContainer after a goal is successfully added
 
 export const AddGoal:React.FC<INewGoal> = (props:INewGoal) => {
     const userInfo: authInfo = useContext(StitchAuthContext);
