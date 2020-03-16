@@ -13,6 +13,17 @@ export interface IGoal {
     points: number
 }
 
+export interface IEpic {
+    epicTitle: string;
+    epicDescription?: string;
+    endDate: string;
+    startDate: string;
+    owner_id: any;
+    isComplete: boolean,
+    goals: string[]  // I was thinking this would hold a goal's _id. When we query an epic, get all the goals
+    // and query those when they need to represented
+}
+
 const goalsCollection = mongodb.db("study_pet").collection("Goals");
 
 export const insertGoal = (goal: Partial<IGoal>): Promise<string> => {

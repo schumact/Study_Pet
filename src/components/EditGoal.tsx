@@ -8,20 +8,22 @@ import {
     IonItem,
     IonTextarea,
     IonLabel,
-    IonAlert
+    IonAlert,
+    IonBackButton, IonButtons, IonContent, IonToolbar, IonHeader
 } from '@ionic/react';
 import './AddGoal.css';
 import {IGoal} from "../Stitch/StitchGoals";
 import DateTimePicker from "./DateTimePicker";
 import {findGoal, updateGoal} from "../Stitch/StitchGoals";
 import {DATE_ENUMS, UPDATE_GOAL_RESULT} from "../Util/Enums";
-import { RouteComponentProps } from "react-router-dom";
+import {RouteComponentProps} from "react-router-dom";
 
 interface UserDetailPageProps extends RouteComponentProps<{
     id: string;
-}> {}
+}> {
+}
 
-export const EditGoal:React.FC<UserDetailPageProps> = ({match}) => {
+export const EditGoal: React.FC<UserDetailPageProps> = ({match}) => {
     const userInfo: authInfo = useContext(StitchAuthContext);
     const [showAlert1, setShowAlert1] = useState(false);
     const [showAlert2, setShowAlert2] = useState(false);
@@ -34,19 +36,17 @@ export const EditGoal:React.FC<UserDetailPageProps> = ({match}) => {
         // TODO add in a check to make sure that end date is after startDate
         const areDatesValid = dateValidation(goal.startDate, goal.endDate);
         const isTitleValid = titleValidation(goal.goalTitle);
-        if (areDatesValid && isTitleValid){
+        if (areDatesValid && isTitleValid) {
             // already validated points in render and description is optional
-            let result:any = updateGoal(match.params.id, goal);
-            result.then((res:any) => {
+            let result: any = updateGoal(match.params.id, goal);
+            result.then((res: any) => {
                 setResultMessage(res);
                 setShowAlert4(true);
-            }).catch((err:any) => {
+            }).catch((err: any) => {
                 setResultMessage(err);
                 setShowAlert4(true);
             });
-        }
-        else
-        {
+        } else {
             if (!isTitleValid)
                 setShowAlert3(true);
             else
@@ -57,7 +57,7 @@ export const EditGoal:React.FC<UserDetailPageProps> = ({match}) => {
     const validatePoints = (points: number) => {
         const pointValues = [1, 2, 3, 4, 5];
         if (pointValues.includes(points))
-            setGoal({...goal, points:points});
+            setGoal({...goal, points: points});
         else {
             setShowAlert1(true);
         }
@@ -72,98 +72,109 @@ export const EditGoal:React.FC<UserDetailPageProps> = ({match}) => {
     });
 
     return (
-        <IonList>
-            <div style={{display: "flex", justifyContent: "center"}}>
-                <h1 style={{fontWeight: "bold", textDecoration: "underline"}}>Goal Creator</h1>
-            </div>
-            <br/>
-            <IonItem>
-                <IonInput
-                    value={goal?.goalTitle}
-                    placeholder="Title"
-                    required={true}
-                    debounce={750}
-                    clearInput={true}
-                    minlength={1}
-                    maxlength={50}
-                    // onIonChange={e => setTitle(e.detail.value!)}
-                    onIonChange={e => setGoal({...goal, goalTitle: e.detail.value!})}
-                >
-                </IonInput>
-            </IonItem>
-            <br/>
-            <br/>
-            <br/>
-            <IonItem>
-                <IonLabel position="floating">Description</IonLabel>
-                <IonTextarea
-                    value={goal?.goalDescription}
-                    placeholder="Please enter your description here"
-                    onIonChange={e => setGoal( {...goal, goalDescription: e.detail.value!})}>
-                </IonTextarea>
-            </IonItem>
-            <IonItem>
-                <IonLabel position="floating">Point Value. Enter a goal value of 1 -5.</IonLabel>
-                <IonInput
-                    value={goal?.points || 1}
-                    placeholder="Enter value of goal. 1 through 5"
-                    required={true}
-                    type="number"
-                    debounce={750}
-                    clearInput={true}
-                    minlength={1}
-                    maxlength={50}
-                    onIonChange={e => validatePoints(parseInt(e.detail.value!))}>
-                </IonInput>
-            </IonItem>
-            <br/>
-            <br/>
-            <br/>
-            <DateTimePicker dateType={DATE_ENUMS.start} setDate={setGoal} goalState={goal}/>
-            <br/>
-            <br/>
-            <br/>
-            <DateTimePicker dateType={DATE_ENUMS.end} setDate={setGoal} goalState={goal}/>
-            <br/>
-            <br/>
-            <br/>
-            <IonButton
-                expand="block"
-                onClick={() => UpdateGoal()}>
-                Edit Goal
-            </IonButton>
-            <IonAlert
-                isOpen={showAlert1}
-                onDidDismiss={() => setShowAlert1(false)}
-                header={'Point Error'}
-                message={"A goal's point value must be either 1, 2, 3, 4 or 5."}
-                buttons={["OK"]}
-            />
-            <IonAlert
-                isOpen={showAlert2}
-                onDidDismiss={() => setShowAlert2(false)}
-                header={'Date Error'}
-                message={"A start and end date must be selected and the start date must be before " +
-                "the end date"}
-                buttons={["OK"]}
-            />
-            <IonAlert
-                isOpen={showAlert3}
-                onDidDismiss={() => setShowAlert3(false)}
-                header={'Title Error'}
-                message={"Please make sure that you input a title and it is less than 30 characters long."}
-                buttons={["OK"]}
-            />
-            <IonAlert
-                isOpen={showAlert4}
-                onDidDismiss={() => {
-                    setShowAlert4(false);
-                    // close modal if the insert was successful
-                }}
-                header={resultMessage}
-                buttons={["OK"]}
-            />
-        </IonList>
+        <IonContent>
+            <IonHeader>
+                <IonToolbar>
+                    <IonButtons slot="start">
+                        <IonBackButton defaultHref="/home" icon="buttonIcon" />
+                    </IonButtons>
+                </IonToolbar>
+            </IonHeader>
+            <IonList>
+                <IonBackButton/>
+                <div style={{display: "flex", justifyContent: "center"}}>
+                    <h1 style={{fontWeight: "bold", textDecoration: "underline"}}>Edit Goal</h1>
+                </div>
+                <br/>
+                <IonItem>
+                    <IonInput
+                        value={goal?.goalTitle}
+                        placeholder="Title"
+                        required={true}
+                        debounce={750}
+                        clearInput={true}
+                        minlength={1}
+                        maxlength={50}
+                        // onIonChange={e => setTitle(e.detail.value!)}
+                        onIonChange={e => setGoal({...goal, goalTitle: e.detail.value!})}
+                    >
+                    </IonInput>
+                </IonItem>
+                <br/>
+                <br/>
+                <br/>
+                <IonItem>
+                    <IonLabel position="floating">Description</IonLabel>
+                    <IonTextarea
+                        value={goal?.goalDescription}
+                        placeholder="Please enter your description here"
+                        onIonChange={e => setGoal({...goal, goalDescription: e.detail.value!})}>
+                    </IonTextarea>
+                </IonItem>
+                <IonItem>
+                    <IonLabel position="floating">Point Value. Enter a goal value of 1 -5.</IonLabel>
+                    <IonInput
+                        value={goal?.points || 1}
+                        placeholder="Enter value of goal. 1 through 5"
+                        required={true}
+                        type="number"
+                        debounce={750}
+                        clearInput={true}
+                        minlength={1}
+                        maxlength={50}
+                        onIonChange={e => validatePoints(parseInt(e.detail.value!))}>
+                    </IonInput>
+                </IonItem>
+                <br/>
+                <br/>
+                <br/>
+                <DateTimePicker dateType={DATE_ENUMS.start} setDate={setGoal} goalState={goal}/>
+                <br/>
+                <br/>
+                <br/>
+                <DateTimePicker dateType={DATE_ENUMS.end} setDate={setGoal} goalState={goal}/>
+                <br/>
+                <br/>
+                <br/>
+                <IonButton
+                    expand="block"
+                    onClick={() => UpdateGoal()}>
+                    Edit Goal
+                </IonButton>
+                <IonAlert
+                    isOpen={showAlert1}
+                    onDidDismiss={() => setShowAlert1(false)}
+                    header={'Point Error'}
+                    message={"A goal's point value must be either 1, 2, 3, 4 or 5."}
+                    buttons={["OK"]}
+                />
+                <IonAlert
+                    isOpen={showAlert2}
+                    onDidDismiss={() => setShowAlert2(false)}
+                    header={'Date Error'}
+                    message={"A start and end date must be selected and the start date must be before " +
+                    "the end date"}
+                    buttons={["OK"]}
+                />
+                <IonAlert
+                    isOpen={showAlert3}
+                    onDidDismiss={() => setShowAlert3(false)}
+                    header={'Title Error'}
+                    message={"Please make sure that you input a title and it is less than 30 characters long."}
+                    buttons={["OK"]}
+                />
+                <IonAlert
+                    isOpen={showAlert4}
+                    onDidDismiss={() => {
+                        setShowAlert4(false);
+                        // close modal if the insert was successful
+                    }}
+                    header={resultMessage}
+                    buttons={["OK"]}
+                />
+            </IonList>
+        </IonContent>
+
     )
 };
 

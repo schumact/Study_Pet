@@ -31,7 +31,7 @@ export const GoalItem: React.FC<IGoalItem> = (props: IGoalItem) => {
         props.isComplete ?
             <IonCard type="button"
                      key={props.key}
-                     routerLink={`/edit_goal:${props.key}`}
+                     href={`/edit_goal:${props.key}`}
                      routerDirection="forward"
                      button={true}
                      style={{backgroundImage: "linear-gradient(#99ffcc, #ffffff)"}}
@@ -46,11 +46,10 @@ export const GoalItem: React.FC<IGoalItem> = (props: IGoalItem) => {
             </IonCard> :
             <IonCard type="button"
                      key={props.key}
-                     routerLink={`/edit_goal:${props.key}`}
+                     href={`/edit_goal:${props.key}`}
                      routerDirection="forward"
                      button={true}
-                     style={{backgroundImage: "linear-gradient(#ff6666, #ffffff)"}}
-                     onClick={() => console.log("I'm tappable")}>
+                     style={{backgroundImage: "linear-gradient(#ff6666, #ffffff)"}}>
                 <IonCardHeader>
                     <IonCardTitle>{props.title}</IonCardTitle>
                 </IonCardHeader>

@@ -22,3 +22,8 @@ export const COMPLETE_GOAL_RESULT = {
     pass: "Nice Work! Your goal is now complete!",
     fail: "Failed to mark goal as complete. Please try again."
 };
+
+export const INSERT_EPIC_RESULT = {
+    pass: "Successfully added epic! Edit the epic to add goals.",
+    fail: "Failed to add epic. Please try again."
+};

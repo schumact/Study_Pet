@@ -61,6 +61,7 @@ function AppUI() {
                             <Route path="/home" component={Home} exact={true}/>
                             <Route path="/my_pet" component={MyPet}/>
                             <Route path="/edit_goal:id" component={EditGoal}/>
+                            <Route path="/test_com" component={TestCom}/>
                             <Route path="/" render={() => <Redirect to="/account"/>} exact={true}/>
                         </IonRouterOutlet>
                         <IonTabBar slot="bottom">
