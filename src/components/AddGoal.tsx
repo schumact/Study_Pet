@@ -86,7 +86,6 @@ export const AddGoal:React.FC<INewGoal> = (props:INewGoal) => {
             </IonItem>
             <br/>
             <br/>
-            <br/>
             <IonItem>
                 <IonLabel position="floating">Description</IonLabel>
                 <IonTextarea
@@ -111,13 +110,10 @@ export const AddGoal:React.FC<INewGoal> = (props:INewGoal) => {
             </IonItem>
             <br/>
             <br/>
-            <br/>
             <DateTimePicker dateType={DATE_ENUMS.start} setDate={setGoal} goalState={goal}/>
             <br/>
             <br/>
-            <br/>
             <DateTimePicker dateType={DATE_ENUMS.end} setDate={setGoal} goalState={goal}/>
-            <br/>
             <br/>
             <br/>
             <IonButton
