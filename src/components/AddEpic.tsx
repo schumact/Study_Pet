@@ -10,9 +10,9 @@ import {
     IonAlert
 } from '@ionic/react';
 import './AddGoal.css';
-import {IGoal} from "../Stitch/StitchGoals";
+import {IEpic} from "../Stitch/StitchGoals";
 import DateTimePicker from "./DateTimePicker";
-import {insertGoal} from "../Stitch/StitchGoals";
+import {insertEpic} from "../Stitch/StitchGoals";
 import {DATE_ENUMS, INSERT_EPIC_RESULT} from "../Util/Enums";
 import {dateValidation, titleValidation} from "../Util/GoalValidation";
 
@@ -23,21 +23,20 @@ interface INewEpic {
 
 export const AddEpic:React.FC<INewEpic> = (props:INewEpic) => {
     const userInfo: authInfo = useContext(StitchAuthContext);
-    const [showAlert1, setShowAlert1] = useState(false);
     const [showAlert2, setShowAlert2] = useState(false);
     const [showAlert3, setShowAlert3] = useState(false);
     const [showAlert4, setShowAlert4] = useState(false);
     const [resultMessage, setResultMessage] = useState();
-    const [epic, setEpic] = useState<Partial<IGoal>>({points: 1,
-        owner_id:userInfo.currentUser.id, isComplete: false});
+    const [epic, setEpic] = useState<Partial<IEpic>>(
+        { owner_id:userInfo.currentUser.id, isComplete: false});
 
     const createGoal = () => {
         // TODO add in a check to make sure that end date is after startDate
         const areDatesValid = dateValidation(epic.startDate, epic.endDate);
-        const isTitleValid = titleValidation(epic.goalTitle);
+        const isTitleValid = titleValidation(epic.epicTitle);
         if (areDatesValid && isTitleValid){
             // already validated points in render and description is optional
-            let result:Promise<string> = insertGoal(epic);
+            let result:Promise<string> = insertEpic(epic);
             result.then(res => {
                 setResultMessage(res);
                 setShowAlert4(true);
@@ -63,7 +62,7 @@ export const AddEpic:React.FC<INewEpic> = (props:INewEpic) => {
             <br/>
             <IonItem>
                 <IonInput
-                    value={epic?.goalTitle}
+                    value={epic?.epicTitle}
                     placeholder="Title"
                     required={true}
                     debounce={750}
@@ -71,7 +70,7 @@ export const AddEpic:React.FC<INewEpic> = (props:INewEpic) => {
                     minlength={1}
                     maxlength={50}
                     // onIonChange={e => setTitle(e.detail.value!)}
-                    onIonChange={e => setEpic({...epic, goalTitle: e.detail.value!})}
+                    onIonChange={e => setEpic({...epic, epicTitle: e.detail.value!})}
                 >
                 </IonInput>
             </IonItem>
@@ -81,9 +80,9 @@ export const AddEpic:React.FC<INewEpic> = (props:INewEpic) => {
             <IonItem>
                 <IonLabel position="floating">Description</IonLabel>
                 <IonTextarea
-                    value={epic?.goalDescription}
+                    value={epic?.epicDescription}
                     placeholder="Please enter your description here"
-                    onIonChange={e => setEpic( {...epic, goalDescription: e.detail.value!})}>
+                    onIonChange={e => setEpic( {...epic, epicDescription: e.detail.value!})}>
                 </IonTextarea>
             </IonItem>
             <br/>
@@ -102,13 +101,6 @@ export const AddEpic:React.FC<INewEpic> = (props:INewEpic) => {
                 onClick={() => createGoal()}>
                 Add Epic
             </IonButton>
-            <IonAlert
-                isOpen={showAlert1}
-                onDidDismiss={() => setShowAlert1(false)}
-                header={'Point Error'}
-                message={"A goal's point value must be either 1, 2, 3, 4 or 5."}
-                buttons={["OK"]}
-            />
             <IonAlert
                 isOpen={showAlert2}
                 onDidDismiss={() => setShowAlert2(false)}

@@ -13,6 +13,11 @@ export const FIND_GOAL_RESULT = {
     fail: "Failed to find goal. Please try again."
 };
 
+export const FIND_EPIC_RESULT = {
+    pass: "Successfully added epic!",
+    fail: "Failed to find epic. Please try again."
+};
+
 export const UPDATE_GOAL_RESULT = {
     pass: "Successfully updated goal!",
     fail: "Failed to update goal. Please try again."
@@ -26,4 +31,9 @@ export const COMPLETE_GOAL_RESULT = {
 export const INSERT_EPIC_RESULT = {
     pass: "Successfully added epic! Edit the epic to add goals.",
     fail: "Failed to add epic. Please try again."
+};
+
+export const UPDATE_EPIC_RESULT = {
+    pass: "Successfully updated epic!",
+    fail: "Failed to update epic. Please try again."
 };

@@ -1,5 +1,13 @@
 import {mongodb} from "./StitchApp";
-import {INSERT_GOAL_RESULT, FIND_GOAL_RESULT, UPDATE_GOAL_RESULT, COMPLETE_GOAL_RESULT} from "../Util/Enums";
+import {
+    INSERT_GOAL_RESULT,
+    FIND_GOAL_RESULT,
+    UPDATE_GOAL_RESULT,
+    COMPLETE_GOAL_RESULT,
+    INSERT_EPIC_RESULT,
+    FIND_EPIC_RESULT,
+    UPDATE_EPIC_RESULT
+} from "../Util/Enums";
 import {BSON} from 'mongodb-stitch-browser-sdk';
 import {object} from "prop-types";
 
@@ -25,9 +33,10 @@ export interface IEpic {
 }
 
 const goalsCollection = mongodb.db("study_pet").collection("Goals");
+const epicCollection = mongodb.db("study_pet").collection("Epic");
 
+// Goals
 export const insertGoal = (goal: Partial<IGoal>): Promise<string> => {
-    console.log(goal);
     let insertResult: Promise<string> = goalsCollection.insertOne(goal)
         .then(result => {
             console.log(`Successfully inserted item with _id: ${result.insertedId}`);
@@ -85,7 +94,6 @@ export const markGoalComplete = (id:string) => {
     return result;
 };
 
-
 export const updateGoal = (id:string, goal:any) => {
     const update = {
         "$set": {
@@ -111,15 +119,65 @@ export const updateGoal = (id:string, goal:any) => {
     return result;
 };
 
-// export const selectIncompleteGoals = (): void => {
-//     var returnedGoals;
-//     goalsCollection.find({isComplete: false})
-//         .toArray()
-//         .then(res => {
-//             returnedGoals = res;
-//         })
-//         .catch(err => {
-//             console.log(`${FIND_GOAL_RESULT}: ${err}`)
-//         });
-// };
-//
+// Epics
+export const insertEpic = (epic: Partial<IEpic>): Promise<string> => {
+    let insertResult: Promise<string> = epicCollection.insertOne(epic)
+        .then(result => {
+            console.log(`Successfully inserted item with _id: ${result.insertedId}`);
+            return INSERT_EPIC_RESULT.pass;
+        })
+        .catch(err => {
+            console.error(`Failed to insert item: ${err}`);
+            return INSERT_EPIC_RESULT.fail;
+        });
+    return insertResult;
+};
+
+export const selectAllEpics = () => {
+    const epics = epicCollection.find()
+        .toArray()
+        .then(res => {
+            return res;
+        })
+        .catch(err => {
+            console.log(`${FIND_EPIC_RESULT}: ${err}`);
+        });
+    return epics;
+};
+
+export const findEpic = (id:string) => {
+    const epic = epicCollection.find({_id:id})
+        .toArray()
+        .then(res => {
+            return res;
+        })
+        .catch(err => {
+            console.log(`${FIND_EPIC_RESULT}: ${err}`);
+        });
+    return epic;
+};
+
+export const updateEpic = (id:string, epic:any) => {
+    const update = {
+        "$set": {
+            "epicTitle": epic.epicTitle,
+            "epicDescription": epic.epicDescription,
+            "startDate": epic.startDate,
+            "endDate": epic.endDate,
+            "goals": epic.goals
+        }
+    };
+    const options = { "upsert": false };
+    const result = epicCollection.updateOne({_id:id}, update, options)
+        .then(res => {
+            const { matchedCount, modifiedCount } = res;
+            if(matchedCount && modifiedCount) {
+                console.log(UPDATE_EPIC_RESULT.pass)
+            }
+            return res;
+        })
+        .catch(err => {
+            console.log(`${UPDATE_EPIC_RESULT.fail}: ${err}`);
+        });
+    return result;
+};

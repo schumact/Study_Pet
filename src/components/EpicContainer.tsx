@@ -1,16 +1,16 @@
 import React, {useState, useEffect} from "react";
 import './GoalContainer.css';
-import GoalItem from "./GoalItem";
-import {selectAllGoals} from "../Stitch/StitchGoals";
+import {selectAllEpics} from "../Stitch/StitchGoals";
 import {IonAlert} from "@ionic/react";
+import EpicItem from "./EpicItem";
 
 // TODO see if I can get this to work with goals state object
 
-const GoalContainer: React.FC = () => {
-    const [goals, setGoals] = useState<any>();
+const EpicContainer: React.FC = () => {
+    const [epics, setEpics] = useState<any>();
     const [showAlert1, setShowAlert1] = useState(false);
-    const [isEmptyGoals, setEmptyGoals] = useState<boolean>(false);
-    const [goalItemList, setGoalItems] = useState<any>();
+    const [isEmptyEpic, setEmptyEpic] = useState<boolean>(false);
+    const [epicItemList, setEpicItems] = useState<any>();
 
 
     useEffect(() => {
@@ -21,25 +21,25 @@ const GoalContainer: React.FC = () => {
         (async () => {
             console.log("running");
             try {
-                const res = await selectAllGoals();
+                const res = await selectAllEpics();
                 if (res)
                     if (res.length === 0)
-                        setEmptyGoals(true);
+                        setEmptyEpic(true);
                     else
                     {
-                        setGoals(JSON.stringify(res));
-                        var goalItems = res.map((currGoal:any) => {
+                        setEpics(JSON.stringify(res));
+                        var goalItems = res.map((currEpic:any) => {
                             // seems like a mess waiting to happen
-                            var newGoal = {title: currGoal.goalTitle, desc:currGoal.goalDescription,
-                                startDate:currGoal.startDate, endDate:currGoal.endDate, points:currGoal.points,
-                            owner_id: currGoal.owner_id, isComplete:currGoal.isComplete, key:currGoal._id.toString()};
-                            return GoalItem(newGoal);
+                            var newEpic = {title: currEpic.epicTitle, desc:currEpic.epicDescription,
+                                startDate:currEpic.startDate, endDate:currEpic.endDate, goals:currEpic.goals,
+                                owner_id: currEpic.owner_id, isComplete:currEpic.isComplete, key:currEpic._id.toString()};
+                            return EpicItem(newEpic);
                         });
-                        setGoalItems(goalItems);
+                        setEpicItems(goalItems);
                     }
                 else
                 {
-                    setEmptyGoals(true);
+                    setEmptyEpic(true);
                     setShowAlert1(true);
                 }
             } catch (e) {
@@ -48,15 +48,12 @@ const GoalContainer: React.FC = () => {
                 console.log(e);
             }
         })();
-    }, [goals, isEmptyGoals]);
+    }, [epics, isEmptyEpic]);
 
 
     return (
-        isEmptyGoals ?
+        isEmptyEpic ?
             <div>
-                <div style={{display: "flex", justifyContent: "center"}}>
-                    <p style={{fontWeight: "bold", fontSize: "20px"}}>Add some goals to help your pet!</p>
-                </div>
                 <IonAlert
                     isOpen={showAlert1}
                     onDidDismiss={() => {
@@ -68,13 +65,13 @@ const GoalContainer: React.FC = () => {
                 />
             </div>
             :
-        <div>
-            <div style={{display: "flex", justifyContent: "center"}}>
-                <p style={{fontWeight: "bold", fontSize: "20px"}}>My Goals</p>
+            <div>
+                <div style={{display: "flex", justifyContent: "center"}}>
+                    <p style={{fontWeight: "bold", fontSize: "20px"}}>My Epics</p>
+                </div>
+                {epicItemList}
             </div>
-            {goalItemList}
-        </div>
     );
 };
 
-export default GoalContainer;
+export default EpicContainer;

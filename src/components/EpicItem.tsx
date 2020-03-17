@@ -4,19 +4,19 @@ import {IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonRouterLink} fro
 import './GoalItem.css';
 import {IGoal} from "../Stitch/StitchGoals";
 
-interface IGoalItem {
+interface IEpicItem {
     title: string | undefined;
     desc?: string | undefined;
     startDate: string | undefined;
     endDate: string | undefined;
-    points: number | undefined;
     isComplete: boolean | undefined;
     owner_id: string | undefined;
-    key: string | undefined
+    key: string | undefined;
+    goals: string[] | undefined
 }
 
 
-export const GoalItem: React.FC<IGoalItem> = (props: IGoalItem) => {
+export const EpicItem: React.FC<IEpicItem> = (props: IEpicItem) => {
 
     const oneDay = 24 * 60 * 60 * 1000;
     let daysLeft = -1;
@@ -31,21 +31,21 @@ export const GoalItem: React.FC<IGoalItem> = (props: IGoalItem) => {
                      href={`/edit_goal:${props.key}`}
                      routerDirection="forward"
                      button={true}
-                     style={{backgroundImage: "linear-gradient(#99ffcc, #ffffff)"}}>
+                     style={{backgroundImage: "linear-gradient(#b3ecff, #ffffff)"}}>
                 <IonCardHeader>
                     <IonCardTitle>{props.title}</IonCardTitle>
                 </IonCardHeader>
                 <IonCardContent>
-                    <p>Goal Complete!</p>
+                    <p>Epic Complete!</p>
                     <p>Click me to Edit!</p>
                 </IonCardContent>
             </IonCard> :
             <IonCard type="button"
                      key={props.key}
-                     href={`/edit_goal:${props.key}`}
+                     href={`/edit_epic:${props.key}`}
                      routerDirection="forward"
                      button={true}
-                     style={{backgroundImage: "linear-gradient(#ff6666, #ffffff)"}}>
+                     style={{backgroundImage: "linear-gradient(#ffff80, #ffffff)"}}>
                 <IonCardHeader>
                     <IonCardTitle>{props.title}</IonCardTitle>
                 </IonCardHeader>
@@ -57,4 +57,4 @@ export const GoalItem: React.FC<IGoalItem> = (props: IGoalItem) => {
     )
 };
 
-export default GoalItem;
+export default EpicItem;

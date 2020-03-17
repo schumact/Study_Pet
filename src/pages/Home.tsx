@@ -4,6 +4,7 @@ import './Home.css';
 import GoalContainer from "../components/GoalContainer";
 import AddGoal from "../components/AddGoal";
 import AddEpic from "../components/AddEpic";
+import EpicContainer from "../components/EpicContainer";
 
 const Home: React.FC = () => {
     const [showModal, setShowModal] = useState<boolean>(false);
@@ -56,6 +57,7 @@ const Home: React.FC = () => {
                     Create New Epic!
                 </IonButton>
                 <GoalContainer/>
+                <EpicContainer/>
             </IonContent>
         </IonPage>
     );
