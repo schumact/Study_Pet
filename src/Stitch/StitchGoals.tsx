@@ -8,8 +8,6 @@ import {
     FIND_EPIC_RESULT,
     UPDATE_EPIC_RESULT
 } from "../Util/Enums";
-import {BSON} from 'mongodb-stitch-browser-sdk';
-import {object} from "prop-types";
 
 export interface IGoal {
     goalTitle: string;
@@ -62,9 +60,11 @@ export const selectAllGoals = () => {
 };
 
 export const findGoal = (id:string) => {
-    const goal = goalsCollection.find({_id:id})
+    const goal = goalsCollection.find({_id:{$oid: id}})
         .toArray()
         .then(res => {
+            console.log("here is the res");
+            console.log(res);
             return res;
         })
         .catch(err => {
@@ -101,20 +101,23 @@ export const updateGoal = (id:string, goal:any) => {
             "goalDescription": goal.goalDescription,
             "startDate": goal.startDate,
             "endDate": goal.endDate,
-            "points": goal.Points
+            "points": goal.points
         }
     };
     const options = { "upsert": false };
-    const result = goalsCollection.updateOne({_id:id}, update, options)
+    let outcome = UPDATE_GOAL_RESULT.fail;
+    const result = goalsCollection.updateOne({_id:{$oid: id}}, update, options)
         .then(res => {
             const { matchedCount, modifiedCount } = res;
             if(matchedCount && modifiedCount) {
-                console.log(UPDATE_GOAL_RESULT.pass)
+                outcome = UPDATE_GOAL_RESULT.pass;
             }
-            return res;
+            return outcome;
         })
         .catch(err => {
             console.log(`${UPDATE_GOAL_RESULT.fail}: ${err}`);
+            outcome = UPDATE_GOAL_RESULT.error;
+            return outcome;
         });
     return result;
 };
@@ -146,9 +149,10 @@ export const selectAllEpics = () => {
 };
 
 export const findEpic = (id:string) => {
-    const epic = epicCollection.find({_id:id})
+    const epic = epicCollection.find({_id:{$oid: id}})
         .toArray()
         .then(res => {
+            console.log(res);
             return res;
         })
         .catch(err => {
@@ -164,20 +168,23 @@ export const updateEpic = (id:string, epic:any) => {
             "epicDescription": epic.epicDescription,
             "startDate": epic.startDate,
             "endDate": epic.endDate,
-            "goals": epic.goals
+            "goals": epic.goals  || []
         }
     };
     const options = { "upsert": false };
-    const result = epicCollection.updateOne({_id:id}, update, options)
+    let outcome = UPDATE_EPIC_RESULT.fail;
+    const result = epicCollection.updateOne({_id:{$oid: id}}, update, options)
         .then(res => {
             const { matchedCount, modifiedCount } = res;
             if(matchedCount && modifiedCount) {
-                console.log(UPDATE_EPIC_RESULT.pass)
+                outcome = UPDATE_EPIC_RESULT.pass;
             }
-            return res;
+            return outcome;
         })
         .catch(err => {
             console.log(`${UPDATE_EPIC_RESULT.fail}: ${err}`);
+            outcome = UPDATE_EPIC_RESULT.error;
+            return outcome;
         });
     return result;
 };

@@ -19,7 +19,6 @@ const GoalContainer: React.FC = () => {
         // map() items in goals array to GoalItem objects
         // set goals state with new array inheriting from IGoalsList
         (async () => {
-            console.log("running");
             try {
                 const res = await selectAllGoals();
                 if (res)

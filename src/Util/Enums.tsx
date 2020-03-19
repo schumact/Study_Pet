@@ -20,7 +20,8 @@ export const FIND_EPIC_RESULT = {
 
 export const UPDATE_GOAL_RESULT = {
     pass: "Successfully updated goal!",
-    fail: "Failed to update goal. Please try again."
+    fail: "Failed to update goal. Please try again.",
+    error: "Error encountered when trying to update goal. Please try again."
 };
 
 export const COMPLETE_GOAL_RESULT = {
@@ -35,5 +36,6 @@ export const INSERT_EPIC_RESULT = {
 
 export const UPDATE_EPIC_RESULT = {
     pass: "Successfully updated epic!",
-    fail: "Failed to update epic. Please try again."
+    fail: "Failed to update epic. Please try again.",
+    error: "Error encountered when trying to update epic. Please try again."
 };

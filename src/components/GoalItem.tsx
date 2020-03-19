@@ -23,12 +23,11 @@ export const GoalItem: React.FC<IGoalItem> = (props: IGoalItem) => {
     if (props.endDate && props.startDate)
         daysLeft = Math.round(Math.abs(Date.parse(props.endDate) - Date.parse(props.startDate)) / oneDay);
 
-
     return (
         props.isComplete ?
             <IonCard type="button"
                      key={props.key}
-                     href={`/edit_goal:${props.key}`}
+                     href={`/edit_goal/${props.key}`}
                      routerDirection="forward"
                      button={true}
                      style={{backgroundImage: "linear-gradient(#99ffcc, #ffffff)"}}>
@@ -42,7 +41,7 @@ export const GoalItem: React.FC<IGoalItem> = (props: IGoalItem) => {
             </IonCard> :
             <IonCard type="button"
                      key={props.key}
-                     href={`/edit_goal:${props.key}`}
+                     href={`/edit_goal/${props.key}`}
                      routerDirection="forward"
                      button={true}
                      style={{backgroundImage: "linear-gradient(#ff6666, #ffffff)"}}>

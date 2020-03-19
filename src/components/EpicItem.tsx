@@ -42,7 +42,7 @@ export const EpicItem: React.FC<IEpicItem> = (props: IEpicItem) => {
             </IonCard> :
             <IonCard type="button"
                      key={props.key}
-                     href={`/edit_epic:${props.key}`}
+                     href={`/edit_epic/${props.key}`}
                      routerDirection="forward"
                      button={true}
                      style={{backgroundImage: "linear-gradient(#ffff80, #ffffff)"}}>

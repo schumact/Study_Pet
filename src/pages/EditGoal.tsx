@@ -14,7 +14,7 @@ import {
 import '../components/AddGoal.css';
 import DateTimePicker from "../components/DateTimePicker";
 import {findGoal, updateGoal} from "../Stitch/StitchGoals";
-import {DATE_ENUMS} from "../Util/Enums";
+import {DATE_ENUMS, UPDATE_GOAL_RESULT} from "../Util/Enums";
 import {RouteComponentProps} from "react-router-dom";
 
 interface UserDetailPageProps extends RouteComponentProps<{
@@ -39,7 +39,10 @@ export const EditGoal: React.FC<UserDetailPageProps> = ({match}) => {
             // already validated points in render and description is optional
             let result: any = updateGoal(match.params.id, goal);
             result.then((res: any) => {
-                setResultMessage(res);
+                if (!res)
+                    setResultMessage(UPDATE_GOAL_RESULT.fail);
+                else
+                    setResultMessage(res);
                 setShowAlert4(true);
             }).catch((err: any) => {
                 setResultMessage(err);
@@ -64,11 +67,11 @@ export const EditGoal: React.FC<UserDetailPageProps> = ({match}) => {
 
     useEffect(() => {
         (async () => {
-            const res = await findGoal(match.params.id);
-            if (res)
-                setGoal(JSON.stringify(res));
+            const res:any = await findGoal(match.params.id);
+            if (res[0])
+                setGoal(res[0]);
         })();
-    });
+    }, []);
 
     return (
         <IonPage>

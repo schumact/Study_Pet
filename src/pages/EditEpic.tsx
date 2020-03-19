@@ -33,7 +33,7 @@ export const EditEpic: React.FC<UserDetailPageProps> = ({match}) => {
     const UpdateEpic = () => {
         // TODO add in a check to make sure that end date is after startDate
         const areDatesValid = dateValidation(epic.startDate, epic.endDate);
-        const isTitleValid = titleValidation(epic.goalTitle);
+        const isTitleValid = titleValidation(epic.epicTitle);
         if (areDatesValid && isTitleValid) {
             // already validated points in render and description is optional
             let result: any = updateEpic(match.params.id, epic);
@@ -56,9 +56,9 @@ export const EditEpic: React.FC<UserDetailPageProps> = ({match}) => {
         (async () => {
             const res = await findEpic(match.params.id);
             if (res)
-                setEpic(JSON.stringify(res));
+                setEpic(res[0]);
         })();
-    });
+    }, []);
 
     return (
         <IonPage>
@@ -73,7 +73,7 @@ export const EditEpic: React.FC<UserDetailPageProps> = ({match}) => {
                 <IonList>
                     <IonBackButton/>
                     <div style={{display: "flex", justifyContent: "center"}}>
-                        <h1 style={{fontWeight: "bold", textDecoration: "underline"}}>Edit Goal</h1>
+                        <h1 style={{fontWeight: "bold", textDecoration: "underline"}}>Edit Epic</h1>
                     </div>
                     <br/>
                     <IonItem>
