@@ -3,6 +3,7 @@ import {authInfo, StitchAuthContext} from "../Stitch/StitchAuth";
 import {IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonRouterLink} from '@ionic/react';
 import './GoalItem.css';
 import {IGoal} from "../Stitch/StitchGoals";
+import {Link} from "react-router-dom";
 
 interface IEpicItem {
     title: string | undefined;
@@ -40,18 +41,17 @@ export const EpicItem: React.FC<IEpicItem> = (props: IEpicItem) => {
                     <p>Click me to Edit!</p>
                 </IonCardContent>
             </IonCard> :
-            <IonCard type="button"
+            <IonCard
                      key={props.key}
-                     href={`/edit_epic/${props.key}`}
-                     routerDirection="forward"
-                     button={true}
                      style={{backgroundImage: "linear-gradient(#ffff80, #ffffff)"}}>
                 <IonCardHeader>
                     <IonCardTitle>{props.title}</IonCardTitle>
                 </IonCardHeader>
                 <IonCardContent>
                     <p style={{color: "red", fontWeight: "bold"}}>{daysLeft} days left!</p>
-                    <p>Click me to Edit!</p>
+                    <Link to={`/edit_epic/${props.key}`}>Click me to Edit!</Link>
+                    <br/>
+                    <Link to={`/epic_goals/${props.key}`}> Epic's Goals </Link>
                 </IonCardContent>
             </IonCard>
     )

@@ -18,6 +18,7 @@ import SignUp from "./pages/SignUp";
 import Account from "./pages/Account";
 import EditGoal from "./pages/EditGoal";
 import EditEpic from "./pages/EditEpic";
+import EpicGoals from "./pages/EpicGoals";
 
 import {StitchAuthProvider, useStitchAuth} from "./Stitch/StitchAuth";
 
@@ -62,6 +63,7 @@ function AppUI() {
                             <Route path="/my_pet" component={MyPet}/>
                             <Route path="/edit_goal/:id" component={EditGoal} exact={true}/>
                             <Route path="/edit_epic/:id" component={EditEpic} exact={true}/>
+                            <Route path="/epic_goals/:id" component={EpicGoals} exact={true}/>
                             <Route path="/" render={() => <Redirect to="/account"/>} exact={true}/>
                         </IonRouterOutlet>
                         <IonTabBar slot="bottom">

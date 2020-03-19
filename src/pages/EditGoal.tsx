@@ -17,12 +17,12 @@ import {findGoal, updateGoal} from "../Stitch/StitchGoals";
 import {DATE_ENUMS, UPDATE_GOAL_RESULT} from "../Util/Enums";
 import {RouteComponentProps} from "react-router-dom";
 
-interface UserDetailPageProps extends RouteComponentProps<{
+interface IEditGoal extends RouteComponentProps<{
     id: string;
 }> {
 }
 
-export const EditGoal: React.FC<UserDetailPageProps> = ({match}) => {
+export const EditGoal: React.FC<IEditGoal> = ({match}) => {
     const userInfo: authInfo = useContext(StitchAuthContext);
     const [showAlert1, setShowAlert1] = useState(false);
     const [showAlert2, setShowAlert2] = useState(false);

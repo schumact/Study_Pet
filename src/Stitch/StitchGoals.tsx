@@ -1,12 +1,12 @@
 import {mongodb} from "./StitchApp";
 import {
-    INSERT_GOAL_RESULT,
-    FIND_GOAL_RESULT,
-    UPDATE_GOAL_RESULT,
     COMPLETE_GOAL_RESULT,
-    INSERT_EPIC_RESULT,
     FIND_EPIC_RESULT,
-    UPDATE_EPIC_RESULT
+    FIND_GOAL_RESULT,
+    INSERT_EPIC_RESULT,
+    INSERT_GOAL_RESULT,
+    UPDATE_EPIC_RESULT,
+    UPDATE_GOAL_RESULT
 } from "../Util/Enums";
 
 export interface IGoal {
@@ -15,8 +15,10 @@ export interface IGoal {
     endDate: string;
     startDate: string;
     owner_id: any;
-    isComplete: boolean,
-    points: number
+    isComplete: boolean;
+    points: number;
+    isInEpic: boolean;
+    epicId?:any
 }
 
 export interface IEpic {
@@ -26,7 +28,7 @@ export interface IEpic {
     startDate: string;
     owner_id: any;
     isComplete: boolean,
-    goals: string[]  // I was thinking this would hold a goal's _id. When we query an epic, get all the goals
+    goals: any[]  // I was thinking this would hold a goal's _id. When we query an epic, get all the goals
     // and query those when they need to represented
 }
 
@@ -35,7 +37,7 @@ const epicCollection = mongodb.db("study_pet").collection("Epic");
 
 // Goals
 export const insertGoal = (goal: Partial<IGoal>): Promise<string> => {
-    let insertResult: Promise<string> = goalsCollection.insertOne(goal)
+    return goalsCollection.insertOne(goal)
         .then(result => {
             console.log(`Successfully inserted item with _id: ${result.insertedId}`);
             return INSERT_GOAL_RESULT.pass;
@@ -44,11 +46,10 @@ export const insertGoal = (goal: Partial<IGoal>): Promise<string> => {
             console.error(`Failed to insert item: ${err}`);
             return INSERT_GOAL_RESULT.fail;
         });
-    return insertResult;
 };
 
 export const selectAllGoals = () => {
-    const goals = goalsCollection.find()
+    return goalsCollection.find({isInEpic: false})
         .toArray()
         .then(res => {
             return res;
@@ -56,11 +57,10 @@ export const selectAllGoals = () => {
         .catch(err => {
             console.log(`${FIND_GOAL_RESULT}: ${err}`);
         });
-    return goals;
 };
 
 export const findGoal = (id:string) => {
-    const goal = goalsCollection.find({_id:{$oid: id}})
+    return goalsCollection.find({_id: {$oid: id}})
         .toArray()
         .then(res => {
             console.log("here is the res");
@@ -70,7 +70,6 @@ export const findGoal = (id:string) => {
         .catch(err => {
             console.log(`${FIND_GOAL_RESULT}: ${err}`);
         });
-    return goal;
 };
 
 export const markGoalComplete = (id:string) => {
@@ -80,10 +79,10 @@ export const markGoalComplete = (id:string) => {
         }
     };
     const options = { "upsert": false };
-    const result = goalsCollection.updateOne({_id:id}, update, options)
+    return goalsCollection.updateOne({_id: id}, update, options)
         .then(res => {
-            const { matchedCount, modifiedCount } = res;
-            if(matchedCount && modifiedCount) {
+            const {matchedCount, modifiedCount} = res;
+            if (matchedCount && modifiedCount) {
                 console.log(COMPLETE_GOAL_RESULT.pass);
             }
             return res;
@@ -91,7 +90,6 @@ export const markGoalComplete = (id:string) => {
         .catch(err => {
             console.log(`${COMPLETE_GOAL_RESULT.fail}: ${err}`);
         });
-    return result;
 };
 
 export const updateGoal = (id:string, goal:any) => {
@@ -106,12 +104,13 @@ export const updateGoal = (id:string, goal:any) => {
     };
     const options = { "upsert": false };
     let outcome = UPDATE_GOAL_RESULT.fail;
-    const result = goalsCollection.updateOne({_id:{$oid: id}}, update, options)
+    return goalsCollection.updateOne({_id: {$oid: id}}, update, options)
         .then(res => {
-            const { matchedCount, modifiedCount } = res;
-            if(matchedCount && modifiedCount) {
+            const {matchedCount, modifiedCount} = res;
+            if (matchedCount && modifiedCount) {
                 outcome = UPDATE_GOAL_RESULT.pass;
-            }
+            } else
+                outcome = UPDATE_GOAL_RESULT.fail;
             return outcome;
         })
         .catch(err => {
@@ -119,12 +118,11 @@ export const updateGoal = (id:string, goal:any) => {
             outcome = UPDATE_GOAL_RESULT.error;
             return outcome;
         });
-    return result;
 };
 
 // Epics
 export const insertEpic = (epic: Partial<IEpic>): Promise<string> => {
-    let insertResult: Promise<string> = epicCollection.insertOne(epic)
+    return epicCollection.insertOne(epic)
         .then(result => {
             console.log(`Successfully inserted item with _id: ${result.insertedId}`);
             return INSERT_EPIC_RESULT.pass;
@@ -133,11 +131,10 @@ export const insertEpic = (epic: Partial<IEpic>): Promise<string> => {
             console.error(`Failed to insert item: ${err}`);
             return INSERT_EPIC_RESULT.fail;
         });
-    return insertResult;
 };
 
 export const selectAllEpics = () => {
-    const epics = epicCollection.find()
+    return epicCollection.find()
         .toArray()
         .then(res => {
             return res;
@@ -145,11 +142,58 @@ export const selectAllEpics = () => {
         .catch(err => {
             console.log(`${FIND_EPIC_RESULT}: ${err}`);
         });
-    return epics;
 };
 
-export const findEpic = (id:string) => {
-    const epic = epicCollection.find({_id:{$oid: id}})
+export const selectGoalsInEpic= (id:string) => {
+    return epicCollection.find({_id: {$oid: id}})
+        .toArray()
+        .then(res => {
+            return res;
+        })
+        .catch(err => {
+            console.log(`${FIND_EPIC_RESULT}: ${err}`);
+        });
+};
+
+export const addGoalToEpic= (epicId:string, goalId:string) => {
+    const update = {
+        "$push": {
+            "goals": goalId
+        }
+    };
+    const options = { "upsert": false };
+    let outcome = UPDATE_EPIC_RESULT.fail;
+    return epicCollection.updateOne({_id: {$oid: epicId}}, update, options)
+        .then(res => {
+            const {matchedCount, modifiedCount} = res;
+            if (matchedCount && modifiedCount) {
+                outcome = UPDATE_EPIC_RESULT.pass;
+            }
+            return outcome;
+        })
+        .catch(err => {
+            console.log(`${UPDATE_EPIC_RESULT.error}: ${err}`);
+            outcome = UPDATE_EPIC_RESULT.error;
+            return outcome;
+        });
+};
+
+
+export const selectGoalsForEpic= async (id:string) => {
+    console.log("id is " + id);
+    const epic = await findEpic(id);
+    return goalsCollection.find({_id: {$in: epic[0].goals}})
+        .toArray()
+        .then(res => {
+            return res;
+        })
+        .catch(err => {
+            console.log(`${FIND_EPIC_RESULT}: ${err}`);
+        });
+};
+
+export const findEpic = (id:string):any => {
+    return epicCollection.find({_id: {$oid: id}})
         .toArray()
         .then(res => {
             console.log(res);
@@ -158,7 +202,6 @@ export const findEpic = (id:string) => {
         .catch(err => {
             console.log(`${FIND_EPIC_RESULT}: ${err}`);
         });
-    return epic;
 };
 
 export const updateEpic = (id:string, epic:any) => {
@@ -173,12 +216,13 @@ export const updateEpic = (id:string, epic:any) => {
     };
     const options = { "upsert": false };
     let outcome = UPDATE_EPIC_RESULT.fail;
-    const result = epicCollection.updateOne({_id:{$oid: id}}, update, options)
+    return epicCollection.updateOne({_id: {$oid: id}}, update, options)
         .then(res => {
-            const { matchedCount, modifiedCount } = res;
-            if(matchedCount && modifiedCount) {
+            const {matchedCount, modifiedCount} = res;
+            if (matchedCount && modifiedCount) {
                 outcome = UPDATE_EPIC_RESULT.pass;
-            }
+            } else
+                outcome = UPDATE_EPIC_RESULT.fail;
             return outcome;
         })
         .catch(err => {
@@ -186,5 +230,4 @@ export const updateEpic = (id:string, epic:any) => {
             outcome = UPDATE_EPIC_RESULT.error;
             return outcome;
         });
-    return result;
 };

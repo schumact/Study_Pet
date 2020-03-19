@@ -43,7 +43,6 @@ const DateTimePicker: React.FC<DateProps> = (props) => {
                     max="2025"
                     onIonChange={e => {
                         setSelectedDate(e.detail.value!);
-                        console.log("Here is the date value " + e.detail.value);
                         props.setDate({...props.goalState, endDate:
                                 moment(e.detail.value!).format("YYYY-MM-DD")});
                     }}
