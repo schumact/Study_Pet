@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import './GoalContainer.css';
 import GoalItem from "./GoalItem";
-import {IGoal, selectAllIncompleteGoals, selectGoalsForEpic} from "../Stitch/StitchGoals";
+import {selectAllCompletedGoals, selectGoalsForEpic} from "../Stitch/StitchGoals";
 import {IonAlert} from "@ionic/react";
 
 interface IGoalContainer {
@@ -10,7 +10,7 @@ interface IGoalContainer {
 }
 
 
-const GoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer) => {
+const CompletedGoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer) => {
     const [goals, setGoals] = useState<any>();
     const [showAlert1, setShowAlert1] = useState(false);
     const [isEmptyGoals, setEmptyGoals] = useState<boolean>(false);
@@ -30,7 +30,7 @@ const GoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer) => {
                         res = await selectGoalsForEpic(props.epicId);
                     console.log("Uncomment the line above");
                 } else
-                    res = await selectAllIncompleteGoals();
+                    res = await selectAllCompletedGoals();
                 if (res) {
                     if (res.length === 0)
                         setEmptyGoals(true);
@@ -69,7 +69,7 @@ const GoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer) => {
         isEmptyGoals ?
             <div>
                 <div style={{display: "flex", justifyContent: "center"}}>
-                    <p style={{fontWeight: "bold", fontSize: "20px"}}>Add some goals to help your pet!</p>
+                    <p style={{fontWeight: "bold", fontSize: "20px"}}>No completed goals to show</p>
                 </div>
                 <IonAlert
                     isOpen={showAlert1}
@@ -84,11 +84,11 @@ const GoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer) => {
             :
             <div>
                 <div style={{display: "flex", justifyContent: "center"}}>
-                    <p style={{fontWeight: "bold", fontSize: "20px"}}>My Goals</p>
+                    <p style={{fontWeight: "bold", fontSize: "20px"}}>Completed Goals</p>
                 </div>
                 {goalItemList}
             </div>
     );
 };
 
-export default GoalContainer;
+export default CompletedGoalContainer;

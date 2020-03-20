@@ -8,6 +8,7 @@ import {
     UPDATE_EPIC_RESULT,
     UPDATE_GOAL_RESULT
 } from "../Util/Enums";
+import {BSON} from 'mongodb-stitch-browser-sdk';
 
 export interface IGoal {
     goalTitle: string;
@@ -18,7 +19,7 @@ export interface IGoal {
     isComplete: boolean;
     points: number;
     isInEpic: boolean;
-    epicId?:any
+    epicId?:any;
 }
 
 export interface IEpic {
@@ -31,6 +32,7 @@ export interface IEpic {
     goals: any[]  // I was thinking this would hold a goal's _id. When we query an epic, get all the goals
     // and query those when they need to represented
 }
+
 
 const goalsCollection = mongodb.db("study_pet").collection("Goals");
 const epicCollection = mongodb.db("study_pet").collection("Epic");
@@ -48,8 +50,19 @@ export const insertGoal = (goal: Partial<IGoal>): Promise<string> => {
         });
 };
 
-export const selectAllGoals = () => {
-    return goalsCollection.find({isInEpic: false})
+export const selectAllIncompleteGoals = () => {
+    return goalsCollection.find({isInEpic: false, isComplete: false})
+        .toArray()
+        .then(res => {
+            return res;
+        })
+        .catch(err => {
+            console.log(`${FIND_GOAL_RESULT}: ${err}`);
+        });
+};
+
+export const selectAllCompletedGoals = () => {
+    return goalsCollection.find({isInEpic: false, isComplete: true})
         .toArray()
         .then(res => {
             return res;
@@ -133,8 +146,31 @@ export const insertEpic = (epic: Partial<IEpic>): Promise<string> => {
         });
 };
 
+export const insertGoalForEpic= (goal: Partial<IGoal>): Promise<string> => {
+    return goalsCollection.insertOne(goal)
+        .then(result => {
+            console.log(`Successfully inserted item with _id: ${result.insertedId}`);
+            return result.insertedId;
+        })
+        .catch(err => {
+            console.error(`Failed to insert item: ${err}`);
+            return INSERT_GOAL_RESULT.fail;
+        });
+};
+
 export const selectAllEpics = () => {
     return epicCollection.find()
+        .toArray()
+        .then(res => {
+            return res;
+        })
+        .catch(err => {
+            console.log(`${FIND_EPIC_RESULT}: ${err}`);
+        });
+};
+
+export const selectAllCompletedEpics = () => {
+    return epicCollection.find({isCompleted: true})
         .toArray()
         .then(res => {
             return res;
@@ -155,10 +191,14 @@ export const selectGoalsInEpic= (id:string) => {
         });
 };
 
-export const addGoalToEpic= (epicId:string, goalId:string) => {
+export const addGoalToEpic= (epicId:any, goalId:string) => {
+    console.log("adding goal to epic");
+    console.log("epic id is ", epicId);
+    console.log("goal string is ", goalId);
+    const objGoalId = new BSON.ObjectId(goalId);
     const update = {
         "$push": {
-            "goals": goalId
+            "goals": objGoalId
         }
     };
     const options = { "upsert": false };

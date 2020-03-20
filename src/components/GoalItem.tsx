@@ -12,7 +12,9 @@ interface IGoalItem {
     points: number | undefined;
     isComplete: boolean | undefined;
     owner_id: string | undefined;
-    key: string | undefined
+    key: string | undefined;
+    isInEpic?: boolean;
+    epicId?:any
 }
 
 

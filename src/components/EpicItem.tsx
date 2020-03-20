@@ -27,18 +27,17 @@ export const EpicItem: React.FC<IEpicItem> = (props: IEpicItem) => {
 
     return (
         props.isComplete ?
-            <IonCard type="button"
+            <IonCard
                      key={props.key}
-                     href={`/edit_goal:${props.key}`}
-                     routerDirection="forward"
-                     button={true}
                      style={{backgroundImage: "linear-gradient(#b3ecff, #ffffff)"}}>
                 <IonCardHeader>
                     <IonCardTitle>{props.title}</IonCardTitle>
                 </IonCardHeader>
                 <IonCardContent>
-                    <p>Epic Complete!</p>
-                    <p>Click me to Edit!</p>
+                    <p style={{color: "red", fontWeight: "bold"}}>{daysLeft} days left!</p>
+                    <Link to={`/edit_epic/${props.key}`}>Click me to Edit!</Link>
+                    <br/>
+                    <Link to={`/epic_goals/${props.key}`}> Epic's Goals </Link>
                 </IonCardContent>
             </IonCard> :
             <IonCard

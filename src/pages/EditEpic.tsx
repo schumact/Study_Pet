@@ -17,12 +17,12 @@ import {findEpic, updateEpic} from "../Stitch/StitchGoals";
 import {DATE_ENUMS} from "../Util/Enums";
 import {RouteComponentProps} from "react-router-dom";
 
-interface UserDetailPageProps extends RouteComponentProps<{
+interface IEditEpic extends RouteComponentProps<{
     id: string;
 }> {
 }
 
-export const EditEpic: React.FC<UserDetailPageProps> = ({match}) => {
+export const EditEpic: React.FC<IEditEpic> = ({match}) => {
     const userInfo: authInfo = useContext(StitchAuthContext);
     const [showAlert2, setShowAlert2] = useState(false);
     const [showAlert3, setShowAlert3] = useState(false);
@@ -71,7 +71,6 @@ export const EditEpic: React.FC<UserDetailPageProps> = ({match}) => {
                     </IonToolbar>
                 </IonHeader>
                 <IonList>
-                    <IonBackButton/>
                     <div style={{display: "flex", justifyContent: "center"}}>
                         <h1 style={{fontWeight: "bold", textDecoration: "underline"}}>Edit Epic</h1>
                     </div>

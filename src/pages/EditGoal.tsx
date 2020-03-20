@@ -84,7 +84,6 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                     </IonToolbar>
                 </IonHeader>
                 <IonList>
-                    <IonBackButton/>
                     <div style={{display: "flex", justifyContent: "center"}}>
                         <h1 style={{fontWeight: "bold", textDecoration: "underline"}}>Edit Goal</h1>
                     </div>

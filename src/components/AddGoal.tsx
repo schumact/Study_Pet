@@ -10,7 +10,7 @@ import {
     IonAlert
 } from '@ionic/react';
 import './AddGoal.css';
-import {IGoal} from "../Stitch/StitchGoals";
+import {addGoalToEpic, IGoal, insertGoalForEpic} from "../Stitch/StitchGoals";
 import DateTimePicker from "./DateTimePicker";
 import {insertGoal, findEpic} from "../Stitch/StitchGoals";
 import {DATE_ENUMS, INSERT_GOAL_RESULT} from "../Util/Enums";
@@ -59,8 +59,12 @@ export const AddGoal: React.FC<INewGoal> = (props: INewGoal) => {
                 if (!isValidStartDate || !isValidEndDate) {
                     setShowAlert5(true);
                 } else {
-                    let result: Promise<string> = insertGoal(goal);
+                    let result: Promise<string> = insertGoalForEpic(goal);
                     result.then(res => {
+                        return addGoalToEpic(props.epicId, res);
+                        // setResultMessage(res);
+                        // setShowAlert4(true);
+                    }).then(res => {
                         setResultMessage(res);
                         setShowAlert4(true);
                     }).catch(err => {
@@ -110,7 +114,7 @@ export const AddGoal: React.FC<INewGoal> = (props: INewGoal) => {
                     console.log(epic[0]);
                     setEpicStartDate(epic[0].startDate);
                     setEpicEndDate(epic[0].endDate);
-                    const epicObjId = new BSON.ObjectId(props.epicId)
+                    const epicObjId = new BSON.ObjectId(props.epicId);
                     setGoal({...goal, isInEpic: props.isUsedByEpic, epicId: epicObjId});
                     console.log("New Goal", goal);
                 }

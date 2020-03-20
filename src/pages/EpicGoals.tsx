@@ -15,30 +15,25 @@ import GoalContainer from "../components/GoalContainer";
 import AddGoal from "../components/AddGoal";
 import {RouteComponentProps} from "react-router-dom";
 
-interface IEditEpic extends RouteComponentProps<{
+interface IEditGoals extends RouteComponentProps<{
     id: string;
 }> {
 }
 
-const EpicGoals: React.FC<IEditEpic> = ({match}) => {
+const EpicGoals: React.FC<IEditGoals> = ({match}) => {
     const [showModal, setShowModal] = useState<boolean>(false);
     // TODO do I need a goal successfully added state in here or something to make
     // sure that the component rerenders on added goals. I want GoalContainer to rerender
 
     return (
         <IonPage>
-            <IonHeader>
-                <IonToolbar>
-                    <IonButtons slot="start">
-                        <IonBackButton defaultHref="/home" icon="buttonIcon"/>
-                    </IonButtons>
-                    <IonTitle>Epic Goal Viewer</IonTitle>
-                </IonToolbar>
-            </IonHeader>
             <IonContent>
                 <IonHeader collapse="condense">
                     <IonToolbar>
-                        <IonTitle size="large">Epic Goal Viewer</IonTitle>
+                        <IonButtons slot="start">
+                            <IonBackButton defaultHref="/home" icon="buttonIcon"/>
+                        </IonButtons>
+                        <IonTitle>Epic Goal Viewer</IonTitle>
                     </IonToolbar>
                 </IonHeader>
                 <IonModal isOpen={showModal}>

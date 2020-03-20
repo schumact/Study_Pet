@@ -56,6 +56,14 @@ const Home: React.FC = () => {
                     onClick={() => setShowModal2(true)}>
                     Create New Epic!
                 </IonButton>
+                <br/>
+                <IonButton
+                    expand="block"
+                    color="tertiary"
+                    href={"/completed_view"}
+                    onClick={() => console.log("replace this with a page")}>
+                    View Completed Goals and Epics
+                </IonButton>
                 <GoalContainer/>
                 <EpicContainer/>
             </IonContent>

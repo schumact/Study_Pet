@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from "react";
 import './GoalContainer.css';
-import {selectAllEpics} from "../Stitch/StitchGoals";
+import {selectAllCompletedEpics} from "../Stitch/StitchGoals";
 import {IonAlert} from "@ionic/react";
 import EpicItem from "./EpicItem";
 
 // TODO see if I can get this to work with goals state object
 
-const EpicContainer: React.FC = () => {
+const CompletedEpicContainer: React.FC = () => {
     const [epics, setEpics] = useState<any>();
     const [showAlert1, setShowAlert1] = useState(false);
     const [isEmptyEpic, setEmptyEpic] = useState<boolean>(false);
@@ -20,7 +20,7 @@ const EpicContainer: React.FC = () => {
         // set goals state with new array inheriting from IGoalsList
         (async () => {
             try {
-                const res = await selectAllEpics();
+                const res = await selectAllCompletedEpics();
                 if (res) {
                     if (res.length === 0)
                         setEmptyEpic(true);
@@ -58,6 +58,9 @@ const EpicContainer: React.FC = () => {
     return (
         isEmptyEpic ?
             <div>
+                <div style={{display: "flex", justifyContent: "center"}}>
+                    <p style={{fontWeight: "bold", fontSize: "20px"}}>No Completed Epics to Show</p>
+                </div>
                 <IonAlert
                     isOpen={showAlert1}
                     onDidDismiss={() => {
@@ -71,11 +74,11 @@ const EpicContainer: React.FC = () => {
             :
             <div>
                 <div style={{display: "flex", justifyContent: "center"}}>
-                    <p style={{fontWeight: "bold", fontSize: "20px"}}>My Epics</p>
+                    <p style={{fontWeight: "bold", fontSize: "20px"}}>Completed Epics</p>
                 </div>
                 {epicItemList}
             </div>
     );
 };
 
-export default EpicContainer;
+export default CompletedEpicContainer;
