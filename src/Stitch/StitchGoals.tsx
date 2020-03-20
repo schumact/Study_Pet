@@ -6,7 +6,8 @@ import {
     INSERT_EPIC_RESULT,
     INSERT_GOAL_RESULT,
     UPDATE_EPIC_RESULT,
-    UPDATE_GOAL_RESULT
+    UPDATE_GOAL_RESULT,
+    DELETE_GOAL_RESULT, COMPLETE_EPIC_RESULT, DELETE_EPIC_RESULT, DELETE_GOALS_IN_EPIC_RESULT
 } from "../Util/Enums";
 import {BSON} from 'mongodb-stitch-browser-sdk';
 
@@ -46,7 +47,20 @@ export const insertGoal = (goal: Partial<IGoal>): Promise<string> => {
         })
         .catch(err => {
             console.error(`Failed to insert item: ${err}`);
-            return INSERT_GOAL_RESULT.fail;
+            return INSERT_GOAL_RESULT.error;
+        });
+};
+
+export const deleteGoal = (id: string): Promise<string> => {
+    return goalsCollection.deleteOne({_id: {$oid: id}})
+        .then(result => {
+            if (result.deletedCount > 0)
+                return DELETE_GOAL_RESULT.pass;
+            return DELETE_GOAL_RESULT.fail;
+        })
+        .catch(err => {
+            console.error(`Failed to delete item: ${err}`);
+            return DELETE_GOAL_RESULT.error;
         });
 };
 
@@ -76,8 +90,6 @@ export const findGoal = (id:string) => {
     return goalsCollection.find({_id: {$oid: id}})
         .toArray()
         .then(res => {
-            console.log("here is the res");
-            console.log(res);
             return res;
         })
         .catch(err => {
@@ -85,23 +97,24 @@ export const findGoal = (id:string) => {
         });
 };
 
-export const markGoalComplete = (id:string) => {
+export const completeGoal = (id:string) => {
     const update = {
         "$set": {
             "isComplete": true,
         }
     };
     const options = { "upsert": false };
-    return goalsCollection.updateOne({_id: id}, update, options)
+    return goalsCollection.updateOne({_id: {$oid: id}}, update, options)
         .then(res => {
             const {matchedCount, modifiedCount} = res;
             if (matchedCount && modifiedCount) {
-                console.log(COMPLETE_GOAL_RESULT.pass);
+                return COMPLETE_GOAL_RESULT.pass
             }
-            return res;
+            return COMPLETE_GOAL_RESULT.fail;
         })
         .catch(err => {
             console.log(`${COMPLETE_GOAL_RESULT.fail}: ${err}`);
+            return COMPLETE_GOAL_RESULT.error;
         });
 };
 
@@ -146,6 +159,35 @@ export const insertEpic = (epic: Partial<IEpic>): Promise<string> => {
         });
 };
 
+export const completeEpic = async (epic:any) => {
+    let incompleteGoals = await selectIncompleteGoalsInEpic(epic);
+    if (incompleteGoals)
+        if (incompleteGoals.length > 0) {
+            // all goals for an epic need to be complete in order to complete an epic
+            console.log("one or more goals is yet to be completed.");
+            return COMPLETE_EPIC_RESULT.fail;
+        }
+
+    const update = {
+        "$set": {
+            "isComplete": true,
+        }
+    };
+    const options = { "upsert": false };
+    return epicCollection.updateOne({_id: {$oid: epic._id.toString()}}, update, options)
+        .then(res => {
+            const {matchedCount, modifiedCount} = res;
+            if (matchedCount && modifiedCount) {
+                return COMPLETE_EPIC_RESULT.pass
+            }
+            return COMPLETE_EPIC_RESULT.fail;
+        })
+        .catch(err => {
+            console.log(`${COMPLETE_GOAL_RESULT.fail}: ${err}`);
+            return COMPLETE_EPIC_RESULT.error;
+        });
+};
+
 export const insertGoalForEpic= (goal: Partial<IGoal>): Promise<string> => {
     return goalsCollection.insertOne(goal)
         .then(result => {
@@ -169,8 +211,26 @@ export const selectAllEpics = () => {
         });
 };
 
+export const deleteEpic = async (epic:any): Promise<string> => {
+    // delete goals associated with epic first
+    const allGoalsDeleted = await deleteAllGoalsInEpic(epic);
+    if (!allGoalsDeleted)
+        return DELETE_GOALS_IN_EPIC_RESULT.fail;
+
+    return epicCollection.deleteOne({_id: {$oid: epic._id.toString()}})
+        .then(result => {
+            if (result.deletedCount > 0)
+                return DELETE_EPIC_RESULT.pass;
+            return DELETE_EPIC_RESULT.fail;
+        })
+        .catch(err => {
+            console.error(`Failed to delete item: ${err}`);
+            return DELETE_EPIC_RESULT.error;
+        });
+};
+
 export const selectAllCompletedEpics = () => {
-    return epicCollection.find({isCompleted: true})
+    return epicCollection.find({isComplete: true})
         .toArray()
         .then(res => {
             return res;
@@ -180,21 +240,40 @@ export const selectAllCompletedEpics = () => {
         });
 };
 
-export const selectGoalsInEpic= (id:string) => {
-    return epicCollection.find({_id: {$oid: id}})
+export const selectAllIncompleteEpics = () => {
+    return epicCollection.find({isComplete: false})
         .toArray()
         .then(res => {
             return res;
         })
         .catch(err => {
             console.log(`${FIND_EPIC_RESULT}: ${err}`);
+        });
+};
+
+export const selectIncompleteGoalsInEpic= (epic:any) => {
+    return goalsCollection.find({_id: {$in: epic.goals}, isComplete:false})
+        .toArray()
+        .then(res => {
+            return res;
+        })
+        .catch(err => {
+            console.log(`${FIND_EPIC_RESULT}: ${err}`);
+        });
+};
+
+export const deleteAllGoalsInEpic= (epic:any) => {
+    return goalsCollection.deleteMany({_id: {$in: epic.goals}})
+        .then(res => {
+            return DELETE_GOALS_IN_EPIC_RESULT.pass;
+        })
+        .catch(err => {
+            console.log(`${FIND_EPIC_RESULT}: ${err}`);
+            return DELETE_GOALS_IN_EPIC_RESULT.fail;
         });
 };
 
 export const addGoalToEpic= (epicId:any, goalId:string) => {
-    console.log("adding goal to epic");
-    console.log("epic id is ", epicId);
-    console.log("goal string is ", goalId);
     const objGoalId = new BSON.ObjectId(goalId);
     const update = {
         "$push": {
@@ -220,8 +299,11 @@ export const addGoalToEpic= (epicId:any, goalId:string) => {
 
 
 export const selectGoalsForEpic= async (id:string) => {
-    console.log("id is " + id);
     const epic = await findEpic(id);
+    if (!epic[0].goals)
+        return undefined;
+    else if (epic[0].goals.length === 0)
+        return undefined;
     return goalsCollection.find({_id: {$in: epic[0].goals}})
         .toArray()
         .then(res => {
@@ -236,7 +318,6 @@ export const findEpic = (id:string):any => {
     return epicCollection.find({_id: {$oid: id}})
         .toArray()
         .then(res => {
-            console.log(res);
             return res;
         })
         .catch(err => {

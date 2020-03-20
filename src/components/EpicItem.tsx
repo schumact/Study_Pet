@@ -1,6 +1,6 @@
 import React from "react";
 import {authInfo, StitchAuthContext} from "../Stitch/StitchAuth";
-import {IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonRouterLink} from '@ionic/react';
+import {IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonRouterLink, IonCardSubtitle} from '@ionic/react';
 import './GoalItem.css';
 import {IGoal} from "../Stitch/StitchGoals";
 import {Link} from "react-router-dom";
@@ -21,8 +21,11 @@ export const EpicItem: React.FC<IEpicItem> = (props: IEpicItem) => {
 
     const oneDay = 24 * 60 * 60 * 1000;
     let daysLeft = -1;
-    if (props.endDate && props.startDate)
+    if (props.endDate && props.startDate) {
         daysLeft = Math.round(Math.abs(Date.parse(props.endDate) - Date.parse(props.startDate)) / oneDay);
+        if (daysLeft < 0)
+            daysLeft = 0;
+    }
 
 
     return (
@@ -31,10 +34,10 @@ export const EpicItem: React.FC<IEpicItem> = (props: IEpicItem) => {
                      key={props.key}
                      style={{backgroundImage: "linear-gradient(#b3ecff, #ffffff)"}}>
                 <IonCardHeader>
+                    <IonCardSubtitle>Epic Complete!</IonCardSubtitle>
                     <IonCardTitle>{props.title}</IonCardTitle>
                 </IonCardHeader>
                 <IonCardContent>
-                    <p style={{color: "red", fontWeight: "bold"}}>{daysLeft} days left!</p>
                     <Link to={`/edit_epic/${props.key}`}>Click me to Edit!</Link>
                     <br/>
                     <Link to={`/epic_goals/${props.key}`}> Epic's Goals </Link>
@@ -44,10 +47,10 @@ export const EpicItem: React.FC<IEpicItem> = (props: IEpicItem) => {
                      key={props.key}
                      style={{backgroundImage: "linear-gradient(#ffff80, #ffffff)"}}>
                 <IonCardHeader>
+                    <IonCardSubtitle color="dark">{daysLeft} days left!</IonCardSubtitle>
                     <IonCardTitle>{props.title}</IonCardTitle>
                 </IonCardHeader>
                 <IonCardContent>
-                    <p style={{color: "red", fontWeight: "bold"}}>{daysLeft} days left!</p>
                     <Link to={`/edit_epic/${props.key}`}>Click me to Edit!</Link>
                     <br/>
                     <Link to={`/epic_goals/${props.key}`}> Epic's Goals </Link>

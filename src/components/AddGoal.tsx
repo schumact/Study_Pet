@@ -26,9 +26,6 @@ interface INewGoal {
 // TODO add in refresh for GoalContainer after a goal is successfully added
 
 export const AddGoal: React.FC<INewGoal> = (props: INewGoal) => {
-    console.log("props are");
-    console.log(props.isUsedByEpic);
-    console.log(props.epicId);
 
     const userInfo: authInfo = useContext(StitchAuthContext);
     const [showAlert1, setShowAlert1] = useState(false);
@@ -51,8 +48,6 @@ export const AddGoal: React.FC<INewGoal> = (props: INewGoal) => {
         const isTitleValid = titleValidation(goal.goalTitle);
         if (areDatesValid && isTitleValid) {
             // already validated points in render and description is optional
-            console.log("post change to epic");
-            console.log(goal);
             if (props.isUsedByEpic) {
                 const isValidStartDate = dateValidation(epicStartDate, goal.startDate);
                 const isValidEndDate = dateValidation(goal.endDate, epicEndDate);
@@ -102,21 +97,14 @@ export const AddGoal: React.FC<INewGoal> = (props: INewGoal) => {
 
     useEffect(() => {
         (async () => {
-            console.log("From changeToEpic");
-            console.log(props.isUsedByEpic);
-            console.log(props.epicId);
             if (props.isUsedByEpic && props.epicId) {
-                console.log("continue");
                 const epic = await findEpic(props.epicId);
                 // verify the dates are valid
                 if (epic) {
-                    console.log("Epic has been found");
-                    console.log(epic[0]);
                     setEpicStartDate(epic[0].startDate);
                     setEpicEndDate(epic[0].endDate);
                     const epicObjId = new BSON.ObjectId(props.epicId);
                     setGoal({...goal, isInEpic: props.isUsedByEpic, epicId: epicObjId});
-                    console.log("New Goal", goal);
                 }
             }
         })();

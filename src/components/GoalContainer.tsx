@@ -12,7 +12,6 @@ interface IGoalContainer {
 
 const GoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer) => {
     const [goals, setGoals] = useState<any>();
-    const [showAlert1, setShowAlert1] = useState(false);
     const [isEmptyGoals, setEmptyGoals] = useState<boolean>(false);
     const [goalItemList, setGoalItems] = useState<any>();
 
@@ -26,9 +25,9 @@ const GoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer) => {
             try {
                 let res: any;
                 if (props.isUsedByEpic) {
-                    if (props.epicId)
+                    if (props.epicId){
                         res = await selectGoalsForEpic(props.epicId);
-                    console.log("Uncomment the line above");
+                    }
                 } else
                     res = await selectAllIncompleteGoals();
                 if (res) {
@@ -54,7 +53,6 @@ const GoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer) => {
                     }
                 } else {
                     setEmptyGoals(true);
-                    setShowAlert1(true);
                 }
             } catch (e) {
                 if (e instanceof TypeError)
@@ -71,15 +69,6 @@ const GoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer) => {
                 <div style={{display: "flex", justifyContent: "center"}}>
                     <p style={{fontWeight: "bold", fontSize: "20px"}}>Add some goals to help your pet!</p>
                 </div>
-                <IonAlert
-                    isOpen={showAlert1}
-                    onDidDismiss={() => {
-                        setShowAlert1(false);
-                    }}
-                    header={"Connection Error"}
-                    message={"Unable to receive goals at this time."}
-                    buttons={["OK"]}
-                />
             </div>
             :
             <div>

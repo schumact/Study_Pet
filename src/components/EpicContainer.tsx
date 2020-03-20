@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import './GoalContainer.css';
-import {selectAllEpics} from "../Stitch/StitchGoals";
+import {selectAllIncompleteEpics} from "../Stitch/StitchGoals";
 import {IonAlert} from "@ionic/react";
 import EpicItem from "./EpicItem";
 
@@ -20,7 +20,7 @@ const EpicContainer: React.FC = () => {
         // set goals state with new array inheriting from IGoalsList
         (async () => {
             try {
-                const res = await selectAllEpics();
+                const res = await selectAllIncompleteEpics();
                 if (res) {
                     if (res.length === 0)
                         setEmptyEpic(true);
@@ -58,6 +58,9 @@ const EpicContainer: React.FC = () => {
     return (
         isEmptyEpic ?
             <div>
+                <div style={{display: "flex", justifyContent: "center"}}>
+                    <p style={{fontWeight: "bold", fontSize: "20px"}}>No Epics to Show</p>
+                </div>
                 <IonAlert
                     isOpen={showAlert1}
                     onDidDismiss={() => {

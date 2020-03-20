@@ -9,13 +9,14 @@ import {
     IonTextarea,
     IonLabel,
     IonAlert,
-    IonBackButton, IonButtons, IonContent, IonToolbar, IonHeader, IonPage
+    IonBackButton, IonButtons, IonContent, IonToolbar, IonHeader, IonPage, IonIcon, IonFabButton, IonFab
 } from '@ionic/react';
 import '../components/AddGoal.css';
 import DateTimePicker from "../components/DateTimePicker";
-import {findGoal, updateGoal} from "../Stitch/StitchGoals";
-import {DATE_ENUMS, UPDATE_GOAL_RESULT} from "../Util/Enums";
+import {findGoal, updateGoal, deleteGoal, completeGoal} from "../Stitch/StitchGoals";
+import {DATE_ENUMS, UPDATE_GOAL_RESULT, DELETE_GOAL_RESULT, COMPLETE_GOAL_RESULT} from "../Util/Enums";
 import {RouteComponentProps} from "react-router-dom";
+import {trashOutline, checkmarkDoneOutline} from 'ionicons/icons';
 
 interface IEditGoal extends RouteComponentProps<{
     id: string;
@@ -23,11 +24,16 @@ interface IEditGoal extends RouteComponentProps<{
 }
 
 export const EditGoal: React.FC<IEditGoal> = ({match}) => {
-    const userInfo: authInfo = useContext(StitchAuthContext);
     const [showAlert1, setShowAlert1] = useState(false);
     const [showAlert2, setShowAlert2] = useState(false);
     const [showAlert3, setShowAlert3] = useState(false);
     const [showAlert4, setShowAlert4] = useState(false);
+    const [showAlert5, setShowAlert5] = useState(false);
+    const [showAlert6, setShowAlert6] = useState(false);
+    const [showAlert7, setShowAlert7] = useState(false);
+    const [showAlert8, setShowAlert8] = useState(false);
+    const [showAlert9, setShowAlert9] = useState(false);
+    const [showAlert10, setShowAlert10] = useState(false);
     const [resultMessage, setResultMessage] = useState();
     const [goal, setGoal] = useState<any>();
 
@@ -104,7 +110,6 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                     </IonItem>
                     <br/>
                     <br/>
-                    <br/>
                     <IonItem>
                         <IonLabel position="floating">Description</IonLabel>
                         <IonTextarea
@@ -129,13 +134,10 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                     </IonItem>
                     <br/>
                     <br/>
-                    <br/>
                     <DateTimePicker dateType={DATE_ENUMS.start} setDate={setGoal} goalState={goal}/>
                     <br/>
                     <br/>
-                    <br/>
                     <DateTimePicker dateType={DATE_ENUMS.end} setDate={setGoal} goalState={goal}/>
-                    <br/>
                     <br/>
                     <br/>
                     <IonButton
@@ -143,6 +145,16 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                         onClick={() => UpdateGoal()}>
                         Edit Goal
                     </IonButton>
+                    <IonFab horizontal="end" vertical="top" slot="fixed">
+                        <IonFabButton color="danger" onClick={() => setShowAlert5(true)}>
+                            <IonIcon icon={trashOutline}/>
+                        </IonFabButton>
+                    </IonFab>
+                    <IonFab horizontal="start" vertical="top" slot="fixed">
+                        <IonFabButton color="success" onClick={() => setShowAlert8(true)}>
+                            <IonIcon icon={checkmarkDoneOutline}/>
+                        </IonFabButton>
+                    </IonFab>
                     <IonAlert
                         isOpen={showAlert1}
                         onDidDismiss={() => setShowAlert1(false)}
@@ -173,6 +185,86 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                         }}
                         header={resultMessage}
                         buttons={["OK"]}
+                    />
+                    <IonAlert
+                        isOpen={showAlert6}
+                        onDidDismiss={() => setShowAlert6(false)}
+                        header={'Error'}
+                        message={DELETE_GOAL_RESULT.error}
+                        buttons={["OK"]}
+                    />
+                    <IonAlert
+                        isOpen={showAlert7}
+                        onDidDismiss={() => setShowAlert7(false)}
+                        header={'Success'}
+                        message={DELETE_GOAL_RESULT.pass}
+                        buttons={["OK"]}
+                    />
+                    <IonAlert
+                        isOpen={showAlert9}
+                        onDidDismiss={() => setShowAlert9(false)}
+                        header={'Success'}
+                        message={COMPLETE_GOAL_RESULT.pass}
+                        buttons={["OK"]}
+                    />
+                    <IonAlert
+                        isOpen={showAlert10}
+                        onDidDismiss={() => setShowAlert10(false)}
+                        header={'Error'}
+                        message={COMPLETE_GOAL_RESULT.error}
+                        buttons={["OK"]}
+                    />
+                    <IonAlert
+                        isOpen={showAlert5}
+                        onDidDismiss={() => {
+                            setShowAlert5(false);
+                            // close modal if the insert was successful
+                        }}
+                        header={'Delete Goal'}
+                        message={"Are you sure that you would like to delete the selected goal?"}
+                        buttons={[{
+                            text: "NO",
+                            handler: () => {
+                                // do nothing
+                            }
+                        }, {
+                            text: "YES",
+                            handler: () => {
+                                (async () => {
+                                    const result = await deleteGoal(match.params.id);
+                                    if (result === DELETE_GOAL_RESULT.pass)
+                                        setShowAlert7(true);
+                                    else
+                                        setShowAlert6(true);
+                                })();
+                            }
+                        }]}
+                    />
+                    <IonAlert
+                        isOpen={showAlert8}
+                        onDidDismiss={() => {
+                            setShowAlert8(false);
+                            // close modal if the insert was successful
+                        }}
+                        header={'Complete Goal'}
+                        message={"Click YES to mark this goal as complete."}
+                        buttons={[{
+                            text: "NO",
+                            handler: () => {
+                                // do nothing
+                            }
+                        }, {
+                            text: "YES",
+                            handler: () => {
+                                (async () => {
+                                    const result = await completeGoal(match.params.id);
+                                    if (result === COMPLETE_GOAL_RESULT.pass)
+                                        setShowAlert9(true);
+                                    else
+                                        setShowAlert10(true);
+                                })();
+                            }
+                        }]}
                     />
                 </IonList>
             </IonContent>
