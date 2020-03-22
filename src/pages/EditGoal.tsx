@@ -1,5 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
-import {authInfo, StitchAuthContext} from "../Stitch/StitchAuth";
+import React, {useEffect, useState} from "react";
 import {dateValidation, titleValidation} from "../Util/GoalValidation";
 import {
     IonButton,

@@ -39,8 +39,18 @@ export const DELETE_GOALS_IN_EPIC_RESULT = {
 };
 
 export const FIND_GOAL_RESULT = {
-    pass: "Successfully added goal!",
+    pass: "Successfully retrieving goals.",
     fail: "Failed to find goal. Please try again."
+};
+
+export const FIND_PET_RESULT = {
+    pass: "Pet Found",
+    fail: "Your pet seems to have wandered off. Please refresh the page."
+};
+
+export const INSERT_PET_RESULT = {
+    pass: "Your Pet is being created back in the lab right now.",
+    fail: "Uh oh. There was an issue creating your pet. Please try again."
 };
 
 export const FIND_EPIC_RESULT = {

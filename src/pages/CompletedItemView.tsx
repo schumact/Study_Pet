@@ -1,5 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
-import {authInfo, StitchAuthContext} from "../Stitch/StitchAuth";
+import React from "react";
 import {
     IonBackButton, IonButtons, IonContent, IonToolbar, IonHeader, IonPage, IonTitle
 } from '@ionic/react';

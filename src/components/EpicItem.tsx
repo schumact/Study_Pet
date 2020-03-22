@@ -1,8 +1,6 @@
 import React from "react";
-import {authInfo, StitchAuthContext} from "../Stitch/StitchAuth";
-import {IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonRouterLink, IonCardSubtitle} from '@ionic/react';
+import {IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonCardSubtitle} from '@ionic/react';
 import './GoalItem.css';
-import {IGoal} from "../Stitch/StitchGoals";
 import {Link} from "react-router-dom";
 
 interface IEpicItem {
@@ -18,7 +16,6 @@ interface IEpicItem {
 
 
 export const EpicItem: React.FC<IEpicItem> = (props: IEpicItem) => {
-
     const oneDay = 24 * 60 * 60 * 1000;
     let daysLeft = -1;
     if (props.endDate && props.startDate) {

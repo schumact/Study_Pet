@@ -1,8 +1,7 @@
 import React, {useState, useEffect} from "react";
 import './GoalContainer.css';
 import GoalItem from "./GoalItem";
-import {IGoal, selectAllIncompleteGoals, selectGoalsForEpic} from "../Stitch/StitchGoals";
-import {IonAlert} from "@ionic/react";
+import {selectAllIncompleteGoals, selectGoalsForEpic} from "../Stitch/StitchGoals";
 
 interface IGoalContainer {
     isUsedByEpic?: boolean;

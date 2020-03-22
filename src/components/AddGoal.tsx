@@ -26,7 +26,6 @@ interface INewGoal {
 // TODO add in refresh for GoalContainer after a goal is successfully added
 
 export const AddGoal: React.FC<INewGoal> = (props: INewGoal) => {
-
     const userInfo: authInfo = useContext(StitchAuthContext);
     const [showAlert1, setShowAlert1] = useState(false);
     const [showAlert2, setShowAlert2] = useState(false);

@@ -1,10 +1,8 @@
 import React from 'react';
-import {IonAlert, IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
+import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
 import LoginUser from '../components/LoginUser';
 import './Login.css';
-import {Link} from "react-router-dom";
 import Logo from '../Util/Images/Logo.png';
-import transparentLogo from '../Util/Images/transparent_logo.png';
 
 const Login: React.FC = () => {
     return (

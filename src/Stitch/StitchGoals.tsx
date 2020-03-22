@@ -7,7 +7,12 @@ import {
     INSERT_GOAL_RESULT,
     UPDATE_EPIC_RESULT,
     UPDATE_GOAL_RESULT,
-    DELETE_GOAL_RESULT, COMPLETE_EPIC_RESULT, DELETE_EPIC_RESULT, DELETE_GOALS_IN_EPIC_RESULT
+    DELETE_GOAL_RESULT,
+    COMPLETE_EPIC_RESULT,
+    DELETE_EPIC_RESULT,
+    DELETE_GOALS_IN_EPIC_RESULT,
+    FIND_PET_RESULT,
+    INSERT_PET_RESULT
 } from "../Util/Enums";
 import {BSON} from 'mongodb-stitch-browser-sdk';
 
@@ -34,9 +39,46 @@ export interface IEpic {
     // and query those when they need to represented
 }
 
+export interface IPet {
+    owner_id: string;
+    health_percent?: number;
+    hydration_percent?: number;
+    hunger_percent?: number;
+    points?: number;
+    name:string
+}
 
 const goalsCollection = mongodb.db("study_pet").collection("Goals");
 const epicCollection = mongodb.db("study_pet").collection("Epic");
+const petCollection = mongodb.db("study_pet").collection("Pet");
+
+// Pet
+export const insertPet = (petName:IPet):Promise<string> => {
+    petName.health_percent = 100;
+    petName.hunger_percent = 100;
+    petName.hydration_percent = 100;
+    return petCollection.insertOne(petName)
+        .then(res => {
+            console.log(`Successfully inserted item with _id: ${res.insertedId}`);
+            return INSERT_PET_RESULT.pass;
+        })
+        .catch(err => {
+            console.error(`Failed to insert pet: ${err}`);
+            return INSERT_PET_RESULT.fail;
+        })
+};
+
+export const getPet = () => {
+    return petCollection.find()
+        .toArray()
+        .then(res => {
+            return res;
+        })
+        .catch(err => {
+            console.log("Error finding pet ", err);
+            return FIND_PET_RESULT.fail;
+        })
+};
 
 // Goals
 export const insertGoal = (goal: Partial<IGoal>): Promise<string> => {
@@ -46,7 +88,7 @@ export const insertGoal = (goal: Partial<IGoal>): Promise<string> => {
             return INSERT_GOAL_RESULT.pass;
         })
         .catch(err => {
-            console.error(`Failed to insert item: ${err}`);
+            console.error(`Failed to insert goal: ${err}`);
             return INSERT_GOAL_RESULT.error;
         });
 };
