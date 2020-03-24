@@ -24,7 +24,6 @@ export const EpicItem: React.FC<IEpicItem> = (props: IEpicItem) => {
             daysLeft = 0;
     }
 
-
     return (
         props.isComplete ?
             <IonCard

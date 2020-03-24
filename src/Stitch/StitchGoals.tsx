@@ -1,18 +1,19 @@
 import {mongodb} from "./StitchApp";
 import {
+    COMPLETE_EPIC_RESULT,
     COMPLETE_GOAL_RESULT,
+    DELETE_EPIC_RESULT,
+    DELETE_GOAL_RESULT,
+    DELETE_GOALS_IN_EPIC_RESULT,
     FIND_EPIC_RESULT,
     FIND_GOAL_RESULT,
+    FIND_PET_RESULT,
     INSERT_EPIC_RESULT,
     INSERT_GOAL_RESULT,
+    INSERT_PET_RESULT,
     UPDATE_EPIC_RESULT,
     UPDATE_GOAL_RESULT,
-    DELETE_GOAL_RESULT,
-    COMPLETE_EPIC_RESULT,
-    DELETE_EPIC_RESULT,
-    DELETE_GOALS_IN_EPIC_RESULT,
-    FIND_PET_RESULT,
-    INSERT_PET_RESULT
+    UPDATE_PET_POINTS_RESULT
 } from "../Util/Enums";
 import {BSON} from 'mongodb-stitch-browser-sdk';
 
@@ -25,7 +26,7 @@ export interface IGoal {
     isComplete: boolean;
     points: number;
     isInEpic: boolean;
-    epicId?:any;
+    epicId?: any;
 }
 
 export interface IEpic {
@@ -44,8 +45,8 @@ export interface IPet {
     health_percent?: number;
     hydration_percent?: number;
     hunger_percent?: number;
-    points?: number;
-    name:string
+    points: number;
+    name: string
 }
 
 const goalsCollection = mongodb.db("study_pet").collection("Goals");
@@ -53,82 +54,124 @@ const epicCollection = mongodb.db("study_pet").collection("Epic");
 const petCollection = mongodb.db("study_pet").collection("Pet");
 
 // Pet
-export const insertPet = (petName:IPet):Promise<string> => {
+export const insertPet = async (petName: IPet): Promise<string> => {
     petName.health_percent = 100;
     petName.hunger_percent = 100;
     petName.hydration_percent = 100;
-    return petCollection.insertOne(petName)
-        .then(res => {
-            console.log(`Successfully inserted item with _id: ${res.insertedId}`);
-            return INSERT_PET_RESULT.pass;
-        })
-        .catch(err => {
-            console.error(`Failed to insert pet: ${err}`);
-            return INSERT_PET_RESULT.fail;
-        })
+    petName.points = 0;
+    try {
+        let res = await petCollection.insertOne(petName);
+        console.log(`Successfully inserted item with _id: ${res.insertedId}`);
+        return INSERT_PET_RESULT.pass;
+    } catch (err) {
+        console.error(`Failed to insert pet: ${err}`);
+        return INSERT_PET_RESULT.fail;
+    }
 };
 
-export const getPet = () => {
-    return petCollection.find()
-        .toArray()
-        .then(res => {
-            return res;
-        })
-        .catch(err => {
-            console.log("Error finding pet ", err);
-            return FIND_PET_RESULT.fail;
-        })
+export const getPet = async () => {
+    try {
+        return await petCollection.find()
+            .toArray();
+    } catch (err) {
+        console.log("Error finding pet ", err);
+        return FIND_PET_RESULT.fail;
+    }
+};
+
+export const updatePetPointsFromEpic = async (id: string, petPoints: number) => {
+    let bonus = Math.floor(Math.random() * 30);
+    if (bonus < 5)
+        // don't want them getting stiffed out of epic points. set 5 as min
+        bonus = 5;
+    const update = {
+        "$set": {
+            "points": petPoints + bonus,
+        }
+    };
+    const options = {"upsert": false};
+    try {
+        let res = await petCollection.updateOne({_id: {$oid: id.toString()}}, update, options);
+        const {matchedCount, modifiedCount} = res;
+        if (matchedCount && modifiedCount) {
+            return UPDATE_PET_POINTS_RESULT.pass
+        }
+        return UPDATE_PET_POINTS_RESULT.fail;
+    } catch (err) {
+        console.log(`${UPDATE_PET_POINTS_RESULT.fail}: ${err}`);
+        return UPDATE_PET_POINTS_RESULT.fail;
+    }
+};
+
+export const updatePetPointsFromGoal = async (id: string, petPoints: number, pointsFromGoal: number) => {
+    let multiplier = Math.floor(Math.random() * 6);
+    pointsFromGoal = pointsFromGoal * multiplier;
+    if (pointsFromGoal > 30)
+        pointsFromGoal = 30;
+    if (pointsFromGoal === 0)
+        pointsFromGoal = 1;
+    const update = {
+        "$set": {
+            "points": petPoints + pointsFromGoal,
+        }
+    };
+    const options = {"upsert": false};
+    try {
+        let res = await petCollection.updateOne({_id: {$oid: id.toString()}}, update, options);
+        const {matchedCount, modifiedCount} = res;
+        if (matchedCount && modifiedCount) {
+            return UPDATE_PET_POINTS_RESULT.pass
+        }
+        return UPDATE_PET_POINTS_RESULT.fail;
+    } catch (err) {
+        console.log(`${UPDATE_PET_POINTS_RESULT.fail}: ${err}`);
+        return UPDATE_PET_POINTS_RESULT.fail;
+    }
 };
 
 // Goals
-export const insertGoal = (goal: Partial<IGoal>): Promise<string> => {
-    return goalsCollection.insertOne(goal)
-        .then(result => {
-            console.log(`Successfully inserted item with _id: ${result.insertedId}`);
-            return INSERT_GOAL_RESULT.pass;
-        })
-        .catch(err => {
-            console.error(`Failed to insert goal: ${err}`);
-            return INSERT_GOAL_RESULT.error;
-        });
+export const insertGoal = async (goal: Partial<IGoal>): Promise<string> => {
+    try {
+        let result = await goalsCollection.insertOne(goal);
+        console.log(`Successfully inserted item with _id: ${result.insertedId}`);
+        return INSERT_GOAL_RESULT.pass;
+    } catch (err) {
+        console.error(`Failed to insert goal: ${err}`);
+        return INSERT_GOAL_RESULT.error;
+    }
 };
 
-export const deleteGoal = (id: string): Promise<string> => {
-    return goalsCollection.deleteOne({_id: {$oid: id}})
-        .then(result => {
-            if (result.deletedCount > 0)
-                return DELETE_GOAL_RESULT.pass;
-            return DELETE_GOAL_RESULT.fail;
-        })
-        .catch(err => {
-            console.error(`Failed to delete item: ${err}`);
-            return DELETE_GOAL_RESULT.error;
-        });
+export const deleteGoal = async (id: string): Promise<string> => {
+    try {
+        let result = await goalsCollection.deleteOne({_id: {$oid: id}});
+        if (result.deletedCount > 0)
+            return DELETE_GOAL_RESULT.pass;
+        return DELETE_GOAL_RESULT.fail;
+    } catch (err) {
+        console.error(`Failed to delete item: ${err}`);
+        return DELETE_GOAL_RESULT.error;
+    }
 };
 
-export const selectAllIncompleteGoals = () => {
-    return goalsCollection.find({isInEpic: false, isComplete: false})
-        .toArray()
-        .then(res => {
-            return res;
-        })
-        .catch(err => {
-            console.log(`${FIND_GOAL_RESULT}: ${err}`);
-        });
+export const selectAllIncompleteGoals = async () => {
+    try {
+        return await goalsCollection.find({isInEpic: false, isComplete: false})
+            .toArray();
+    } catch (err) {
+        console.log(`${FIND_GOAL_RESULT}: ${err}`);
+    }
 };
 
-export const selectAllCompletedGoals = () => {
-    return goalsCollection.find({isInEpic: false, isComplete: true})
-        .toArray()
-        .then(res => {
-            return res;
-        })
-        .catch(err => {
-            console.log(`${FIND_GOAL_RESULT}: ${err}`);
-        });
+export const selectAllCompletedGoals = async () => {
+    try {
+        return await goalsCollection.find({isInEpic: false, isComplete: true})
+            .toArray();
+    } catch (err) {
+        console.log(`${FIND_GOAL_RESULT}: ${err}`);
+    }
 };
 
-export const findGoal = (id:string) => {
+export const findGoal = (id: string) => {
     return goalsCollection.find({_id: {$oid: id}})
         .toArray()
         .then(res => {
@@ -139,13 +182,13 @@ export const findGoal = (id:string) => {
         });
 };
 
-export const completeGoal = (id:string) => {
+export const completeGoal = (id: string) => {
     const update = {
         "$set": {
             "isComplete": true,
         }
     };
-    const options = { "upsert": false };
+    const options = {"upsert": false};
     return goalsCollection.updateOne({_id: {$oid: id}}, update, options)
         .then(res => {
             const {matchedCount, modifiedCount} = res;
@@ -160,7 +203,7 @@ export const completeGoal = (id:string) => {
         });
 };
 
-export const updateGoal = (id:string, goal:any) => {
+export const updateGoal = async (id: string, goal: any) => {
     const update = {
         "$set": {
             "goalTitle": goal.goalTitle,
@@ -170,38 +213,36 @@ export const updateGoal = (id:string, goal:any) => {
             "points": goal.points
         }
     };
-    const options = { "upsert": false };
+    const options = {"upsert": false};
     let outcome = UPDATE_GOAL_RESULT.fail;
-    return goalsCollection.updateOne({_id: {$oid: id}}, update, options)
-        .then(res => {
-            const {matchedCount, modifiedCount} = res;
-            if (matchedCount && modifiedCount) {
-                outcome = UPDATE_GOAL_RESULT.pass;
-            } else
-                outcome = UPDATE_GOAL_RESULT.fail;
-            return outcome;
-        })
-        .catch(err => {
-            console.log(`${UPDATE_GOAL_RESULT.fail}: ${err}`);
-            outcome = UPDATE_GOAL_RESULT.error;
-            return outcome;
-        });
+    try {
+        let res = await goalsCollection.updateOne({_id: {$oid: id}}, update, options);
+        const {matchedCount, modifiedCount} = res;
+        if (matchedCount && modifiedCount) {
+            outcome = UPDATE_GOAL_RESULT.pass;
+        } else
+            outcome = UPDATE_GOAL_RESULT.fail;
+        return outcome;
+    } catch (err) {
+        console.log(`${UPDATE_GOAL_RESULT.fail}: ${err}`);
+        outcome = UPDATE_GOAL_RESULT.error;
+        return outcome;
+    }
 };
 
 // Epics
-export const insertEpic = (epic: Partial<IEpic>): Promise<string> => {
-    return epicCollection.insertOne(epic)
-        .then(result => {
-            console.log(`Successfully inserted item with _id: ${result.insertedId}`);
-            return INSERT_EPIC_RESULT.pass;
-        })
-        .catch(err => {
-            console.error(`Failed to insert item: ${err}`);
-            return INSERT_EPIC_RESULT.fail;
-        });
+export const insertEpic = async (epic: Partial<IEpic>): Promise<string> => {
+    try {
+        let result = await epicCollection.insertOne(epic);
+        console.log(`Successfully inserted item with _id: ${result.insertedId}`);
+        return INSERT_EPIC_RESULT.pass;
+    } catch (err) {
+        console.error(`Failed to insert item: ${err}`);
+        return INSERT_EPIC_RESULT.fail;
+    }
 };
 
-export const completeEpic = async (epic:any) => {
+export const completeEpic = async (epic: any) => {
     let incompleteGoals = await selectIncompleteGoalsInEpic(epic);
     if (incompleteGoals)
         if (incompleteGoals.length > 0) {
@@ -215,7 +256,7 @@ export const completeEpic = async (epic:any) => {
             "isComplete": true,
         }
     };
-    const options = { "upsert": false };
+    const options = {"upsert": false};
     return epicCollection.updateOne({_id: {$oid: epic._id.toString()}}, update, options)
         .then(res => {
             const {matchedCount, modifiedCount} = res;
@@ -230,30 +271,17 @@ export const completeEpic = async (epic:any) => {
         });
 };
 
-export const insertGoalForEpic= (goal: Partial<IGoal>): Promise<string> => {
-    return goalsCollection.insertOne(goal)
-        .then(result => {
-            console.log(`Successfully inserted item with _id: ${result.insertedId}`);
-            return result.insertedId;
-        })
-        .catch(err => {
-            console.error(`Failed to insert item: ${err}`);
-            return INSERT_GOAL_RESULT.fail;
-        });
+export const insertGoalForEpic = async (goal: Partial<IGoal>): Promise<string> => {
+    try {
+        let result = await goalsCollection.insertOne(goal);
+        console.log(`Successfully inserted item with _id: ${result.insertedId}`);
+        return result.insertedId;
+    } catch (err) {
+        console.error(`Failed to insert item: ${err}`);
+        return INSERT_GOAL_RESULT.fail;
+    }
 };
-
-export const selectAllEpics = () => {
-    return epicCollection.find()
-        .toArray()
-        .then(res => {
-            return res;
-        })
-        .catch(err => {
-            console.log(`${FIND_EPIC_RESULT}: ${err}`);
-        });
-};
-
-export const deleteEpic = async (epic:any): Promise<string> => {
+export const deleteEpic = async (epic: any): Promise<string> => {
     // delete goals associated with epic first
     const allGoalsDeleted = await deleteAllGoalsInEpic(epic);
     if (!allGoalsDeleted)
@@ -271,76 +299,68 @@ export const deleteEpic = async (epic:any): Promise<string> => {
         });
 };
 
-export const selectAllCompletedEpics = () => {
-    return epicCollection.find({isComplete: true})
-        .toArray()
-        .then(res => {
-            return res;
-        })
-        .catch(err => {
-            console.log(`${FIND_EPIC_RESULT}: ${err}`);
-        });
+export const selectAllCompletedEpics = async () => {
+    try {
+        return await epicCollection.find({isComplete: true})
+            .toArray();
+    } catch (err) {
+        console.log(`${FIND_EPIC_RESULT}: ${err}`);
+    }
 };
 
-export const selectAllIncompleteEpics = () => {
-    return epicCollection.find({isComplete: false})
-        .toArray()
-        .then(res => {
-            return res;
-        })
-        .catch(err => {
-            console.log(`${FIND_EPIC_RESULT}: ${err}`);
-        });
+export const selectAllIncompleteEpics = async () => {
+    try {
+        return await epicCollection.find({isComplete: false})
+            .toArray();
+    } catch (err) {
+        console.log(`${FIND_EPIC_RESULT}: ${err}`);
+    }
 };
 
-export const selectIncompleteGoalsInEpic= (epic:any) => {
-    return goalsCollection.find({_id: {$in: epic.goals}, isComplete:false})
-        .toArray()
-        .then(res => {
-            return res;
-        })
-        .catch(err => {
-            console.log(`${FIND_EPIC_RESULT}: ${err}`);
-        });
+export const selectIncompleteGoalsInEpic = async (epic: any) => {
+    try {
+        return await goalsCollection.find({_id: {$in: epic.goals}, isComplete: false})
+            .toArray();
+    } catch (err) {
+        console.log(`${FIND_EPIC_RESULT}: ${err}`);
+    }
 };
 
-export const deleteAllGoalsInEpic= (epic:any) => {
-    return goalsCollection.deleteMany({_id: {$in: epic.goals}})
-        .then(res => {
-            return DELETE_GOALS_IN_EPIC_RESULT.pass;
-        })
-        .catch(err => {
-            console.log(`${FIND_EPIC_RESULT}: ${err}`);
-            return DELETE_GOALS_IN_EPIC_RESULT.fail;
-        });
+export const deleteAllGoalsInEpic = async (epic: any) => {
+    try {
+        await goalsCollection.deleteMany({_id: {$in: epic.goals}});
+        return DELETE_GOALS_IN_EPIC_RESULT.pass;
+    } catch (err) {
+        console.log(`${FIND_EPIC_RESULT}: ${err}`);
+        return DELETE_GOALS_IN_EPIC_RESULT.fail;
+    }
 };
 
-export const addGoalToEpic= (epicId:any, goalId:string) => {
+export const addGoalToEpic = async (epicId: any, goalId: string) => {
     const objGoalId = new BSON.ObjectId(goalId);
     const update = {
         "$push": {
             "goals": objGoalId
         }
     };
-    const options = { "upsert": false };
+    const options = {"upsert": false};
     let outcome = UPDATE_EPIC_RESULT.fail;
-    return epicCollection.updateOne({_id: {$oid: epicId}}, update, options)
-        .then(res => {
-            const {matchedCount, modifiedCount} = res;
-            if (matchedCount && modifiedCount) {
-                outcome = UPDATE_EPIC_RESULT.pass;
-            }
-            return outcome;
-        })
-        .catch(err => {
-            console.log(`${UPDATE_EPIC_RESULT.error}: ${err}`);
-            outcome = UPDATE_EPIC_RESULT.error;
-            return outcome;
-        });
+    try {
+        let res = await epicCollection.updateOne({_id: {$oid: epicId}}, update, options);
+        const {matchedCount, modifiedCount} = res;
+        if (matchedCount && modifiedCount) {
+            outcome = UPDATE_EPIC_RESULT.pass;
+        }
+        return outcome;
+    } catch (err) {
+        console.log(`${UPDATE_EPIC_RESULT.error}: ${err}`);
+        outcome = UPDATE_EPIC_RESULT.error;
+        return outcome;
+    }
 };
 
 
-export const selectGoalsForEpic= async (id:string) => {
+export const selectGoalsForEpic = async (id: string) => {
     const epic = await findEpic(id);
     if (!epic[0].goals)
         return undefined;
@@ -356,7 +376,7 @@ export const selectGoalsForEpic= async (id:string) => {
         });
 };
 
-export const findEpic = (id:string):any => {
+export const findEpic = (id: string): any => {
     return epicCollection.find({_id: {$oid: id}})
         .toArray()
         .then(res => {
@@ -367,30 +387,29 @@ export const findEpic = (id:string):any => {
         });
 };
 
-export const updateEpic = (id:string, epic:any) => {
+export const updateEpic = async (id: string, epic: any) => {
     const update = {
         "$set": {
             "epicTitle": epic.epicTitle,
             "epicDescription": epic.epicDescription,
             "startDate": epic.startDate,
             "endDate": epic.endDate,
-            "goals": epic.goals  || []
+            "goals": epic.goals || []
         }
     };
-    const options = { "upsert": false };
-    let outcome = UPDATE_EPIC_RESULT.fail;
-    return epicCollection.updateOne({_id: {$oid: id}}, update, options)
-        .then(res => {
-            const {matchedCount, modifiedCount} = res;
-            if (matchedCount && modifiedCount) {
-                outcome = UPDATE_EPIC_RESULT.pass;
-            } else
-                outcome = UPDATE_EPIC_RESULT.fail;
-            return outcome;
-        })
-        .catch(err => {
-            console.log(`${UPDATE_EPIC_RESULT.fail}: ${err}`);
-            outcome = UPDATE_EPIC_RESULT.error;
-            return outcome;
-        });
+    const options = {"upsert": false};
+    let outcome;
+    try {
+        let res = await epicCollection.updateOne({_id: {$oid: id}}, update, options);
+        const {matchedCount, modifiedCount} = res;
+        if (matchedCount && modifiedCount) {
+            outcome = UPDATE_EPIC_RESULT.pass;
+        } else
+            outcome = UPDATE_EPIC_RESULT.fail;
+        return outcome;
+    } catch (err) {
+        console.log(`${UPDATE_EPIC_RESULT.fail}: ${err}`);
+        outcome = UPDATE_EPIC_RESULT.error;
+        return outcome;
+    }
 };

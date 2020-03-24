@@ -43,6 +43,12 @@ export const FIND_GOAL_RESULT = {
     fail: "Failed to find goal. Please try again."
 };
 
+export const UPDATE_PET_POINTS_RESULT = {
+    pass: "Successfully updated pet points.",
+    fail: "Failed to update pet points. Please try again."
+};
+
+
 export const FIND_PET_RESULT = {
     pass: "Pet Found",
     fail: "Your pet seems to have wandered off. Please refresh the page."

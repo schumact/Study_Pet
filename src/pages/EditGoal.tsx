@@ -12,7 +12,7 @@ import {
 } from '@ionic/react';
 import '../components/AddGoal.css';
 import DateTimePicker from "../components/DateTimePicker";
-import {findGoal, updateGoal, deleteGoal, completeGoal} from "../Stitch/StitchGoals";
+import {findGoal, updateGoal, deleteGoal, completeGoal, getPet, updatePetPointsFromGoal} from "../Stitch/StitchGoals";
 import {DATE_ENUMS, UPDATE_GOAL_RESULT, DELETE_GOAL_RESULT, COMPLETE_GOAL_RESULT} from "../Util/Enums";
 import {RouteComponentProps} from "react-router-dom";
 import {trashOutline, checkmarkDoneOutline} from 'ionicons/icons';
@@ -33,6 +33,7 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
     const [showAlert8, setShowAlert8] = useState(false);
     const [showAlert9, setShowAlert9] = useState(false);
     const [showAlert10, setShowAlert10] = useState(false);
+    const [pet, setPet] = useState({petPoints: 0, id: ""});
     const [resultMessage, setResultMessage] = useState();
     const [goal, setGoal] = useState<any>();
 
@@ -75,8 +76,19 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
             const res:any = await findGoal(match.params.id);
             if (res[0])
                 setGoal(res[0]);
+            var my_pet:any = await getPet();
+            if (my_pet)
+                if (my_pet.length > 0){
+                    setPet({petPoints: my_pet[0].points, id: my_pet[0]._id});
+                }
         })();
-    }, []);
+    }, [pet.petPoints]);
+
+    const updatePet = () => {
+        (async() => {
+            await updatePetPointsFromGoal(pet.id, pet.petPoints, goal.points);
+        })();
+    };
 
     return (
         <IonPage>
@@ -102,7 +114,6 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                             clearInput={true}
                             minlength={1}
                             maxlength={50}
-                            // onIonChange={e => setTitle(e.detail.value!)}
                             onIonChange={e => setGoal({...goal, goalTitle: e.detail.value!})}
                         >
                         </IonInput>
@@ -258,7 +269,10 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                                 (async () => {
                                     const result = await completeGoal(match.params.id);
                                     if (result === COMPLETE_GOAL_RESULT.pass)
+                                    {
+                                        updatePet();
                                         setShowAlert9(true);
+                                    }
                                     else
                                         setShowAlert10(true);
                                 })();

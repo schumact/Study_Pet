@@ -13,7 +13,14 @@ import {
 } from '@ionic/react';
 import '../components/AddGoal.css';
 import DateTimePicker from "../components/DateTimePicker";
-import {completeEpic, completeGoal, deleteEpic, deleteGoal, findEpic, updateEpic} from "../Stitch/StitchGoals";
+import {
+    completeEpic,
+    deleteEpic,
+    findEpic,
+    getPet,
+    updateEpic,
+    updatePetPointsFromEpic
+} from "../Stitch/StitchGoals";
 import {COMPLETE_EPIC_RESULT, DELETE_EPIC_RESULT, DATE_ENUMS, DELETE_GOALS_IN_EPIC_RESULT} from "../Util/Enums";
 import {RouteComponentProps} from "react-router-dom";
 import {checkmarkDoneOutline, trashOutline} from "ionicons/icons";
@@ -37,6 +44,7 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
     const [showAlert11, setShowAlert11] = useState(false);
     const [resultMessage, setResultMessage] = useState();
     const [epic, setEpic] = useState<any>();
+    const [pet, setPet] = useState({petPoints: 0, id: ""});
 
     const UpdateEpic = () => {
         // TODO add in a check to make sure that end date is after startDate
@@ -65,8 +73,20 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
             const res = await findEpic(match.params.id);
             if (res)
                 setEpic(res[0]);
+            // set pet
+            var my_pet:any = await getPet();
+            if (my_pet)
+                if (my_pet.length > 0) {
+                    setPet({petPoints: my_pet[0].points, id: my_pet[0]._id});
+                }
         })();
-    }, []);
+    }, [pet.petPoints]);
+
+    const updatePet = () => {
+        (async() => {
+            await updatePetPointsFromEpic(pet.id, pet.petPoints);
+        })();
+    };
 
     return (
         <IonPage>
@@ -237,8 +257,10 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
                             handler: () => {
                                 (async () => {
                                     const result = await completeEpic(epic);
-                                    if (result === COMPLETE_EPIC_RESULT.pass)
+                                    if (result === COMPLETE_EPIC_RESULT.pass) {
+                                        updatePet();
                                         setShowAlert9(true);
+                                    }
                                     else
                                         setShowAlert10(true);
                                 })();
