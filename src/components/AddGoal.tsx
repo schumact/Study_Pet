@@ -20,7 +20,8 @@ import {BSON} from 'mongodb-stitch-browser-sdk';
 interface INewGoal {
     modalHandler: (isOpen: boolean) => void;
     isUsedByEpic?: boolean;
-    epicId?: string
+    epicId?: string;
+    updater?: (val:number) => void;
 }
 
 // TODO add in refresh for GoalContainer after a goal is successfully added
@@ -60,6 +61,8 @@ export const AddGoal: React.FC<INewGoal> = (props: INewGoal) => {
                         // setShowAlert4(true);
                     }).then(res => {
                         setResultMessage(res);
+                        if (props.updater)
+                            props.updater(1);
                         setShowAlert4(true);
                     }).catch(err => {
                         setResultMessage(err);
@@ -71,6 +74,8 @@ export const AddGoal: React.FC<INewGoal> = (props: INewGoal) => {
                 let result: Promise<string> = insertGoal(goal);
                 result.then(res => {
                     setResultMessage(res);
+                    if (props.updater)
+                        props.updater(1);
                     setShowAlert4(true);
                 }).catch(err => {
                     setResultMessage(err);
@@ -193,8 +198,9 @@ export const AddGoal: React.FC<INewGoal> = (props: INewGoal) => {
                 onDidDismiss={() => {
                     setShowAlert4(false);
                     // close modal if the insert was successful
-                    if (resultMessage === INSERT_GOAL_RESULT.pass)
+                    if (resultMessage === INSERT_GOAL_RESULT.pass) {
                         props.modalHandler(false);
+                    }
                 }}
                 header={resultMessage}
                 buttons={["OK"]}

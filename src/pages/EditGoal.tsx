@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {dateValidation, titleValidation} from "../Util/GoalValidation";
+import {useHistory} from "react-router-dom";
 import {
     IonButton,
     IonList,
@@ -22,7 +23,11 @@ interface IEditGoal extends RouteComponentProps<{
 }> {
 }
 
-export const EditGoal: React.FC<IEditGoal> = ({match}) => {
+interface IProps {
+    updater?: (val:number) => void;
+}
+
+export const EditGoal: React.FC<IEditGoal> = ({match}, props:IProps) => {
     const [showAlert1, setShowAlert1] = useState(false);
     const [showAlert2, setShowAlert2] = useState(false);
     const [showAlert3, setShowAlert3] = useState(false);
@@ -36,6 +41,7 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
     const [pet, setPet] = useState({petPoints: 0, id: ""});
     const [resultMessage, setResultMessage] = useState();
     const [goal, setGoal] = useState<any>();
+    const history = useHistory();
 
     const UpdateGoal = () => {
         // TODO add in a check to make sure that end date is after startDate
@@ -242,8 +248,12 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                             handler: () => {
                                 (async () => {
                                     const result = await deleteGoal(match.params.id);
-                                    if (result === DELETE_GOAL_RESULT.pass)
+                                    if (result === DELETE_GOAL_RESULT.pass) {
                                         setShowAlert7(true);
+                                        if (props.updater)
+                                            props.updater(1);
+                                        history.goBack();
+                                    }
                                     else
                                         setShowAlert6(true);
                                 })();
@@ -272,6 +282,7 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                                     {
                                         updatePet();
                                         setShowAlert9(true);
+                                        history.goBack();
                                     }
                                     else
                                         setShowAlert10(true);

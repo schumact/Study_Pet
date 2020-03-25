@@ -6,14 +6,14 @@ import {selectAllIncompleteGoals, selectGoalsForEpic} from "../Stitch/StitchGoal
 interface IGoalContainer {
     isUsedByEpic?: boolean;
     epicId?: string
+    updaterCount:number
 }
-
 
 const GoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer) => {
     const [goals, setGoals] = useState<any>();
     const [isEmptyGoals, setEmptyGoals] = useState<boolean>(false);
     const [goalItemList, setGoalItems] = useState<any>();
-
+    const [updateForIncrease, setUpdateForIncrease] = useState<number>(props.updaterCount);
 
     useEffect(() => {
         // query goals for a given user.
@@ -21,6 +21,7 @@ const GoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer) => {
         // map() items in goals array to GoalItem objects
         // set goals state with new array inheriting from IGoalsList
         (async () => {
+            setUpdateForIncrease(props.updaterCount);
             try {
                 let res: any;
                 if (props.isUsedByEpic) {
@@ -49,6 +50,7 @@ const GoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer) => {
                             return GoalItem(newGoal);
                         });
                         setGoalItems(goalItems);
+                        setEmptyGoals(false);
                     }
                 } else {
                     setEmptyGoals(true);
@@ -59,8 +61,7 @@ const GoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer) => {
                 console.log(e);
             }
         })();
-    }, [goals, isEmptyGoals]);
-
+    }, [goals, isEmptyGoals, props.updaterCount]);
 
     return (
         isEmptyGoals ?

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonModal} from '@ionic/react';
 import './Home.css';
 import GoalContainer from "../components/GoalContainer";
@@ -9,8 +9,26 @@ import EpicContainer from "../components/EpicContainer";
 const Home: React.FC = () => {
     const [showModal, setShowModal] = useState<boolean>(false);
     const [showModal2, setShowModal2] = useState<boolean>(false);
+    const [goalUpdaterCount, setGoalUpdater] = useState<number>(0);
+    const [epicUpdaterCount, setEpicUpdater] = useState<number>(0);
+
     // TODO do I need a goal successfully added state in here or something to make
     // sure that the component rerenders on added goals. I want GoalContainer to rerender
+
+    const updateGoalUpdater = (updateValue:number) => {
+        setGoalUpdater(goalUpdaterCount + updateValue);
+    };
+
+    const updateEpicUpdater = (updateValue:number) => {
+        setEpicUpdater(epicUpdaterCount + updateValue);
+    };
+
+    useEffect(() => {
+        console.log("running use effect")
+    }, [goalUpdaterCount]);
+
+    console.log("my goal updater count is now ", goalUpdaterCount);
+    console.log("my epic updater count is now ", epicUpdaterCount);
 
     return (
         <IonPage>
@@ -26,19 +44,23 @@ const Home: React.FC = () => {
                     </IonToolbar>
                 </IonHeader>
                 <IonModal isOpen={showModal}>
-                    <AddGoal modalHandler={setShowModal}/>
+                    <AddGoal modalHandler={setShowModal} updater={updateGoalUpdater}/>
                     <IonButton
                         color="danger"
-                        onClick={() => setShowModal(false)}
+                        onClick={() => {
+                            setShowModal(false);
+                        }}
                         expand="block">
                         Close
                     </IonButton>
                 </IonModal>
                 <IonModal isOpen={showModal2}>
-                    <AddEpic modalHandler={setShowModal2}/>
+                    <AddEpic modalHandler={setShowModal2} updater={updateEpicUpdater}/>
                     <IonButton
                         color="danger"
-                        onClick={() => setShowModal2(false)}
+                        onClick={() => {
+                            setShowModal2(false);
+                        }}
                         expand="block">
                         Close
                     </IonButton>
@@ -60,12 +82,11 @@ const Home: React.FC = () => {
                 <IonButton
                     expand="block"
                     color="tertiary"
-                    href={"/completed_view"}
-                    onClick={() => console.log("replace this with a page")}>
+                    href={"/completed_view"}>
                     View Completed Goals and Epics
                 </IonButton>
-                <GoalContainer/>
-                <EpicContainer/>
+                <GoalContainer updaterCount={goalUpdaterCount}/>
+                <EpicContainer updaterCount={epicUpdaterCount}/>
             </IonContent>
         </IonPage>
     );

@@ -17,7 +17,8 @@ import {DATE_ENUMS, INSERT_EPIC_RESULT} from "../Util/Enums";
 import {dateValidation, titleValidation} from "../Util/GoalValidation";
 
 interface INewEpic {
-    modalHandler: (isOpen: boolean) => void
+    modalHandler: (isOpen: boolean) => void;
+    updater?: (val:number) => void;
 }
 // TODO add in refresh for GoalContainer after a goal is successfully added
 
@@ -39,6 +40,8 @@ export const AddEpic:React.FC<INewEpic> = (props:INewEpic) => {
             let result:Promise<string> = insertEpic(epic);
             result.then(res => {
                 setResultMessage(res);
+                if (props.updater)
+                    props.updater(1);
                 setShowAlert4(true);
             }).catch(err => {
                 setResultMessage(err);
@@ -122,7 +125,10 @@ export const AddEpic:React.FC<INewEpic> = (props:INewEpic) => {
                     setShowAlert4(false);
                     // close modal if the insert was successful
                     if (resultMessage === INSERT_EPIC_RESULT.pass)
+                    {
+                        console.log("pass");
                         props.modalHandler(false);
+                    }
                 }}
                 header={resultMessage}
                 buttons={["OK"]}

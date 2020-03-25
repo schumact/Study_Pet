@@ -22,7 +22,7 @@ import {
     updatePetPointsFromEpic
 } from "../Stitch/StitchGoals";
 import {COMPLETE_EPIC_RESULT, DELETE_EPIC_RESULT, DATE_ENUMS, DELETE_GOALS_IN_EPIC_RESULT} from "../Util/Enums";
-import {RouteComponentProps} from "react-router-dom";
+import {RouteComponentProps, useHistory} from "react-router-dom";
 import {checkmarkDoneOutline, trashOutline} from "ionicons/icons";
 
 interface IEditEpic extends RouteComponentProps<{
@@ -30,7 +30,11 @@ interface IEditEpic extends RouteComponentProps<{
 }> {
 }
 
-export const EditEpic: React.FC<IEditEpic> = ({match}) => {
+interface IProps {
+    updater?: (val:number) => void;
+}
+
+export const EditEpic: React.FC<IEditEpic> = ({match}, props:IProps) => {
     const userInfo: authInfo = useContext(StitchAuthContext);
     const [showAlert2, setShowAlert2] = useState(false);
     const [showAlert3, setShowAlert3] = useState(false);
@@ -45,6 +49,7 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
     const [resultMessage, setResultMessage] = useState();
     const [epic, setEpic] = useState<any>();
     const [pet, setPet] = useState({petPoints: 0, id: ""});
+    const history = useHistory();
 
     const UpdateEpic = () => {
         // TODO add in a check to make sure that end date is after startDate
@@ -230,7 +235,10 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
                                 (async () => {
                                     const result = await deleteEpic(epic);
                                     if (result === DELETE_EPIC_RESULT.pass)
+                                    {
                                         setShowAlert7(true);
+                                        history.goBack();
+                                    }
                                     else if (result === DELETE_GOALS_IN_EPIC_RESULT.fail)
                                         setShowAlert11(true);
                                     else
@@ -260,6 +268,9 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
                                     if (result === COMPLETE_EPIC_RESULT.pass) {
                                         updatePet();
                                         setShowAlert9(true);
+                                        if (props.updater)
+                                            props.updater(1);
+                                        history.goBack();
                                     }
                                     else
                                         setShowAlert10(true);
