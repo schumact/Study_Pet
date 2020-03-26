@@ -283,20 +283,24 @@ export const insertGoalForEpic = async (goal: Partial<IGoal>): Promise<string> =
 };
 export const deleteEpic = async (epic: any): Promise<string> => {
     // delete goals associated with epic first
+    console.log("Epic received as ", epic);
     const allGoalsDeleted = await deleteAllGoalsInEpic(epic);
     if (!allGoalsDeleted)
         return DELETE_GOALS_IN_EPIC_RESULT.fail;
-
-    return epicCollection.deleteOne({_id: {$oid: epic._id.toString()}})
-        .then(result => {
-            if (result.deletedCount > 0)
-                return DELETE_EPIC_RESULT.pass;
-            return DELETE_EPIC_RESULT.fail;
-        })
-        .catch(err => {
-            console.error(`Failed to delete item: ${err}`);
-            return DELETE_EPIC_RESULT.error;
-        });
+    if (epic._id) {
+        return epicCollection.deleteOne({_id: {$oid: epic._id.toString()}})
+            .then(result => {
+                if (result.deletedCount > 0)
+                    return DELETE_EPIC_RESULT.pass;
+                return DELETE_EPIC_RESULT.fail;
+            })
+            .catch(err => {
+                console.error(`Failed to delete item: ${err}`);
+                return DELETE_EPIC_RESULT.error;
+            });
+    }
+    else
+        return DELETE_EPIC_RESULT.id_error;
 };
 
 export const selectAllCompletedEpics = async () => {
@@ -319,8 +323,12 @@ export const selectAllIncompleteEpics = async () => {
 
 export const selectIncompleteGoalsInEpic = async (epic: any) => {
     try {
-        return await goalsCollection.find({_id: {$in: epic.goals}, isComplete: false})
-            .toArray();
+        if (epic.goals) {
+            return await goalsCollection.find({_id: {$in: epic.goals}, isComplete: false})
+                .toArray();
+        }
+        else
+            return []
     } catch (err) {
         console.log(`${FIND_EPIC_RESULT}: ${err}`);
     }
@@ -328,7 +336,9 @@ export const selectIncompleteGoalsInEpic = async (epic: any) => {
 
 export const deleteAllGoalsInEpic = async (epic: any) => {
     try {
-        await goalsCollection.deleteMany({_id: {$in: epic.goals}});
+        console.log("my epic is ", epic);
+        if (epic.goals)
+            await goalsCollection.deleteMany({_id: {$in: epic.goals}});
         return DELETE_GOALS_IN_EPIC_RESULT.pass;
     } catch (err) {
         console.log(`${FIND_EPIC_RESULT}: ${err}`);
@@ -361,7 +371,7 @@ export const addGoalToEpic = async (epicId: any, goalId: string) => {
 
 
 export const selectGoalsForEpic = async (id: string) => {
-    const epic = await findEpic(id);
+    const epic:any = await findEpic(id);
     if (!epic[0].goals)
         return undefined;
     else if (epic[0].goals.length === 0)
@@ -376,7 +386,7 @@ export const selectGoalsForEpic = async (id: string) => {
         });
 };
 
-export const findEpic = (id: string): any => {
+export const findEpic = (id: string) => {
     return epicCollection.find({_id: {$oid: id}})
         .toArray()
         .then(res => {

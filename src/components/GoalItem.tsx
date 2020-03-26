@@ -39,7 +39,7 @@ export const GoalItem: React.FC<IGoalItem> = (props: IGoalItem) => {
                     <IonCardTitle>{props.title}</IonCardTitle>
                 </IonCardHeader>
                 <IonCardContent>
-                    <p>Click me to Edit!</p>
+                    <p>Click me to view details!</p>
                 </IonCardContent>
             </IonCard> :
             <IonCard type="button"

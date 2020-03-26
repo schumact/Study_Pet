@@ -30,7 +30,8 @@ export const COMPLETE_EPIC_RESULT = {
 export const DELETE_EPIC_RESULT = {
     pass: "Successfully removed epic!",
     fail: "Failed to remove epic. Please try again.",
-    error: "Error encountered when trying to delete epic. Please try again."
+    error: "Error encountered when trying to delete epic. Please try again.",
+    id_error: "Whoops. This one's on us. Please try again to delete the epic."
 };
 
 export const DELETE_GOALS_IN_EPIC_RESULT = {

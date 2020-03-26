@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {dateValidation, titleValidation} from "../Util/GoalValidation";
 import {useHistory} from "react-router-dom";
 import {
@@ -23,11 +23,7 @@ interface IEditGoal extends RouteComponentProps<{
 }> {
 }
 
-interface IProps {
-    updater?: (val:number) => void;
-}
-
-export const EditGoal: React.FC<IEditGoal> = ({match}, props:IProps) => {
+export const EditGoal: React.FC<IEditGoal> = ({match}) => {
     const [showAlert1, setShowAlert1] = useState(false);
     const [showAlert2, setShowAlert2] = useState(false);
     const [showAlert3, setShowAlert3] = useState(false);
@@ -250,8 +246,6 @@ export const EditGoal: React.FC<IEditGoal> = ({match}, props:IProps) => {
                                     const result = await deleteGoal(match.params.id);
                                     if (result === DELETE_GOAL_RESULT.pass) {
                                         setShowAlert7(true);
-                                        if (props.updater)
-                                            props.updater(1);
                                         history.goBack();
                                     }
                                     else

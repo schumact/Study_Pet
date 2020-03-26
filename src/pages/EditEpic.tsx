@@ -1,5 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
-import {authInfo, StitchAuthContext} from "../Stitch/StitchAuth";
+import React, {useEffect, useRef, useState} from "react";
 import {dateValidation, titleValidation} from "../Util/GoalValidation";
 import {
     IonButton,
@@ -14,7 +13,7 @@ import {
 import '../components/AddGoal.css';
 import DateTimePicker from "../components/DateTimePicker";
 import {
-    completeEpic,
+    completeEpic, deleteAllGoalsInEpic,
     deleteEpic,
     findEpic,
     getPet,
@@ -30,12 +29,8 @@ interface IEditEpic extends RouteComponentProps<{
 }> {
 }
 
-interface IProps {
-    updater?: (val:number) => void;
-}
-
-export const EditEpic: React.FC<IEditEpic> = ({match}, props:IProps) => {
-    const userInfo: authInfo = useContext(StitchAuthContext);
+export const EditEpic: React.FC<IEditEpic> = ({match}) => {
+    const isMounted = useRef(true);
     const [showAlert2, setShowAlert2] = useState(false);
     const [showAlert3, setShowAlert3] = useState(false);
     const [showAlert4, setShowAlert4] = useState(false);
@@ -46,10 +41,12 @@ export const EditEpic: React.FC<IEditEpic> = ({match}, props:IProps) => {
     const [showAlert9, setShowAlert9] = useState(false);
     const [showAlert10, setShowAlert10] = useState(false);
     const [showAlert11, setShowAlert11] = useState(false);
+    // const [showAlert12, setShowAlert12] = useState(false);
     const [resultMessage, setResultMessage] = useState();
     const [epic, setEpic] = useState<any>();
     const [pet, setPet] = useState({petPoints: 0, id: ""});
     const history = useHistory();
+    // const [triggerRefresh, setTriggerFresh] = useState(0);
 
     const UpdateEpic = () => {
         // TODO add in a check to make sure that end date is after startDate
@@ -59,39 +56,76 @@ export const EditEpic: React.FC<IEditEpic> = ({match}, props:IProps) => {
             // already validated points in render and description is optional
             let result: any = updateEpic(match.params.id, epic);
             result.then((res: any) => {
-                setResultMessage(res);
-                setShowAlert4(true);
+                isMounted.current && setResultMessage(res);
+                isMounted.current && setShowAlert4(true);
             }).catch((err: any) => {
-                setResultMessage(err);
-                setShowAlert4(true);
+                isMounted.current && setResultMessage(err);
+                isMounted.current && setShowAlert4(true);
             });
         } else {
             if (!isTitleValid)
-                setShowAlert3(true);
+                isMounted.current && setShowAlert3(true);
             else
-                setShowAlert2(true);
+                isMounted.current && setShowAlert2(true);
         }
     };
 
     useEffect(() => {
-        (async () => {
-            const res = await findEpic(match.params.id);
-            if (res)
-                setEpic(res[0]);
-            // set pet
-            var my_pet:any = await getPet();
-            if (my_pet)
-                if (my_pet.length > 0) {
-                    setPet({petPoints: my_pet[0].points, id: my_pet[0]._id});
+            // let isSubscribed: boolean = true;
+        console.log("running use effect from edit epic");
+            (async () => {
+                const res:any = await findEpic(match.params.id);
+                if (res[0]) {
+                    console.log("found epic ", res[0]);
+                    isMounted.current && setEpic(res[0]);
                 }
-        })();
-    }, [pet.petPoints]);
+                // set pet
+                var my_pet:any = await getPet();
+                if (my_pet)
+                    if (my_pet.length > 0) {
+                        isMounted.current && setPet({petPoints: my_pet[0].points, id: my_pet[0]._id});
+                    }
+            })();
+            // return () => {
+            //     console.log("unmounting");
+            //     isSubscribed = false
+            // };
+        }, [pet.petPoints]
+    );
+
+    useEffect(() => {
+       return () => {isMounted.current = false}
+    }, []);
 
     const updatePet = () => {
-        (async() => {
+        (async () => {
             await updatePetPointsFromEpic(pet.id, pet.petPoints);
         })();
     };
+
+    // const removeEpic = () => {
+    //     (async () => {
+    //         const result = await deleteEpic(epic);
+    //         if (result === DELETE_EPIC_RESULT.pass) {
+    //             console.log("Successful delete");
+    //             setShowAlert7(true);
+    //             // console.log("updater is", props.updater);
+    //             // if (props.updater) {
+    //             //     props.updater(1);
+    //             //     console.log("updater updated");
+    //             // }
+    //             console.log("going back in history");
+    //             history.goBack();
+    //         } else if (result === DELETE_GOALS_IN_EPIC_RESULT.fail)
+    //             setShowAlert11(true);
+    //         else if (result === DELETE_EPIC_RESULT.id_error)
+    //             setShowAlert12(true);
+    //         else
+    //             setShowAlert6(true);
+    //     })();
+    // };
+
+    // console.log("MY props updater", props.updater);
 
     return (
         <IonPage>
@@ -118,7 +152,7 @@ export const EditEpic: React.FC<IEditEpic> = ({match}, props:IProps) => {
                             minlength={1}
                             maxlength={50}
                             // onIonChange={e => setTitle(e.detail.value!)}
-                            onIonChange={e => setEpic({...epic, epicTitle: e.detail.value!})}
+                            onIonChange={e => isMounted.current && setEpic({...epic, epicTitle: e.detail.value!})}
                         >
                         </IonInput>
                     </IonItem>
@@ -130,7 +164,7 @@ export const EditEpic: React.FC<IEditEpic> = ({match}, props:IProps) => {
                         <IonTextarea
                             value={epic?.epicDescription}
                             placeholder="Please enter your description here"
-                            onIonChange={e => setEpic({...epic, epicDescription: e.detail.value!})}>
+                            onIonChange={e => isMounted.current && setEpic({...epic, epicDescription: e.detail.value!})}>
                         </IonTextarea>
                     </IonItem>
                     <br/>
@@ -146,19 +180,24 @@ export const EditEpic: React.FC<IEditEpic> = ({match}, props:IProps) => {
                         onClick={() => UpdateEpic()}>
                         Edit Epic
                     </IonButton>
+                    {/*<IonButton*/}
+                    {/*    expand="block"*/}
+                    {/*    onClick={() => history.goBack()}>*/}
+                    {/*    go back*/}
+                    {/*</IonButton>*/}
                     <IonFab horizontal="end" vertical="top" slot="fixed">
-                        <IonFabButton color="danger" onClick={() => setShowAlert5(true)}>
+                        <IonFabButton color="danger" onClick={() => isMounted.current && setShowAlert5(true)}>
                             <IonIcon icon={trashOutline}/>
                         </IonFabButton>
                     </IonFab>
                     <IonFab horizontal="start" vertical="top" slot="fixed">
-                        <IonFabButton color="success" onClick={() => setShowAlert8(true)}>
+                        <IonFabButton color="success" onClick={() => isMounted.current && setShowAlert8(true)}>
                             <IonIcon icon={checkmarkDoneOutline}/>
                         </IonFabButton>
                     </IonFab>
                     <IonAlert
                         isOpen={showAlert2}
-                        onDidDismiss={() => setShowAlert2(false)}
+                        onDidDismiss={() => isMounted.current && setShowAlert2(false)}
                         header={'Date Error'}
                         message={"A start and end date must be selected and the start date must be before " +
                         "the end date"}
@@ -166,7 +205,7 @@ export const EditEpic: React.FC<IEditEpic> = ({match}, props:IProps) => {
                     />
                     <IonAlert
                         isOpen={showAlert3}
-                        onDidDismiss={() => setShowAlert3(false)}
+                        onDidDismiss={() => isMounted.current && setShowAlert3(false)}
                         header={'Title Error'}
                         message={"Please make sure that you input a title and it is less than 30 characters long."}
                         buttons={["OK"]}
@@ -174,7 +213,7 @@ export const EditEpic: React.FC<IEditEpic> = ({match}, props:IProps) => {
                     <IonAlert
                         isOpen={showAlert4}
                         onDidDismiss={() => {
-                            setShowAlert4(false);
+                            isMounted.current && setShowAlert4(false);
                             // close modal if the insert was successful
                         }}
                         header={resultMessage}
@@ -182,43 +221,53 @@ export const EditEpic: React.FC<IEditEpic> = ({match}, props:IProps) => {
                     />
                     <IonAlert
                         isOpen={showAlert6}
-                        onDidDismiss={() => setShowAlert6(false)}
+                        onDidDismiss={() => isMounted.current && setShowAlert6(false)}
                         header={'Error'}
                         message={DELETE_EPIC_RESULT.error}
                         buttons={["OK"]}
                     />
                     <IonAlert
                         isOpen={showAlert7}
-                        onDidDismiss={() => setShowAlert7(false)}
+                        onDidDismiss={() => isMounted.current && setShowAlert7(false)}
                         header={'Success'}
                         message={DELETE_EPIC_RESULT.pass}
                         buttons={["OK"]}
                     />
                     <IonAlert
                         isOpen={showAlert9}
-                        onDidDismiss={() => setShowAlert9(false)}
+                        onDidDismiss={() => isMounted.current && setShowAlert9(false)}
                         header={'Success'}
                         message={COMPLETE_EPIC_RESULT.pass}
                         buttons={["OK"]}
                     />
                     <IonAlert
                         isOpen={showAlert10}
-                        onDidDismiss={() => setShowAlert10(false)}
+                        onDidDismiss={() => isMounted.current && setShowAlert10(false)}
                         header={'Error'}
                         message={COMPLETE_EPIC_RESULT.fail}
                         buttons={["OK"]}
                     />
                     <IonAlert
                         isOpen={showAlert11}
-                        onDidDismiss={() => setShowAlert11(false)}
+                        onDidDismiss={() => isMounted.current && setShowAlert11(false)}
                         header={'Error'}
                         message={DELETE_GOALS_IN_EPIC_RESULT.fail}
                         buttons={["OK"]}
                     />
+                    {/*<IonAlert*/}
+                    {/*    isOpen={showAlert12}*/}
+                    {/*    onDidDismiss={() => {*/}
+                    {/*        setShowAlert12(false);*/}
+                    {/*        setTriggerFresh(triggerRefresh + 1);*/}
+                    {/*    }}*/}
+                    {/*    header={'Error'}*/}
+                    {/*    message={DELETE_EPIC_RESULT.id_error}*/}
+                    {/*    buttons={["OK"]}*/}
+                    {/*/>*/}
                     <IonAlert
                         isOpen={showAlert5}
                         onDidDismiss={() => {
-                            setShowAlert5(false);
+                            isMounted.current && setShowAlert5(false);
                             // close modal if the insert was successful
                         }}
                         header={'Delete Epic'}
@@ -233,16 +282,24 @@ export const EditEpic: React.FC<IEditEpic> = ({match}, props:IProps) => {
                             text: "YES",
                             handler: () => {
                                 (async () => {
+                                    // const x = await deleteAllGoalsInEpic(epic);
                                     const result = await deleteEpic(epic);
-                                    if (result === DELETE_EPIC_RESULT.pass)
-                                    {
-                                        setShowAlert7(true);
+                                    // if (1 === 1){
+                                    if (result === DELETE_EPIC_RESULT.pass) {
+                                        isMounted.current && setShowAlert7(true);
+                                        // console.log("updater is", props.updater);
+                                        // if (props.updater) {
+                                        //     props.updater(1);
+                                        //     console.log("updater updated");
+                                        // }
                                         history.goBack();
                                     }
-                                    else if (result === DELETE_GOALS_IN_EPIC_RESULT.fail)
-                                        setShowAlert11(true);
+                                        // } else if (result === DELETE_GOALS_IN_EPIC_RESULT.fail)
+                                        //     setShowAlert11(true);
+                                        // else if (result === DELETE_EPIC_RESULT.id_error)
+                                    //     setShowAlert12(true);
                                     else
-                                        setShowAlert6(true);
+                                        isMounted.current && setShowAlert6(true);
                                 })();
                             }
                         }]}
@@ -250,7 +307,7 @@ export const EditEpic: React.FC<IEditEpic> = ({match}, props:IProps) => {
                     <IonAlert
                         isOpen={showAlert8}
                         onDidDismiss={() => {
-                            setShowAlert8(false);
+                            isMounted.current && setShowAlert8(false);
                             // close modal if the insert was successful
                         }}
                         header={'Complete Epic'}
@@ -267,13 +324,12 @@ export const EditEpic: React.FC<IEditEpic> = ({match}, props:IProps) => {
                                     const result = await completeEpic(epic);
                                     if (result === COMPLETE_EPIC_RESULT.pass) {
                                         updatePet();
-                                        setShowAlert9(true);
-                                        if (props.updater)
-                                            props.updater(1);
+                                        isMounted.current && setShowAlert9(true);
+                                        // if (props.updater)
+                                        //     props.updater(1);
                                         history.goBack();
-                                    }
-                                    else
-                                        setShowAlert10(true);
+                                    } else
+                                        isMounted.current && setShowAlert10(true);
                                 })();
                             }
                         }]}

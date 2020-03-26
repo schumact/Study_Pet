@@ -5,8 +5,9 @@ import {selectAllIncompleteGoals, selectGoalsForEpic} from "../Stitch/StitchGoal
 
 interface IGoalContainer {
     isUsedByEpic?: boolean;
-    epicId?: string
-    updaterCount:number
+    epicId?: string;
+    updaterCount:number;
+    updater?: (val:number) => void;
 }
 
 const GoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer) => {

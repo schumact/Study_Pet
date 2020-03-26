@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Redirect, Route} from 'react-router-dom';
 import {
     IonApp,
@@ -49,6 +49,8 @@ const App: React.FC = () => (
 );
 
 function AppUI() {
+    const [value, setValue] = useState("hello from shitfuck");
+
     const {
         isLoggedIn,
         actions: {handleLogout},
@@ -60,12 +62,12 @@ function AppUI() {
                     <IonTabs>
                         <IonRouterOutlet>
                             <Route path="/account" component={Account} exact={true}/>
-                            <Route path="/home" component={Home} exact={true}/>
-                            <Route path="/my_pet" component={MyPet}/>
-                            <Route path="/edit_goal/:id" component={EditGoal} exact={true}/>
-                            <Route path="/edit_epic/:id" component={EditEpic} exact={true}/>
-                            <Route path="/epic_goals/:id" component={EpicGoals} exact={true}/>
-                            <Route path="/completed_view" component={CompletedItemView}/>
+                                <Route path="/home" component={Home} exact={true}/>
+                                <Route path="/my_pet" component={MyPet}/>
+                                <Route path="/edit_goal/:id" component={EditGoal} exact={true}/>
+                                <Route path="/edit_epic/:id" component={EditEpic} exact={true}/>
+                                <Route path="/epic_goals/:id" component={EpicGoals} exact={true}/>
+                                <Route path="/completed_view" component={CompletedItemView}/>
                             <Route path="/" render={() => <Redirect to="/account"/>} exact={true}/>
                         </IonRouterOutlet>
                         <IonTabBar slot="bottom">
