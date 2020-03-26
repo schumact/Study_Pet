@@ -15,6 +15,7 @@ import DateTimePicker from "./DateTimePicker";
 import {insertEpic} from "../Stitch/StitchGoals";
 import {DATE_ENUMS, INSERT_EPIC_RESULT} from "../Util/Enums";
 import {dateValidation, titleValidation} from "../Util/GoalValidation";
+import StudyPetService from "../Util/GlobalSingleton";
 
 interface INewEpic {
     modalHandler: (isOpen: boolean) => void;
@@ -31,7 +32,7 @@ export const AddEpic:React.FC<INewEpic> = (props:INewEpic) => {
     const [epic, setEpic] = useState<Partial<IEpic>>(
         { owner_id:userInfo.currentUser.id, isComplete: false});
 
-    const createGoal = () => {
+    const createEpic = () => {
         // TODO add in a check to make sure that end date is after startDate
         const areDatesValid = dateValidation(epic.startDate, epic.endDate);
         const isTitleValid = titleValidation(epic.epicTitle);
@@ -40,8 +41,9 @@ export const AddEpic:React.FC<INewEpic> = (props:INewEpic) => {
             let result:Promise<string> = insertEpic(epic);
             result.then(res => {
                 setResultMessage(res);
-                if (props.updater)
+                if (props.updater) {
                     props.updater(1);
+                }
                 setShowAlert4(true);
             }).catch(err => {
                 setResultMessage(err);
@@ -101,7 +103,7 @@ export const AddEpic:React.FC<INewEpic> = (props:INewEpic) => {
             <br/>
             <IonButton
                 expand="block"
-                onClick={() => createGoal()}>
+                onClick={() => createEpic()}>
                 Add Epic
             </IonButton>
             <IonAlert
@@ -126,8 +128,8 @@ export const AddEpic:React.FC<INewEpic> = (props:INewEpic) => {
                     // close modal if the insert was successful
                     if (resultMessage === INSERT_EPIC_RESULT.pass)
                     {
-                        console.log("pass");
                         props.modalHandler(false);
+                        StudyPetService.sendAppEvent({increment: 0});
                     }
                 }}
                 header={resultMessage}

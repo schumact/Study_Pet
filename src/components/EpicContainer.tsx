@@ -3,6 +3,8 @@ import './GoalContainer.css';
 import {IEpic, selectAllIncompleteEpics} from "../Stitch/StitchGoals";
 import {IonAlert} from "@ionic/react";
 import EpicItem from "./EpicItem";
+import StudyPetService, {IBus} from '../Util/GlobalSingleton';
+import {Observable, Subscription} from 'rxjs';
 
 // TODO see if I can get this to work with goals state object
 interface IEpicContainer {
@@ -18,6 +20,7 @@ interface IEpicState {
 }
 
 class EpicContainer extends React.Component<IEpicContainer, IEpicState> {
+    appSub:Subscription | null = null;
     constructor(props:IEpicContainer) {
         super(props);
         this.state = {
@@ -25,18 +28,21 @@ class EpicContainer extends React.Component<IEpicContainer, IEpicState> {
             showAlert1: false,
             updateForIncrease: 0,
             epicItemList: [],
-            epics: []
+            epics: ""
         }
     }
 
-    async componentDidMount() {
+    async refresh () {
         try {
+            console.log("component did mount");
             const res = await selectAllIncompleteEpics();
             if (res) {
                 if (res.length === 0)
                     this.setState({isEmptyEpic:true});
                 else {
-                    this.setState({epics:JSON.stringify(res)});
+                    console.log("component mount else statement");
+                    console.log("res obj ", res);
+                    // this.setState({epics:JSON.stringify(res)});
                     let goalItems = res.map((currEpic: any) => {
                         // seems like a mess waiting to happen
                         let newEpic = {
@@ -51,6 +57,7 @@ class EpicContainer extends React.Component<IEpicContainer, IEpicState> {
                         };
                         return EpicItem(newEpic);
                     });
+                    console.log("goal items is ", goalItems);
                     this.setState({
                         epicItemList:goalItems,
                         isEmptyEpic: false
@@ -71,6 +78,12 @@ class EpicContainer extends React.Component<IEpicContainer, IEpicState> {
     }
 
 
+    async componentDidMount() {
+        this.appSub = StudyPetService.getEventBus().subscribe(async e => {
+            return await this.refresh();
+        });
+       return await this.refresh();
+    }
 
     render(): React.ReactElement {
         console.log("My state is ", this.state);

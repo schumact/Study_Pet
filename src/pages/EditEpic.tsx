@@ -13,7 +13,7 @@ import {
 import '../components/AddGoal.css';
 import DateTimePicker from "../components/DateTimePicker";
 import {
-    completeEpic, deleteAllGoalsInEpic,
+    completeEpic,
     deleteEpic,
     findEpic,
     getPet,
@@ -23,6 +23,7 @@ import {
 import {COMPLETE_EPIC_RESULT, DELETE_EPIC_RESULT, DATE_ENUMS, DELETE_GOALS_IN_EPIC_RESULT} from "../Util/Enums";
 import {RouteComponentProps, useHistory} from "react-router-dom";
 import {checkmarkDoneOutline, trashOutline} from "ionicons/icons";
+import StudyPetService, {IBus} from '../Util/GlobalSingleton';
 
 interface IEditEpic extends RouteComponentProps<{
     id: string;
@@ -71,7 +72,6 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
     };
 
     useEffect(() => {
-            // let isSubscribed: boolean = true;
         console.log("running use effect from edit epic");
             (async () => {
                 const res:any = await findEpic(match.params.id);
@@ -86,10 +86,6 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
                         isMounted.current && setPet({petPoints: my_pet[0].points, id: my_pet[0]._id});
                     }
             })();
-            // return () => {
-            //     console.log("unmounting");
-            //     isSubscribed = false
-            // };
         }, [pet.petPoints]
     );
 
@@ -180,11 +176,7 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
                         onClick={() => UpdateEpic()}>
                         Edit Epic
                     </IonButton>
-                    {/*<IonButton*/}
-                    {/*    expand="block"*/}
-                    {/*    onClick={() => history.goBack()}>*/}
-                    {/*    go back*/}
-                    {/*</IonButton>*/}
+
                     <IonFab horizontal="end" vertical="top" slot="fixed">
                         <IonFabButton color="danger" onClick={() => isMounted.current && setShowAlert5(true)}>
                             <IonIcon icon={trashOutline}/>
@@ -292,6 +284,7 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
                                         //     props.updater(1);
                                         //     console.log("updater updated");
                                         // }
+                                        StudyPetService.sendAppEvent({increment: 0});
                                         history.goBack();
                                     }
                                         // } else if (result === DELETE_GOALS_IN_EPIC_RESULT.fail)
@@ -327,6 +320,7 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
                                         isMounted.current && setShowAlert9(true);
                                         // if (props.updater)
                                         //     props.updater(1);
+                                        StudyPetService.sendAppEvent({increment: 2});
                                         history.goBack();
                                     } else
                                         isMounted.current && setShowAlert10(true);

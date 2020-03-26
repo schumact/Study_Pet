@@ -14,11 +14,7 @@ interface IEpicItem {
     goals: string[] | undefined
 }
 
-interface IEpicItem2 {
-    updater?: (val:number) => void;
-}
-
-export const EpicItem: React.FC<IEpicItem> = (props: IEpicItem, props2: IEpicItem2) => {
+export const EpicItem: React.FC<IEpicItem> = (props: IEpicItem) => {
     const oneDay = 24 * 60 * 60 * 1000;
     let daysLeft = -1;
     if (props.endDate && props.startDate) {
@@ -50,11 +46,8 @@ export const EpicItem: React.FC<IEpicItem> = (props: IEpicItem, props2: IEpicIte
                     <IonCardTitle>{props.title}</IonCardTitle>
                 </IonCardHeader>
                 <IonCardContent>
-                    <Link to={ {
-                        pathname: `/edit_epic/${props.key}`,
-                        state: {myState: props2.updater}
-                    }
-                    }>Click me to Edit!</Link>
+                    <Link to={`/edit_epic/${props.key}`}>
+                    Click me to Edit!</Link>
                     <br/>
                     <Link to={`/epic_goals/${props.key}`}> Epic's Goals </Link>
                 </IonCardContent>
