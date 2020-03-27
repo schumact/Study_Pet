@@ -42,12 +42,10 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
     const [showAlert9, setShowAlert9] = useState(false);
     const [showAlert10, setShowAlert10] = useState(false);
     const [showAlert11, setShowAlert11] = useState(false);
-    // const [showAlert12, setShowAlert12] = useState(false);
     const [resultMessage, setResultMessage] = useState();
     const [epic, setEpic] = useState<any>();
     const [pet, setPet] = useState({petPoints: 0, id: ""});
     const history = useHistory();
-    // const [triggerRefresh, setTriggerFresh] = useState(0);
 
     const UpdateEpic = () => {
         // TODO add in a check to make sure that end date is after startDate

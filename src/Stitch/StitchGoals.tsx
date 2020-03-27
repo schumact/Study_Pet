@@ -46,7 +46,9 @@ export interface IPet {
     hydration_percent?: number;
     hunger_percent?: number;
     points: number;
-    name: string
+    name: string;
+    _id: any;
+    last_updated: Date;
 }
 
 const goalsCollection = mongodb.db("study_pet").collection("Goals");
@@ -59,6 +61,7 @@ export const insertPet = async (petName: IPet): Promise<string> => {
     petName.hunger_percent = 100;
     petName.hydration_percent = 100;
     petName.points = 0;
+    petName.last_updated = new Date();
     try {
         let res = await petCollection.insertOne(petName);
         console.log(`Successfully inserted item with _id: ${res.insertedId}`);
@@ -113,6 +116,86 @@ export const updatePetPointsFromGoal = async (id: string, petPoints: number, poi
     const update = {
         "$set": {
             "points": petPoints + pointsFromGoal,
+        }
+    };
+    const options = {"upsert": false};
+    try {
+        let res = await petCollection.updateOne({_id: {$oid: id.toString()}}, update, options);
+        const {matchedCount, modifiedCount} = res;
+        if (matchedCount && modifiedCount) {
+            return UPDATE_PET_POINTS_RESULT.pass
+        }
+        return UPDATE_PET_POINTS_RESULT.fail;
+    } catch (err) {
+        console.log(`${UPDATE_PET_POINTS_RESULT.fail}: ${err}`);
+        return UPDATE_PET_POINTS_RESULT.fail;
+    }
+};
+
+export const increasePetHealth = async (newValue: number, id: any) => {
+    const update = {
+        "$set": {
+            "health_percent": newValue
+        }
+    };
+    const options = {"upsert": false};
+    try {
+        let res = await petCollection.updateOne({_id: {$oid: id.toString()}}, update, options);
+        const {matchedCount, modifiedCount} = res;
+        if (matchedCount && modifiedCount) {
+            return UPDATE_PET_POINTS_RESULT.pass
+        }
+        return UPDATE_PET_POINTS_RESULT.fail;
+    } catch (err) {
+        console.log(`${UPDATE_PET_POINTS_RESULT.fail}: ${err}`);
+        return UPDATE_PET_POINTS_RESULT.fail;
+    }
+};
+
+export const increasePetHydration = async (newValue: number, id: any) => {
+    const update = {
+        "$set": {
+            "hydration_percent": newValue
+        }
+    };
+    const options = {"upsert": false};
+    try {
+        let res = await petCollection.updateOne({_id: {$oid: id.toString()}}, update, options);
+        const {matchedCount, modifiedCount} = res;
+        if (matchedCount && modifiedCount) {
+            return UPDATE_PET_POINTS_RESULT.pass
+        }
+        return UPDATE_PET_POINTS_RESULT.fail;
+    } catch (err) {
+        console.log(`${UPDATE_PET_POINTS_RESULT.fail}: ${err}`);
+        return UPDATE_PET_POINTS_RESULT.fail;
+    }
+};
+
+export const increasePetHunger = async (newValue: number, id: any) => {
+    const update = {
+        "$set": {
+            "hunger_percent": newValue
+        }
+    };
+    const options = {"upsert": false};
+    try {
+        let res = await petCollection.updateOne({_id: {$oid: id.toString()}}, update, options);
+        const {matchedCount, modifiedCount} = res;
+        if (matchedCount && modifiedCount) {
+            return UPDATE_PET_POINTS_RESULT.pass
+        }
+        return UPDATE_PET_POINTS_RESULT.fail;
+    } catch (err) {
+        console.log(`${UPDATE_PET_POINTS_RESULT.fail}: ${err}`);
+        return UPDATE_PET_POINTS_RESULT.fail;
+    }
+};
+
+export const decreasePetPoints = async (newValue: number, id: any) => {
+    const update = {
+        "$set": {
+            "points": newValue
         }
     };
     const options = {"upsert": false};
@@ -298,8 +381,7 @@ export const deleteEpic = async (epic: any): Promise<string> => {
                 console.error(`Failed to delete item: ${err}`);
                 return DELETE_EPIC_RESULT.error;
             });
-    }
-    else
+    } else
         return DELETE_EPIC_RESULT.id_error;
 };
 
@@ -326,8 +408,7 @@ export const selectIncompleteGoalsInEpic = async (epic: any) => {
         if (epic.goals) {
             return await goalsCollection.find({_id: {$in: epic.goals}, isComplete: false})
                 .toArray();
-        }
-        else
+        } else
             return []
     } catch (err) {
         console.log(`${FIND_EPIC_RESULT}: ${err}`);
@@ -371,7 +452,7 @@ export const addGoalToEpic = async (epicId: any, goalId: string) => {
 
 
 export const selectGoalsForEpic = async (id: string) => {
-    const epic:any = await findEpic(id);
+    const epic: any = await findEpic(id);
     if (!epic[0].goals)
         return undefined;
     else if (epic[0].goals.length === 0)

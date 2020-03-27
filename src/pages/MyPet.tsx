@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useReducer} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     IonContent,
     IonHeader,
@@ -8,119 +8,21 @@ import {
     IonProgressBar,
     IonList,
     IonItem,
-    IonLabel
+    IonLabel, IonButton
 } from '@ionic/react';
 import './MyPet.css';
-import {getPet, IPet} from "../Stitch/StitchGoals";
+import {
+    decreasePetPoints,
+    getPet,
+    increasePetHealth,
+    increasePetHunger,
+    increasePetHydration,
+    IPet
+} from "../Stitch/StitchGoals";
 import PetCreation from "../components/PetCreation";
-
-type State = {
-    health: number;
-    hunger: number;
-    hydration: number;
-    points: number
-};
-
-type ChangeHealth = {
-    readonly type: "ChangeHealth";
-    readonly diff: number;  // this number is going to need to be divided by 100
-}
-
-type ChangeHunger = {
-    readonly type: "ChangeHunger";
-    readonly diff: number; // this number is going to need to be divided by 100
-}
-
-type ChangeHydration = {
-    readonly type: "ChangeHydration";
-    readonly diff: number; // this number is going to need to be divided by 100
-}
-
-type ChangePoints = {
-    readonly type: "ChangePoints";
-    readonly diff: number;
-}
-
-type SetPoints = {
-    readonly type: "SetPoints";
-    readonly set: number;
-}
-
-type SetHealth = {
-    readonly type: "SetHealth";
-    readonly set: number;  // this number is going to need to be divided by 100
-}
-
-type SetHunger = {
-    readonly type: "SetHunger";
-    readonly set: number; // this number is going to need to be divided by 100
-}
-
-type SetHydration = {
-    readonly type: "SetHydration";
-    readonly set: number; // this number is going to need to be divided by 100
-}
-
-
-type Actions = ChangeHealth | ChangeHunger | ChangeHydration | ChangePoints |
-    SetPoints | SetHealth | SetHydration | SetHunger;
-
-function reducer(state: State, action: Actions): State {
-    // TODO making note that useEffect or wherever a cleanup function goes when the
-    // component is unmounted, I will need to multiply all these values by 100 and
-    // push values to db
-    switch (action.type) {
-        case "ChangeHealth":
-            return (() => {
-                let new_health = (state.health + action.diff) / 100;
-                if (new_health > 1)
-                    new_health = 1;
-                return {...state, health: new_health};
-            } )();
-        case "ChangeHunger":
-            return (() => {
-                let new_hunger = (state.hunger + action.diff) / 100;
-                if (new_hunger > 1)
-                    new_hunger = 1;
-                return {...state, hunger: new_hunger};
-            } )();
-        case "ChangeHydration":
-            return (() => {
-                let new_hydration = (state.hydration + action.diff) / 100;
-                if (new_hydration > 1)
-                    new_hydration = 1;
-                return {...state, hydration: new_hydration};
-            } )();
-        case "ChangePoints":
-            return (() => {
-                let new_points = (state.points - action.diff);
-                // TODO might need to revisit this
-                if (new_points < 0)
-                    new_points = 0;
-                return {...state, points: new_points};
-            } )();
-        case "SetPoints":
-            return (() => {
-                let new_points = (action.set);
-                return {...state, points: new_points};
-            } )();
-        case "SetHydration":
-            return (() => {
-                let starting_hydration = (action.set);
-                return {...state, hydration: starting_hydration};
-            } )();
-        case "SetHealth":
-            return (() => {
-                let starting_health = (action.set);
-                return {...state, health: starting_health};
-            } )();
-        case "SetHunger":
-            return (() => {
-                let starting_hunger = (action.set);
-                return {...state, hunger: starting_hunger};
-            } )();
-    }
-}
+import PetDrinkOrder from "../components/PetDrinkOrder";
+import PetSupplementsOrder from "../components/PetSupplementsOrder";
+import PetFoodOrder from "../components/PetFoodOrder";
 
 const PROGRESS_COLORS = {
     0: "danger",
@@ -150,11 +52,43 @@ const change_progress_color = (pet_percentage: any) => {
     return color;
 };
 
+interface IShop {
+    showFood: boolean;
+    showDrink: boolean;
+    showSupplement: boolean
+}
+
+interface IPetState {
+    health: number;
+    hydration: number;
+    hunger: number;
+    points: number;
+    hasBeenSet: boolean;
+    isMaxHealth: boolean;
+    isMaxHydration: boolean;
+    isMaxHunger: boolean;
+}
 
 const MyPet: React.FC = () => {
     const [pet, setPet] = useState<IPet>();
-    const [state, dispatch] = useReducer<React.Reducer<State, Actions>>(reducer,
-        {health: 0, hydration: 0, hunger: 0, points: 0});
+    const [petState, setPetState] = useState<IPetState>({
+        health: 0,
+        hydration: 0,
+        hunger: 0,
+        points: 0,
+        hasBeenSet: false,
+        isMaxHealth: false,
+        isMaxHydration: false,
+        isMaxHunger: false,
+    });
+
+    const [showShop, setShowShop] = useState<IShop>({
+        showDrink: false,
+        showFood: true,
+        showSupplement: false
+    });
+    const [refresh, setRefresh] = useState<boolean>(false);
+
 
     useEffect(() => {
         (async () => {
@@ -163,13 +97,82 @@ const MyPet: React.FC = () => {
                 if (my_pet.length > 0) {
                     const p: any = my_pet[0];
                     setPet(p);
-                    dispatch({type: "ChangeHealth", diff: p.health_percent});
-                    dispatch({type: "ChangeHunger", diff: p.hunger_percent});
-                    dispatch({type: "SetPoints", set: p.points});
-                    dispatch({type: "ChangeHydration", diff: p.hydration_percent});
+                    setPetState({
+                        health: p.health_percent,
+                        hasBeenSet: true,
+                        hunger: p.hunger_percent,
+                        hydration: p.hydration_percent,
+                        points: p.points,
+                        isMaxHydration: p.hydration_percent >= 100,
+                        isMaxHunger: p.hunger_percent >= 100,
+                        isMaxHealth: p.health_percent >= 100,
+                    })
                 }
         })();
-    }, [state.health, state.hunger, state.hydration, state.points]);
+    }, [petState.health, petState.hunger, petState.hydration, petState.points, refresh]);
+
+    const displayFood = () => {
+        setShowShop({...showShop, showFood: true, showSupplement: false, showDrink: false})
+    };
+
+    const displayDrinks = () => {
+        setShowShop({...showShop, showFood: false, showSupplement: false, showDrink: true})
+    };
+
+    const displaySupplements = () => {
+        setShowShop({...showShop, showFood: false, showSupplement: true, showDrink: false})
+    };
+
+    const updateHunger = async (increment: number) => {
+        if (petState.hunger + increment >= 100) {
+            setPetState({...petState, hunger: 100, isMaxHunger: true});
+            if (pet)
+                await increasePetHunger(100, pet._id);
+        } else {
+            const newValue = petState.hunger + increment;
+            setPetState({...petState, hunger: newValue});
+            if (pet)
+                await increasePetHunger(newValue, pet._id);
+        }
+
+    };
+
+    const updateHydration = async (increment: number) => {
+        if (petState.hydration + increment >= 100) {
+            setPetState({...petState, hydration: 100, isMaxHydration: true});
+            if (pet)
+                await increasePetHydration(100, pet._id);
+        } else {
+            const newValue = petState.hydration + increment;
+            setPetState({...petState, hydration: newValue});
+            if (pet)
+                await increasePetHydration(newValue, pet._id);
+        }
+    };
+
+    const updateHealth = async (increment: number) => {
+        if (petState.health + increment >= 100) {
+            setPetState({...petState, health: 100, isMaxHealth: true});
+            if (pet)
+                await increasePetHealth(100, pet._id);
+        } else {
+            const newValue = petState.health + increment;
+            setPetState({...petState, health: newValue});
+            if (pet)
+                await increasePetHealth(newValue, pet._id);
+        }
+    };
+
+    const subtractPetPoints = async (decrement: number) => {
+        const newValue = petState.points - decrement;
+        setPetState({...petState, points: petState.points - decrement});
+        if (pet)
+            await decreasePetPoints(newValue, pet._id);
+    };
+
+    const changeRefresher = (val:boolean) => {
+        setRefresh(true);
+    };
 
     return (
         pet ?
@@ -186,31 +189,58 @@ const MyPet: React.FC = () => {
                         </IonToolbar>
                     </IonHeader>
                     <IonList>
+                        <IonItem lines={"none"}>
+                            <h2 className={"monospace2"}>{pet.name}'s Purr Points: {petState.points}</h2>
+                        </IonItem>
                         <IonItem>
                             <IonLabel position="floating">
                                 Health
                             </IonLabel>
                             <IonProgressBar
-                                value={state.health}
-                                color={change_progress_color(state.health)}/>
+                                value={petState.health / 100}
+                                color={change_progress_color(petState.health)}/>
                         </IonItem>
                         <IonItem>
                             <IonLabel position="floating">
                                 Hunger
                             </IonLabel>
                             <IonProgressBar
-                                value={state.hunger}
-                                color={change_progress_color(state.hunger)}/>
+                                value={petState.hunger / 100}
+                                color={change_progress_color(petState.hunger)}/>
                         </IonItem>
                         <IonItem>
                             <IonLabel position="floating">
-                                Hydration
+                                Hydration {petState.hydration}
                             </IonLabel>
                             <IonProgressBar
-                                value={state.hydration}
-                                color={change_progress_color(state.hydration)}/>
+                                value={petState.hydration / 100}
+                                color={change_progress_color(petState.hydration)}/>
                         </IonItem>
                     </IonList>
+                    <div style={{display: "flex", justifyContent: "space-between"}}>
+                        <IonButton onClick={() => displayFood()}>
+                            Food
+                        </IonButton>
+                        <IonButton onClick={() => displayDrinks()}>
+                            Beverages
+                        </IonButton>
+                        <IonButton onClick={() => displaySupplements()}>
+                            Supplements
+                        </IonButton>
+                    </div>
+                    {showShop.showFood && <PetFoodOrder increment={updateHunger}
+                                                        isMaxHunger={petState.isMaxHunger}
+                                                        adjustPetPoints={subtractPetPoints}/>}
+                    {showShop.showDrink && <PetDrinkOrder adjustPetPoints={subtractPetPoints}
+                                                          isMaxHydration={petState.isMaxHydration}
+                                                          increment={updateHydration}/>}
+                    {showShop.showSupplement && <PetSupplementsOrder adjustPetPoints={subtractPetPoints}
+                                                                     incrementHunger={updateHunger}
+                                                                     isMaxHydration={petState.isMaxHydration}
+                                                                     isMaxHealth={petState.isMaxHealth}
+                                                                     isMaxHunger={petState.isMaxHunger}
+                                                                     incrementHydration={updateHydration}
+                                                                     incrementHealth={updateHealth}/>}
                 </IonContent>
             </IonPage> :
             <IonPage>
@@ -225,7 +255,7 @@ const MyPet: React.FC = () => {
                             <IonTitle size="large">My Pet</IonTitle>
                         </IonToolbar>
                     </IonHeader>
-                    <PetCreation/>
+                    {!refresh && <PetCreation refresher={changeRefresher}/>}
                 </IonContent>
             </IonPage>
     );

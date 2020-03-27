@@ -27,6 +27,7 @@ const Account: React.FC = () => {
                 <p> Component should go here with maybe an ion card with the user's account info.
                     Possibly some user stats.</p>
                 <IonButton onClick={() => handleLogout()}>Log out</IonButton>
+                <br/>
             </IonContent>
         </IonPage>:
             <Login/>
