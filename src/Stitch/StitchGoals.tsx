@@ -109,12 +109,17 @@ export const updatePetPointsFromEpic = async (id: string, petPoints: number) => 
 };
 
 export const updatePetPointsFromGoal = async (id: string, petPoints: number, pointsFromGoal: number) => {
+    console.log("params passed into update pet points are ", id);
+    console.log("params passed into update pet points are ", petPoints);
+    console.log("params passed into update pet points are ", pointsFromGoal);
+
     let multiplier = Math.floor(Math.random() * 6);
     pointsFromGoal = pointsFromGoal * multiplier;
     if (pointsFromGoal > 30)
         pointsFromGoal = 30;
     if (pointsFromGoal === 0)
         pointsFromGoal = 1;
+    console.log("setting new pet points to ", petPoints + pointsFromGoal);
     const update = {
         "$set": {
             "points": petPoints + pointsFromGoal,
@@ -125,6 +130,7 @@ export const updatePetPointsFromGoal = async (id: string, petPoints: number, poi
         let res = await petCollection.updateOne({_id: {$oid: id.toString()}}, update, options);
         const {matchedCount, modifiedCount} = res;
         if (matchedCount && modifiedCount) {
+            console.log("SHOULD BE UPDATED");
             return UPDATE_PET_POINTS_RESULT.pass
         }
         return UPDATE_PET_POINTS_RESULT.fail;

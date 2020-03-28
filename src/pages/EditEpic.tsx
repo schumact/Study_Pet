@@ -89,10 +89,8 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
        return () => {isMounted.current = false}
     }, []);
 
-    const updatePet = () => {
-        (async () => {
-            await updatePetPointsFromEpic(pet.id, pet.petPoints);
-        })();
+    const updatePet = async () => {
+        await updatePetPointsFromEpic(pet.id, pet.petPoints);
     };
 
     return (
@@ -269,7 +267,7 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
                                 (async () => {
                                     const result = await completeEpic(epic);
                                     if (result === COMPLETE_EPIC_RESULT.pass) {
-                                        updatePet();
+                                        await updatePet();
                                         isMounted.current && setShowAlert9(true);
                                         StudyPetService.sendAppEvent({increment: 2});
                                         history.goBack();

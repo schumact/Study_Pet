@@ -103,8 +103,6 @@ export const AddGoal: React.FC<INewGoal> = (props: INewGoal) => {
         }
     };
 
-    console.log("FROM add goal props updater ", props.updater);
-
     useEffect(() => {
         (async () => {
             if (props.isUsedByEpic && props.epicId) {

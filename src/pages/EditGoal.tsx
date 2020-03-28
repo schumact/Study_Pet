@@ -75,21 +75,20 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
 
     useEffect(() => {
         (async () => {
-            const res:any = await findGoal(match.params.id);
+            const res: any = await findGoal(match.params.id);
             if (res[0])
                 setGoal(res[0]);
-            var my_pet:any = await getPet();
+            var my_pet: any = await getPet();
             if (my_pet)
-                if (my_pet.length > 0){
+                if (my_pet.length > 0) {
                     setPet({petPoints: my_pet[0].points, id: my_pet[0]._id});
                 }
         })();
     }, [pet.petPoints]);
 
-    const updatePet = () => {
-        (async() => {
-            await updatePetPointsFromGoal(pet.id, pet.petPoints, goal.points);
-        })();
+    const updatePet = async () => {
+        console.log("updating pet with points from epic");
+        await updatePetPointsFromGoal(pet.id, pet.petPoints, goal.points);
     };
 
     return (
@@ -249,8 +248,7 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                                     if (result === DELETE_GOAL_RESULT.pass) {
                                         setShowAlert7(true);
                                         history.goBack();
-                                    }
-                                    else
+                                    } else
                                         setShowAlert6(true);
                                 })();
                             }
@@ -274,13 +272,11 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                             handler: () => {
                                 (async () => {
                                     const result = await completeGoal(match.params.id);
-                                    if (result === COMPLETE_GOAL_RESULT.pass)
-                                    {
-                                        updatePet();
+                                    if (result === COMPLETE_GOAL_RESULT.pass) {
+                                        await updatePet();
                                         setShowAlert9(true);
                                         history.goBack();
-                                    }
-                                    else
+                                    } else
                                         setShowAlert10(true);
                                 })();
                             }

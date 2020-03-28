@@ -37,7 +37,6 @@ export const GoalItem: React.FC<IGoalItem> = (props: IGoalItem) => {
     if (props.endDate && props.startDate) {
 
         daysLeft = Math.round(Math.abs(Date.parse(props.endDate) - Date.parse(props.startDate)) / oneDay);
-        daysLeft = -1;
         if (daysLeft < 0) {
             // daysLeft = 0;
             // TODO take away a point from the pet.
