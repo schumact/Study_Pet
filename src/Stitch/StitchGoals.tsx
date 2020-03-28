@@ -27,6 +27,8 @@ export interface IGoal {
     points: number;
     isInEpic: boolean;
     epicId?: any;
+    isExpired:boolean;
+    last_updated: Date;
 }
 
 export interface IEpic {
@@ -36,8 +38,8 @@ export interface IEpic {
     startDate: string;
     owner_id: any;
     isComplete: boolean,
-    goals: any[]  // I was thinking this would hold a goal's _id. When we query an epic, get all the goals
-    // and query those when they need to represented
+    goals: any[] ;
+    isExpired:boolean;
 }
 
 export interface IPet {
@@ -60,7 +62,7 @@ export const insertPet = async (petName: IPet): Promise<string> => {
     petName.health_percent = 100;
     petName.hunger_percent = 100;
     petName.hydration_percent = 100;
-    petName.points = 0;
+    petName.points = 20;
     petName.last_updated = new Date();
     try {
         let res = await petCollection.insertOne(petName);
@@ -152,10 +154,11 @@ export const increasePetHealth = async (newValue: number, id: any) => {
     }
 };
 
-export const increasePetHydration = async (newValue: number, id: any) => {
+export const increasePetHydration = async (newHydration: number, newHealth:number, id: any) => {
     const update = {
         "$set": {
-            "hydration_percent": newValue
+            "hydration_percent": newHydration,
+            "health_percent": newHealth
         }
     };
     const options = {"upsert": false};
@@ -172,10 +175,11 @@ export const increasePetHydration = async (newValue: number, id: any) => {
     }
 };
 
-export const increasePetHunger = async (newValue: number, id: any) => {
+export const increasePetHunger = async (newHunger: number, newHealth: number, id: any) => {
     const update = {
         "$set": {
-            "hunger_percent": newValue
+            "hunger_percent": newHunger,
+            "health_percent": newHealth
         }
     };
     const options = {"upsert": false};
@@ -189,6 +193,75 @@ export const increasePetHunger = async (newValue: number, id: any) => {
     } catch (err) {
         console.log(`${UPDATE_PET_POINTS_RESULT.fail}: ${err}`);
         return UPDATE_PET_POINTS_RESULT.fail;
+    }
+};
+
+// decreases the pet's health, hunger and hydration based on the
+// number of days the pet was last updated. Pet.last_updated and
+// Date.now() for when the function is ran gets that day difference
+export const dailyModifyPet = async (dayDiff: number, pet: any, currDate:Date) => {
+    const hunger_multipler = Math.floor(Math.random() * 4);
+    const hydration_multipler = Math.floor(Math.random() * 4);
+    const health_multipler = Math.floor(Math.random() * 4);
+    const pet_hunger_decrease = dayDiff * hunger_multipler;
+    const pet_health_decrease = dayDiff * health_multipler;
+    const pet_hydration_decrease = dayDiff * hydration_multipler;
+
+    const update = {
+        "$set": {
+            "hunger_percent": pet.hunger_percent - pet_hunger_decrease,
+            "hydration_percent": pet.hydration_percent - pet_hydration_decrease,
+            "health_percent": pet.health_percent - pet_health_decrease,
+            "last_updated": currDate
+        }
+    };
+    const options = {"upsert": false};
+    try {
+        let res = await petCollection.updateOne({_id: {$oid: pet._id.toString()}}, update, options);
+        const {matchedCount, modifiedCount} = res;
+        if (matchedCount && modifiedCount) {
+            return UPDATE_PET_POINTS_RESULT.pass
+        }
+        return UPDATE_PET_POINTS_RESULT.fail;
+    } catch (err) {
+        console.log(`${UPDATE_PET_POINTS_RESULT.fail}: ${err}`);
+        return UPDATE_PET_POINTS_RESULT.fail;
+    }
+};
+
+// subtracts a point from the pet for each late day.
+// first day late for a goal/epic 1 point subtracted
+// second day two points will be subtracted. (not 1), etc.
+export const subtractLatePointsFromPet = async (daysLate: number) => {
+    let my_pet:any = null;
+    const pet:any = await getPet();
+    if (pet)
+        my_pet = pet[0];
+    if (my_pet) {
+        console.log("attempting to subtract");
+        if (my_pet.points !== 0) {
+            let new_pet_points: number = my_pet.points - Math.abs(daysLate);
+            console.log("new pet points is ", new_pet_points);
+            if (new_pet_points < 0)
+                new_pet_points = 0;
+            const update = {
+                "$set": {
+                    "points": new_pet_points
+                }
+            };
+            const options = {"upsert": false};
+            try {
+                let res = await petCollection.updateOne({_id: {$oid: my_pet._id.toString()}}, update, options);
+                const {matchedCount, modifiedCount} = res;
+                if (matchedCount && modifiedCount) {
+                    return UPDATE_PET_POINTS_RESULT.pass
+                }
+                return UPDATE_PET_POINTS_RESULT.fail;
+            } catch (err) {
+                console.log(`${UPDATE_PET_POINTS_RESULT.fail}: ${err}`);
+                return UPDATE_PET_POINTS_RESULT.fail;
+            }
+        }  // else do nothing. No need to make a request if the pet already has 0 points
     }
 };
 
@@ -254,15 +327,14 @@ export const selectAllCompletedGoals = async () => {
     }
 };
 
-export const findGoal = (id: string) => {
-    return goalsCollection.find({_id: {$oid: id}})
-        .toArray()
-        .then(res => {
-            return res;
-        })
-        .catch(err => {
-            console.log(`${FIND_GOAL_RESULT}: ${err}`);
-        });
+export const findGoal = async (id: string) => {
+    try {
+        const res = await goalsCollection.find({_id: {$oid: id}})
+            .toArray();
+        return res;
+    } catch (err) {
+        console.log(`${FIND_GOAL_RESULT}: ${err}`);
+    }
 };
 
 export const completeGoal = (id: string) => {
@@ -284,6 +356,26 @@ export const completeGoal = (id: string) => {
             console.log(`${COMPLETE_GOAL_RESULT.fail}: ${err}`);
             return COMPLETE_GOAL_RESULT.error;
         });
+};
+
+export const markGoalAsExpired = async (id: string) => {
+    const update = {
+        "$set": {
+            "isExpired": true,
+        }
+    };
+    const options = {"upsert": false};
+    try {
+        let res = await goalsCollection.updateOne({_id: {$oid: id}}, update, options);
+        const {matchedCount, modifiedCount} = res;
+        if (matchedCount && modifiedCount) {
+            return COMPLETE_GOAL_RESULT.pass;
+        }
+        return COMPLETE_GOAL_RESULT.fail;
+    } catch (err) {
+        console.log(`${COMPLETE_GOAL_RESULT.fail}: ${err}`);
+        return COMPLETE_GOAL_RESULT.error;
+    }
 };
 
 export const updateGoal = async (id: string, goal: any) => {
@@ -310,6 +402,31 @@ export const updateGoal = async (id: string, goal: any) => {
         console.log(`${UPDATE_GOAL_RESULT.fail}: ${err}`);
         outcome = UPDATE_GOAL_RESULT.error;
         return outcome;
+    }
+};
+
+export const setGoalLastUpdatedDate = async (id: string | undefined, latest_date: Date) => {
+    if (id){
+        const update = {
+            "$set": {
+                "last_updated": latest_date,
+            }
+        };
+        const options = {"upsert": false};
+        let outcome;
+        try {
+            let res = await goalsCollection.updateOne({_id: {$oid: id}}, update, options);
+            const {matchedCount, modifiedCount} = res;
+            if (matchedCount && modifiedCount) {
+                outcome = UPDATE_GOAL_RESULT.pass;
+            } else
+                outcome = UPDATE_GOAL_RESULT.fail;
+            return outcome;
+        } catch (err) {
+            console.log(`${UPDATE_GOAL_RESULT.fail}: ${err}`);
+            outcome = UPDATE_GOAL_RESULT.error;
+            return outcome;
+        }
     }
 };
 

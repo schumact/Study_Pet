@@ -36,7 +36,8 @@ const CompletedEpicContainer: React.FC = () => {
                                 goals: currEpic.goals,
                                 owner_id: currEpic.owner_id,
                                 isComplete: currEpic.isComplete,
-                                key: currEpic._id.toString()
+                                key: currEpic._id.toString(),
+                                isExpired: currEpic.isExpired,
                             };
                             return EpicItem(newEpic);
                         });

@@ -193,6 +193,8 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                         isOpen={showAlert4}
                         onDidDismiss={() => {
                             setShowAlert4(false);
+                            console.log("Going back in history");
+                            history.goBack();
                             // close modal if the insert was successful
                         }}
                         header={resultMessage}

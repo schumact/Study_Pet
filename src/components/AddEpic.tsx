@@ -29,8 +29,11 @@ export const AddEpic:React.FC<INewEpic> = (props:INewEpic) => {
     const [showAlert3, setShowAlert3] = useState(false);
     const [showAlert4, setShowAlert4] = useState(false);
     const [resultMessage, setResultMessage] = useState();
-    const [epic, setEpic] = useState<Partial<IEpic>>(
-        { owner_id:userInfo.currentUser.id, isComplete: false});
+    const [epic, setEpic] = useState<Partial<IEpic>>({
+        owner_id:userInfo.currentUser.id,
+        isComplete: false,
+        isExpired: false,
+    });
 
     const createEpic = () => {
         // TODO add in a check to make sure that end date is after startDate

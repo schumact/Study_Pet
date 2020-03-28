@@ -12,12 +12,13 @@ import {
 } from '@ionic/react';
 import './MyPet.css';
 import {
+    dailyModifyPet,
     decreasePetPoints,
     getPet,
     increasePetHealth,
     increasePetHunger,
     increasePetHydration,
-    IPet
+    IPet, setGoalLastUpdatedDate, subtractLatePointsFromPet
 } from "../Stitch/StitchGoals";
 import PetCreation from "../components/PetCreation";
 import PetDrinkOrder from "../components/PetDrinkOrder";
@@ -37,15 +38,15 @@ const PROGRESS_COLORS = {
 const change_progress_color = (pet_percentage: any) => {
     // change the attribute's color depending on pet_attr value
     let color;
-    if (pet_percentage < .10)
+    if (pet_percentage < 10)
         color = PROGRESS_COLORS[1];
-    else if (pet_percentage < .30)
+    else if (pet_percentage < 30)
         color = PROGRESS_COLORS[2];
-    else if (pet_percentage < .50)
+    else if (pet_percentage < 50)
         color = PROGRESS_COLORS[3];
-    else if (pet_percentage < .75)
+    else if (pet_percentage < 75)
         color = PROGRESS_COLORS[4];
-    else if (pet_percentage < .90)
+    else if (pet_percentage < 90)
         color = PROGRESS_COLORS[5];
     else
         color = PROGRESS_COLORS[6];
@@ -81,7 +82,7 @@ const MyPet: React.FC = () => {
         isMaxHydration: false,
         isMaxHunger: false,
     });
-
+    const [count, setCount] = useState<number>(0);
     const [showShop, setShowShop] = useState<IShop>({
         showDrink: false,
         showFood: true,
@@ -89,6 +90,26 @@ const MyPet: React.FC = () => {
     });
     const [refresh, setRefresh] = useState<boolean>(false);
 
+    //
+    const setLastUpdated = async (pet: any) => {
+        const curr_date = new Date();
+        const str_date = curr_date.toLocaleDateString();
+        if (pet) {
+            const last_update_date = pet.last_updated;
+            const last_updated_date_str = last_update_date.toLocaleDateString();
+            if (last_updated_date_str !== str_date) {
+                // get the difference in number of days
+                const days_diff = Math.floor((Date.UTC(curr_date.getFullYear(), curr_date.getMonth(),
+                    curr_date.getDate()) - Date.UTC(last_update_date.getFullYear(),
+                    last_update_date.getMonth(), last_update_date.getDate())) / (1000 * 60 * 60 * 24));
+
+                // use days diff to lower health, hunger and hydration of pet
+                // for each day subtract 1-3 points
+                await dailyModifyPet(days_diff, pet, curr_date);
+                setCount(count + 1);
+            }
+        }
+    };
 
     useEffect(() => {
         (async () => {
@@ -106,10 +127,11 @@ const MyPet: React.FC = () => {
                         isMaxHydration: p.hydration_percent >= 100,
                         isMaxHunger: p.hunger_percent >= 100,
                         isMaxHealth: p.health_percent >= 100,
-                    })
+                    });
+                    await setLastUpdated(p);
                 }
         })();
-    }, [petState.health, petState.hunger, petState.hydration, petState.points, refresh]);
+    }, [petState.health, petState.hunger, petState.hydration, petState.points, refresh, count]);
 
     const displayFood = () => {
         setShowShop({...showShop, showFood: true, showSupplement: false, showDrink: false})
@@ -124,29 +146,50 @@ const MyPet: React.FC = () => {
     };
 
     const updateHunger = async (increment: number) => {
-        if (petState.hunger + increment >= 100) {
-            setPetState({...petState, hunger: 100, isMaxHunger: true});
-            if (pet)
-                await increasePetHunger(100, pet._id);
-        } else {
-            const newValue = petState.hunger + increment;
-            setPetState({...petState, hunger: newValue});
-            if (pet)
-                await increasePetHunger(newValue, pet._id);
+        let new_hunger = petState.hunger + increment;
+        let new_health = petState.health + Math.ceil(increment / 2);
+        if (new_health > 100)
+            new_health = 100;
+        if (new_hunger > 100)
+            new_hunger = 100;
+        if (pet) {
+            if (new_hunger === 100 && new_health === 100)
+                setPetState({
+                    ...petState, hunger: new_hunger,
+                    health: new_health, isMaxHunger: true, isMaxHealth: true
+                });
+            else if (new_hunger === 100)
+                setPetState({...petState, hunger: new_hunger, health: new_health, isMaxHunger: true});
+            else if (new_health === 100)
+                setPetState({...petState, hunger: new_hunger, health: new_health, isMaxHealth: true});
+            else {
+                setPetState({...petState, hunger: new_hunger, health: new_health});
+            }
+            await increasePetHunger(new_hunger, new_health, pet._id);
         }
-
     };
 
     const updateHydration = async (increment: number) => {
-        if (petState.hydration + increment >= 100) {
-            setPetState({...petState, hydration: 100, isMaxHydration: true});
-            if (pet)
-                await increasePetHydration(100, pet._id);
-        } else {
-            const newValue = petState.hydration + increment;
-            setPetState({...petState, hydration: newValue});
-            if (pet)
-                await increasePetHydration(newValue, pet._id);
+        let new_hydration = petState.hydration + increment;
+        let new_health = petState.health + Math.ceil(increment / 2);
+        if (new_health > 100)
+            new_health = 100;
+        if (new_hydration > 100)
+            new_hydration = 100;
+        if (pet) {
+            if (new_hydration === 100 && new_health === 100)
+                setPetState({
+                    ...petState, hydration: new_hydration,
+                    health: new_health, isMaxHydration: true, isMaxHealth: true
+                });
+            else if (new_hydration === 100)
+                setPetState({...petState, hydration: new_hydration, health: new_health, isMaxHydration: true});
+            else if (new_health === 100)
+                setPetState({...petState, hydration: new_hydration, health: new_health, isMaxHealth: true});
+            else {
+                setPetState({...petState, hydration: new_hydration, health: new_health});
+            }
+            await increasePetHydration(new_hydration, new_health, pet._id);
         }
     };
 
@@ -170,7 +213,7 @@ const MyPet: React.FC = () => {
             await decreasePetPoints(newValue, pet._id);
     };
 
-    const changeRefresher = (val:boolean) => {
+    const changeRefresher = (val: boolean) => {
         setRefresh(true);
     };
 
@@ -194,7 +237,7 @@ const MyPet: React.FC = () => {
                         </IonItem>
                         <IonItem>
                             <IonLabel position="floating">
-                                Health
+                                Health: {petState.health}%
                             </IonLabel>
                             <IonProgressBar
                                 value={petState.health / 100}
@@ -202,7 +245,7 @@ const MyPet: React.FC = () => {
                         </IonItem>
                         <IonItem>
                             <IonLabel position="floating">
-                                Hunger
+                                Hunger: {petState.hunger}%
                             </IonLabel>
                             <IonProgressBar
                                 value={petState.hunger / 100}
@@ -210,7 +253,7 @@ const MyPet: React.FC = () => {
                         </IonItem>
                         <IonItem>
                             <IonLabel position="floating">
-                                Hydration {petState.hydration}
+                                Hydration: {petState.hydration}%
                             </IonLabel>
                             <IonProgressBar
                                 value={petState.hydration / 100}

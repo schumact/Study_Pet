@@ -46,7 +46,9 @@ const CompletedGoalContainer: React.FC<IGoalContainer> = (props: IGoalContainer)
                                 points: currGoal.points,
                                 owner_id: currGoal.owner_id,
                                 isComplete: currGoal.isComplete,
-                                key: currGoal._id.toString()
+                                key: currGoal._id.toString(),
+                                isExpired: currGoal.isExpired,
+                                last_updated: currGoal.last_updated
                             };
                             return GoalItem(newGoal);
                         });

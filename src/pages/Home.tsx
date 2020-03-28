@@ -24,12 +24,7 @@ const Home: React.FC = () => {
         setEpicUpdater(epicUpdaterCount + updateValue);
     };
 
-    useEffect(() => {
-        console.log("running use effect")
-    }, [goalUpdaterCount]);
-
-    console.log("my goal updater count is now ", goalUpdaterCount);
-    console.log("my epic updater count is now ", epicUpdaterCount);
+    useEffect(() => {}, [goalUpdaterCount]);
 
     return (
             <IonPage>
@@ -87,7 +82,6 @@ const Home: React.FC = () => {
                         View Completed Goals and Epics
                     </IonButton>
                     <GoalContainer updaterCount={goalUpdaterCount}/>
-                    {/*<GoalContainer updater={updateGoalUpdater}/>*/}
                     <EpicContainer updaterCount={epicUpdaterCount}/>
                 </IonContent>
             </IonPage>

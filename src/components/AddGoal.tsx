@@ -38,8 +38,12 @@ export const AddGoal: React.FC<INewGoal> = (props: INewGoal) => {
     const [epicStartDate, setEpicStartDate] = useState();
     const [epicEndDate, setEpicEndDate] = useState();
     const [goal, setGoal] = useState<Partial<IGoal>>({
-        points: 1, isInEpic: false,
-        owner_id: userInfo.currentUser.id, isComplete: false
+        points: 1,
+        isInEpic: false,
+        owner_id: userInfo.currentUser.id,
+        isComplete: false,
+        isExpired: false,
+        last_updated: new Date()
     });
 
     const createGoal = async () => {

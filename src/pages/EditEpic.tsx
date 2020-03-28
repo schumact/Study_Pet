@@ -23,7 +23,7 @@ import {
 import {COMPLETE_EPIC_RESULT, DELETE_EPIC_RESULT, DATE_ENUMS, DELETE_GOALS_IN_EPIC_RESULT} from "../Util/Enums";
 import {RouteComponentProps, useHistory} from "react-router-dom";
 import {checkmarkDoneOutline, trashOutline} from "ionicons/icons";
-import StudyPetService, {IBus} from '../Util/GlobalSingleton';
+import StudyPetService from '../Util/GlobalSingleton';
 
 interface IEditEpic extends RouteComponentProps<{
     id: string;
@@ -70,11 +70,9 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
     };
 
     useEffect(() => {
-        console.log("running use effect from edit epic");
             (async () => {
                 const res:any = await findEpic(match.params.id);
                 if (res[0]) {
-                    console.log("found epic ", res[0]);
                     isMounted.current && setEpic(res[0]);
                 }
                 // set pet
@@ -96,30 +94,6 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
             await updatePetPointsFromEpic(pet.id, pet.petPoints);
         })();
     };
-
-    // const removeEpic = () => {
-    //     (async () => {
-    //         const result = await deleteEpic(epic);
-    //         if (result === DELETE_EPIC_RESULT.pass) {
-    //             console.log("Successful delete");
-    //             setShowAlert7(true);
-    //             // console.log("updater is", props.updater);
-    //             // if (props.updater) {
-    //             //     props.updater(1);
-    //             //     console.log("updater updated");
-    //             // }
-    //             console.log("going back in history");
-    //             history.goBack();
-    //         } else if (result === DELETE_GOALS_IN_EPIC_RESULT.fail)
-    //             setShowAlert11(true);
-    //         else if (result === DELETE_EPIC_RESULT.id_error)
-    //             setShowAlert12(true);
-    //         else
-    //             setShowAlert6(true);
-    //     })();
-    // };
-
-    // console.log("MY props updater", props.updater);
 
     return (
         <IonPage>
@@ -204,7 +178,7 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
                         isOpen={showAlert4}
                         onDidDismiss={() => {
                             isMounted.current && setShowAlert4(false);
-                            // close modal if the insert was successful
+                            history.goBack();
                         }}
                         header={resultMessage}
                         buttons={["OK"]}
@@ -244,16 +218,6 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
                         message={DELETE_GOALS_IN_EPIC_RESULT.fail}
                         buttons={["OK"]}
                     />
-                    {/*<IonAlert*/}
-                    {/*    isOpen={showAlert12}*/}
-                    {/*    onDidDismiss={() => {*/}
-                    {/*        setShowAlert12(false);*/}
-                    {/*        setTriggerFresh(triggerRefresh + 1);*/}
-                    {/*    }}*/}
-                    {/*    header={'Error'}*/}
-                    {/*    message={DELETE_EPIC_RESULT.id_error}*/}
-                    {/*    buttons={["OK"]}*/}
-                    {/*/>*/}
                     <IonAlert
                         isOpen={showAlert5}
                         onDidDismiss={() => {
@@ -277,18 +241,9 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
                                     // if (1 === 1){
                                     if (result === DELETE_EPIC_RESULT.pass) {
                                         isMounted.current && setShowAlert7(true);
-                                        // console.log("updater is", props.updater);
-                                        // if (props.updater) {
-                                        //     props.updater(1);
-                                        //     console.log("updater updated");
-                                        // }
                                         StudyPetService.sendAppEvent({increment: 0});
                                         history.goBack();
                                     }
-                                        // } else if (result === DELETE_GOALS_IN_EPIC_RESULT.fail)
-                                        //     setShowAlert11(true);
-                                        // else if (result === DELETE_EPIC_RESULT.id_error)
-                                    //     setShowAlert12(true);
                                     else
                                         isMounted.current && setShowAlert6(true);
                                 })();
@@ -316,8 +271,6 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
                                     if (result === COMPLETE_EPIC_RESULT.pass) {
                                         updatePet();
                                         isMounted.current && setShowAlert9(true);
-                                        // if (props.updater)
-                                        //     props.updater(1);
                                         StudyPetService.sendAppEvent({increment: 2});
                                         history.goBack();
                                     } else

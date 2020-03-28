@@ -11,7 +11,8 @@ interface IEpicItem {
     isComplete: boolean | undefined;
     owner_id: string | undefined;
     key: string | undefined;
-    goals: string[] | undefined
+    goals: string[] | undefined;
+    isExpired: boolean;
 }
 
 export const EpicItem: React.FC<IEpicItem> = (props: IEpicItem) => {
