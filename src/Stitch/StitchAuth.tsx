@@ -27,11 +27,7 @@ interface Props {
   authInfo: authInfo
 }
 
-// Create a React Context that lets us expose and access auth state
-// without passing props through many levels of the component tree
 
-// https://fettblog.eu/typescript-react/context/ has info on types with default context
-// https://stackoverflow.com/questions/56496624/typescript-for-react-createcontext-and-usecontext
 // TODO still unsure what this context is going to look like. change type from "any" to something else later
 export const StitchAuthContext:React.Context<any> = React.createContext<Partial<Props>>({});  // we don't need a default but ts complains if there is none
 
@@ -52,19 +48,6 @@ export function StitchAuthProvider(props:any) {
     currentUser: getCurrentUser(),
   });
 
-  // Authentication Actions
-  const handleAnonymousLogin = async () => {
-    const { isLoggedIn } = authState;
-    if (!isLoggedIn) {
-      console.log("logging in");
-      const loggedInUser = await loginAnonymous();
-      setAuthState({
-        ...authState,
-        isLoggedIn: true,
-        currentUser: loggedInUser,
-      });
-    }
-  };
   const handleLogout = async () => {
     const { isLoggedIn } = authState;
     if (isLoggedIn) {
@@ -81,32 +64,29 @@ export function StitchAuthProvider(props:any) {
     }
   };
 
-  // TODO Not sure if LoginUser() method will work.
-  // grabbed it from an example on mongo stitch tutorial page.
-  // stitch sdk documentation not working so I can't figure out
-  // for certain how to register a user. which needs to be done
-  // first before using LoginUser function.
-  // TODO Remove "Stub" part from func name once working
   const handleUserLogin = async (email:string, password:string) => {
     const { isLoggedIn } = authState;
     if (!isLoggedIn) {
       console.log("logging in");
       // should return a stitch user, although an exception could also be thrown
-      const loggedInUser = await LoginUser(email, password).catch((err) =>
-      {
-        console.log(`Login failed with error: ${err}`);
-        // return err;
-      });
-      if (loggedInUser) {
-        console.log("logging in user");
-        setAuthState({
-          ...authState,
-          isLoggedIn: true,
-          currentUser: loggedInUser,
-        });
+      try {
+        const loggedInUser = await LoginUser(email, password);
+        if (loggedInUser) {
+          console.log("User successfully logged in");
+          setAuthState({
+            ...authState,
+            isLoggedIn: true,
+            currentUser: loggedInUser,
+          });
+          window.location.assign("/account");
+        }
+      } catch (err) {
+        console.log("Exception thrown when trying to login:", err)
       }
     }
-    else {console.log("already logged in")}
+    else {
+      console.log("already logged in")
+    }
   };
 
   // Use useMemo to improve performance by eliminating some re-renders

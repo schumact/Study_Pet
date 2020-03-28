@@ -25,15 +25,17 @@ const LoginUser: React.FC = () => {
         actions: {handleUserLogin},
     } = useStitchAuth();
 
-    const handleLogin = (email: string, password: string) => {
-        handleUserLogin(email, password);
+    const handleLogin = async (email: string, password: string) => {
+        await handleUserLogin(email, password);
         // TODO find out how to access context here. If the user is not logged in,
         // display alert
-        if (!isLoggedIn) {
-            setShowLoginAlert(true);
-        }
-        // if (err) {
+        // if (!isLoggedIn) {
         //     setShowLoginAlert(true);
+        //     console.log("failed to log user in ");
+        // }
+        // else
+        // {
+        //     console.log("Successfully logged in");
         // }
     };
 
@@ -70,7 +72,11 @@ const LoginUser: React.FC = () => {
                 <IonButton
                     shape="round"
                     expand="block"
-                    onClick={() => handleLogin(creds.email, creds.password)}> Login
+                    onClick={() =>
+                        (async () => {
+                            await handleLogin(creds.email, creds.password);
+                        })()
+                    }> Login
                 </IonButton>
             </div>
             <div>
