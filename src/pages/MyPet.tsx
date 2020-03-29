@@ -18,12 +18,13 @@ import {
     increasePetHealth,
     increasePetHunger,
     increasePetHydration,
-    IPet, setGoalLastUpdatedDate, subtractLatePointsFromPet
+    IPet
 } from "../Stitch/StitchGoals";
 import PetCreation from "../components/PetCreation";
 import PetDrinkOrder from "../components/PetDrinkOrder";
 import PetSupplementsOrder from "../components/PetSupplementsOrder";
 import PetFoodOrder from "../components/PetFoodOrder";
+import Cat from '../components/Cat';
 
 const PROGRESS_COLORS = {
     0: "danger",
@@ -231,59 +232,64 @@ const MyPet: React.FC = () => {
                             <IonTitle size="large">My Pet</IonTitle>
                         </IonToolbar>
                     </IonHeader>
-                    <IonList>
-                        <IonItem lines={"none"}>
-                            <h2 className={"monospace2"}>{pet.name}'s Purr Points: {petState.points}</h2>
-                        </IonItem>
-                        <IonItem>
-                            <IonLabel position="floating">
-                                Health: {petState.health}%
-                            </IonLabel>
-                            <IonProgressBar
-                                value={petState.health / 100}
-                                color={change_progress_color(petState.health)}/>
-                        </IonItem>
-                        <IonItem>
-                            <IonLabel position="floating">
-                                Hunger: {petState.hunger}%
-                            </IonLabel>
-                            <IonProgressBar
-                                value={petState.hunger / 100}
-                                color={change_progress_color(petState.hunger)}/>
-                        </IonItem>
-                        <IonItem>
-                            <IonLabel position="floating">
-                                Hydration: {petState.hydration}%
-                            </IonLabel>
-                            <IonProgressBar
-                                value={petState.hydration / 100}
-                                color={change_progress_color(petState.hydration)}/>
-                        </IonItem>
-                    </IonList>
-                    <div style={{display: "flex", justifyContent: "space-between"}}>
-                        <IonButton onClick={() => displayFood()}>
-                            Food
-                        </IonButton>
-                        <IonButton onClick={() => displayDrinks()}>
-                            Beverages
-                        </IonButton>
-                        <IonButton onClick={() => displaySupplements()}>
-                            Supplements
-                        </IonButton>
+                    <div style={{display: "flex", flexDirection: "column", height: "100%"}}>
+                        <Cat health={petState.health}/>
+                        <div style={{flex: 3}}>
+                            <IonList>
+                                <IonItem lines={"none"}>
+                                    <h2 className={"monospace2"}>{pet.name}'s Purr Points: {petState.points}</h2>
+                                </IonItem>
+                                <IonItem>
+                                    <IonLabel position="floating">
+                                        Health: {petState.health}%
+                                    </IonLabel>
+                                    <IonProgressBar
+                                        value={petState.health / 100}
+                                        color={change_progress_color(petState.health)}/>
+                                </IonItem>
+                                <IonItem>
+                                    <IonLabel position="floating">
+                                        Hunger: {petState.hunger}%
+                                    </IonLabel>
+                                    <IonProgressBar
+                                        value={petState.hunger / 100}
+                                        color={change_progress_color(petState.hunger)}/>
+                                </IonItem>
+                                <IonItem>
+                                    <IonLabel position="floating">
+                                        Hydration: {petState.hydration}%
+                                    </IonLabel>
+                                    <IonProgressBar
+                                        value={petState.hydration / 100}
+                                        color={change_progress_color(petState.hydration)}/>
+                                </IonItem>
+                            </IonList>
+                            <div style={{display: "flex", justifyContent: "space-between"}}>
+                                <IonButton onClick={() => displayFood()}>
+                                    Food
+                                </IonButton>
+                                <IonButton onClick={() => displayDrinks()}>
+                                    Beverages
+                                </IonButton>
+                                <IonButton onClick={() => displaySupplements()}>
+                                    Supplements
+                                </IonButton>
+                            </div>
+                            {showShop.showFood && <PetFoodOrder increment={updateHunger}
+                                                                isMaxHunger={petState.isMaxHunger}
+                                                                adjustPetPoints={subtractPetPoints}/>}
+                            {showShop.showDrink && <PetDrinkOrder adjustPetPoints={subtractPetPoints}
+                                                                  isMaxHydration={petState.isMaxHydration}
+                                                                  increment={updateHydration}/>}
+                            {showShop.showSupplement && <PetSupplementsOrder adjustPetPoints={subtractPetPoints}
+                                                                             incrementHunger={updateHunger}
+                                                                             isMaxHydration={petState.isMaxHydration}
+                                                                             isMaxHealth={petState.isMaxHealth}
+                                                                             isMaxHunger={petState.isMaxHunger}
+                                                                             incrementHydration={updateHydration}
+                                                                             incrementHealth={updateHealth}/>}
+                        </div>
                     </div>
-                    {showShop.showFood && <PetFoodOrder increment={updateHunger}
-                                                        isMaxHunger={petState.isMaxHunger}
-                                                        adjustPetPoints={subtractPetPoints}/>}
-                    {showShop.showDrink && <PetDrinkOrder adjustPetPoints={subtractPetPoints}
-                                                          isMaxHydration={petState.isMaxHydration}
-                                                          increment={updateHydration}/>}
-                    {showShop.showSupplement && <PetSupplementsOrder adjustPetPoints={subtractPetPoints}
-                                                                     incrementHunger={updateHunger}
-                                                                     isMaxHydration={petState.isMaxHydration}
-                                                                     isMaxHealth={petState.isMaxHealth}
-                                                                     isMaxHunger={petState.isMaxHunger}
-                                                                     incrementHydration={updateHydration}
-                                                                     incrementHealth={updateHealth}/>}
                 </IonContent>
             </IonPage> :
             <IonPage>

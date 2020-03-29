@@ -4,7 +4,7 @@ import {
     IonItem,
     IonButton,
 } from '@ionic/react';
-import '../pages/MyPet.css';
+import './PetSupplementsOrder.css';
 
 interface IProps {
     incrementHunger: any;
@@ -22,7 +22,7 @@ const PetSupplementsOrder: React.FC<IProps> = (props: IProps) => {
         <IonList>
             <IonItem>
                 <p>
-                    <label className={"monospace"}> Thirst Quencher</label>
+                    <label style={{fontFamily: "monospace", marginRight: "15px"}}> Thirst Quencher</label>
                     <label className={"itemDetails"}> .....10pts</label>
                 </p>
                 {props.isMaxHydration ?
@@ -46,7 +46,7 @@ const PetSupplementsOrder: React.FC<IProps> = (props: IProps) => {
                     </IonButton>}
             </IonItem>
             <IonItem>
-                <label className={"monospace"}> Full Health </label>
+                <label style={{fontFamily: "monospace", marginRight: "15px"}}> Full Health </label>
                 <label className={"itemDetails"}> .....22pts</label>
                 {props.isMaxHealth ?
                     <IonButton color={"danger"}
@@ -68,7 +68,7 @@ const PetSupplementsOrder: React.FC<IProps> = (props: IProps) => {
                     </IonButton>}
             </IonItem>
             <IonItem>
-                <label className={"monospace"}> Iron Stomach </label>
+                <label style={{fontFamily: "monospace", marginRight: "15px"}}> Iron Stomach </label>
                 <label className={"itemDetails"}> .....10pts</label>
                 {props.isMaxHunger ?
                     <IonButton color={"danger"}

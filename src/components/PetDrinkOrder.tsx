@@ -24,7 +24,7 @@ const PetDrinkOrder:React.FC<IProps> = (props:IProps) => {
             <IonList>
                 <IonItem>
                     <p>
-                        <label className={"monospace"}> Loco Choco Shake</label>
+                        <label style={{fontFamily: "monospace", marginRight: "15px"}}> Loco Choco Shake</label>
                         <label className={"itemDetails"}> .....2pts</label>
                     </p>
                     <IonButton color={"danger"}
@@ -36,7 +36,7 @@ const PetDrinkOrder:React.FC<IProps> = (props:IProps) => {
                     </IonButton>
                 </IonItem>
                 <IonItem>
-                    <label className={"monospace"}> Bowl O' Whip </label>
+                    <label style={{fontFamily: "monospace", marginRight: "15px"}}> Bowl O' Whip </label>
                     <label className={"itemDetails"}> .....1pts</label>
                     <IonButton color={"danger"}
                                shape={"round"}
@@ -47,7 +47,7 @@ const PetDrinkOrder:React.FC<IProps> = (props:IProps) => {
                     </IonButton>
                 </IonItem>
                 <IonItem>
-                    <label className={"monospace"}> Fresh Milk </label>
+                    <label style={{fontFamily: "monospace", marginRight: "15px"}}> Fresh Milk </label>
                     <label className={"itemDetails"}> .....3pts</label>
                     <IonButton color={"danger"}
                                shape={"round"}
@@ -58,7 +58,7 @@ const PetDrinkOrder:React.FC<IProps> = (props:IProps) => {
                     </IonButton>
                 </IonItem>
                 <IonItem>
-                    <label className={"monospace"}> Super Shake </label>
+                    <label style={{fontFamily: "monospace", marginRight: "15px"}}> Super Shake </label>
                     <label className={"itemDetails"}> .....5pts</label>
                     <IonButton color={"danger"}
                                shape={"round"}
@@ -69,7 +69,7 @@ const PetDrinkOrder:React.FC<IProps> = (props:IProps) => {
                     </IonButton>
                 </IonItem>
                 <IonItem>
-                    <label className={"monospace"}> Plasma Juice </label>
+                    <label style={{fontFamily: "monospace", marginRight: "15px"}}> Plasma Juice </label>
                     <label className={"itemDetails"}> .....7pts</label>
                     <IonButton color={"danger"}
                                shape={"round"}
@@ -84,7 +84,7 @@ const PetDrinkOrder:React.FC<IProps> = (props:IProps) => {
         <IonList>
             <IonItem>
                 <p>
-                    <label className={"monospace"}> Loco Choco Shake</label>
+                    <label style={{fontFamily: "monospace", marginRight: "15px"}}> Loco Choco Shake</label>
                     <label className={"itemDetails"}> .....2pts</label>
                 </p>
                 <IonButton color={"success"}
@@ -96,7 +96,7 @@ const PetDrinkOrder:React.FC<IProps> = (props:IProps) => {
                 </IonButton>
             </IonItem>
             <IonItem>
-                <label className={"monospace"}> Bowl O' Whip </label>
+                <label style={{fontFamily: "monospace", marginRight: "15px"}}> Bowl O' Whip </label>
                 <label className={"itemDetails"}> .....1pts</label>
                 <IonButton color={"success"}
                            shape={"round"}
@@ -107,7 +107,7 @@ const PetDrinkOrder:React.FC<IProps> = (props:IProps) => {
                 </IonButton>
             </IonItem>
             <IonItem>
-                <label className={"monospace"}> Fresh Milk </label>
+                <label style={{fontFamily: "monospace", marginRight: "15px"}}> Fresh Milk </label>
                 <label className={"itemDetails"}> .....3pts</label>
                 <IonButton color={"success"}
                            shape={"round"}
@@ -118,7 +118,7 @@ const PetDrinkOrder:React.FC<IProps> = (props:IProps) => {
                 </IonButton>
             </IonItem>
             <IonItem>
-                <label className={"monospace"}> Super Shake </label>
+                <label style={{fontFamily: "monospace", marginRight: "15px"}}> Super Shake </label>
                 <label className={"itemDetails"}> .....5pts</label>
                 <IonButton color={"success"}
                            shape={"round"}
@@ -129,7 +129,7 @@ const PetDrinkOrder:React.FC<IProps> = (props:IProps) => {
                 </IonButton>
             </IonItem>
             <IonItem>
-                <label className={"monospace"}> Plasma Juice </label>
+                <label style={{fontFamily: "monospace", marginRight: "15px"}}> Plasma Juice </label>
                 <label className={"itemDetails"}> .....7pts</label>
                 <IonButton color={"success"}
                            shape={"round"}
