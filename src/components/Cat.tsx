@@ -22,8 +22,8 @@ const Cat: React.FC<IProps> = (props: IProps) => {
             <img src={body} className="body" width="40%" alt="body"/>
             <img src={larm} className="larm" width="45%" alt="larm"/>
             <img src={rarm} className="rarm" width="35%" alt="rarm"/>
-            <img src={lfoot} className="lfoot" width="35%" alt="lfoot"/>
-            <img src={rfoot} className="rfoot" width="35%" alt="rfoot"/>
+            <img src={lfoot} className="lfoot" width="22%" alt="lfoot"/>
+            <img src={rfoot} className="rfoot" width="22%" alt="rfoot"/>
             <img src={tail} className="tail" width="35%" alt="tail"/>
         </div>
     );
