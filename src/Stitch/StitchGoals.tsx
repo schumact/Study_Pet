@@ -51,6 +51,7 @@ export interface IPet {
     name: string;
     _id: any;
     last_updated: Date;
+    date_created?: Date;
 }
 
 const goalsCollection = mongodb.db("study_pet").collection("Goals");
@@ -64,6 +65,7 @@ export const insertPet = async (petName: IPet): Promise<string> => {
     petName.hydration_percent = 100;
     petName.points = 20;
     petName.last_updated = new Date();
+    petName.date_created = new Date();
     try {
         let res = await petCollection.insertOne(petName);
         console.log(`Successfully inserted item with _id: ${res.insertedId}`);

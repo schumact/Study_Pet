@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import {IonBackButton, IonButtons, IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
 import './SignUp.css';
 import AccountCreation from "../components/AccountCreation";
 
@@ -9,6 +9,9 @@ const SignUp: React.FC = () => {
             <IonHeader>
                 <IonToolbar>
                     <IonTitle>Sign Up</IonTitle>
+                    <IonButtons slot="start">
+                        <IonBackButton defaultHref="/login" icon="buttonIcon"/>
+                    </IonButtons>
                 </IonToolbar>
             </IonHeader>
             <IonContent>

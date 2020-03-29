@@ -1,10 +1,9 @@
-import React, {Provider} from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import {StitchUser} from 'mongodb-stitch-browser-sdk';
 
 import {
   hasLoggedInUser,
-  loginAnonymous,
   logoutCurrentUser,
   getCurrentUser,
   LoginUser
@@ -23,15 +22,14 @@ export interface authInfo {
 }
 
 interface Props {
-  // TODO some values should go here eventually like user_id, login state. I think
   authInfo: authInfo
 }
 
 
-// TODO still unsure what this context is going to look like. change type from "any" to something else later
-export const StitchAuthContext:React.Context<any> = React.createContext<Partial<Props>>({});  // we don't need a default but ts complains if there is none
 
-// Create a React Hook that lets us get data from our auth context
+export const StitchAuthContext:React.Context<any> = React.createContext<Partial<Props>>({});
+
+
 export function useStitchAuth() {
   const context = React.useContext(StitchAuthContext);
   if (!context) {
@@ -40,8 +38,6 @@ export function useStitchAuth() {
   return context;
 }
 
-// Create a component that controls auth state and exposes it via
-// the React Context we created.
 export function StitchAuthProvider(props:any) {
   const [authState, setAuthState] = React.useState({
     isLoggedIn: hasLoggedInUser(),
@@ -52,13 +48,12 @@ export function StitchAuthProvider(props:any) {
     const { isLoggedIn } = authState;
     if (isLoggedIn) {
       await logoutCurrentUser();
-      console.log("Should be logging out current user");
-      console.log(hasLoggedInUser());
       setAuthState({
         ...authState,
         isLoggedIn: false,
         currentUser: null,
       });
+      window.location.assign("/login");
     } else {
       console.log(`can't handleLogout when no user is logged in`);
     }
@@ -66,6 +61,7 @@ export function StitchAuthProvider(props:any) {
 
   const handleUserLogin = async (email:string, password:string) => {
     const { isLoggedIn } = authState;
+    let passedLogin:boolean = false;
     if (!isLoggedIn) {
       console.log("logging in");
       // should return a stitch user, although an exception could also be thrown
@@ -79,17 +75,17 @@ export function StitchAuthProvider(props:any) {
             currentUser: loggedInUser,
           });
           window.location.assign("/account");
+          passedLogin = true;
         }
       } catch (err) {
-        console.log("Exception thrown when trying to login:", err)
       }
+      return passedLogin;
     }
     else {
       console.log("already logged in")
     }
   };
 
-  // Use useMemo to improve performance by eliminating some re-renders
   const authInfo = React.useMemo(
     () => {
       const { isLoggedIn, currentUser } = authState;

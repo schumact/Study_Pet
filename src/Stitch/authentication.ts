@@ -30,7 +30,6 @@ export const getCurrentUser = ():any => {
 export const logoutCurrentUser = ():Promise<void> => {
   // Logout the currently logged in user
   const user:any = getCurrentUser();
-  console.log("Logging out user with user.id " + user.id);
   return stitchApp.auth.logoutUserWithId(user.id);
 };
 
@@ -42,4 +41,15 @@ export const CreateAccount = (email:string, password:string): void => {
   emailPasswordClient.registerWithEmail(email, password)
       .then(() => console.log("Sending user email confirmation."))
       .catch((err:any) => console.error("Error registering new user:", err));
+};
+
+export const resetAccPass = (email:string, password:string): void => {
+  const emailPasswordClient = stitchApp.auth.getProviderClient(UserPasswordAuthProviderClient.factory);
+  // const emailPasswordClient = Stitch.defaultAppClient.auth
+  //     .getProviderClient(UserPasswordAuthProviderClient.factory);
+
+  // emailPasswordClient.registerWithEmail(email, password)
+  //     .then(() => console.log("Sending user email confirmation."))
+  //     .catch((err:any) => console.error("Error registering new user:", err));
+  // TODO add in reset acc password code
 };

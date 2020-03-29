@@ -17,7 +17,6 @@ import {RouteComponentProps} from "react-router-dom";
 
 interface IEditGoals extends RouteComponentProps<{
     id: string;
-
 }> {
 }
 
@@ -26,13 +25,6 @@ const EpicGoals: React.FC<IEditGoals> = ({match}) => {
     const [updateCount, setUpdater] = useState<number>(0);
     // TODO do I need a goal successfully added state in here or something to make
     // sure that the component rerenders on added goals. I want GoalContainer to rerender
-
-    const updateUpdater = (updateValue:number) => {
-        console.log("my updater count is ", updateCount);
-        console.log("update value is ", updateValue);
-        setUpdater(updateCount + updateValue);
-        console.log("my updater count is now ", updateCount);
-    };
 
     return (
         <IonPage>

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {dateValidation, titleValidation} from "../Util/GoalValidation";
 import {useHistory} from "react-router-dom";
 import {
@@ -194,7 +194,6 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                             setShowAlert4(false);
                             console.log("Going back in history");
                             history.goBack();
-                            // close modal if the insert was successful
                         }}
                         header={resultMessage}
                         buttons={["OK"]}
@@ -231,7 +230,6 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                         isOpen={showAlert5}
                         onDidDismiss={() => {
                             setShowAlert5(false);
-                            // close modal if the insert was successful
                         }}
                         header={'Delete Goal'}
                         message={"Are you sure that you would like to delete the selected goal?"}
@@ -258,7 +256,6 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                         isOpen={showAlert8}
                         onDidDismiss={() => {
                             setShowAlert8(false);
-                            // close modal if the insert was successful
                         }}
                         header={'Complete Goal'}
                         message={"Click YES to mark this goal as complete."}

@@ -1,21 +1,55 @@
-export default function validateNewUser(creds) {
-    const isValidUserName = verifyUsername(creds.username);
+// export function validateNewUser(creds) {
+//     const isValidUserName = verifyUsername(creds.username);
+//     const isValidEmail = verifyEmail(creds.email);
+//     const isValidPassword = verifyPassword(creds.password, creds.reEnterPassword);
+//     if (isValidUserName && isValidEmail)
+//     {
+//         if (isValidPassword) {
+//             return [true, "passed"];
+//         }
+//         else {
+//             return [false, "The supplied passwords didn't match or weren't a minimum of 8 characters."];
+//         }
+//     }
+//     else {
+//         return [false, "Please make sure that you are using a valid email address" +
+//         " and that your username is at minimum 5 characters long"];
+//     }
+// }
+
+export function validateNewUser(creds) {
     const isValidEmail = verifyEmail(creds.email);
     const isValidPassword = verifyPassword(creds.password, creds.reEnterPassword);
-    if (isValidUserName && isValidEmail)
+    if (isValidEmail)
     {
         if (isValidPassword) {
-            return [true];
+            return [true, "passed"];
         }
         else {
             return [false, "The supplied passwords didn't match or weren't a minimum of 8 characters."];
         }
     }
     else {
-        return [false, "Please make sure that you are using a valid email address" +
-        " and that your username is at minimum 5 characters long"];
+        return [false, "Please make sure that you are using a valid email address"];
     }
-};
+}
+
+export  function validateNewPassword(creds) {
+    const isValidEmail = verifyEmail(creds.email);
+    const isValidPassword = verifyPassword(creds.password, creds.reEnterPassword);
+    if (isValidEmail)
+    {
+        if (isValidPassword) {
+            return [true, "Passed"];
+        }
+        else {
+            return [false, "The supplied passwords didn't match or weren't a minimum of 8 characters."];
+        }
+    }
+    else {
+        return [false, "Please make sure that you are using a valid email address"];
+    }
+}
 
 const verifyPassword = (password1, password2) => {
     if (password1 !== password2) {

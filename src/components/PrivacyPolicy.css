@@ -1,0 +1,15 @@
+.info {
+    font-size: 13px;
+}
+
+.monospace {
+    font-family: "Lucida Console", Courier, monospace;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.monospace2 {
+    font-family: "Lucida Console", Courier, monospace;
+    font-weight: bold;
+    font-size: 16px;
+}

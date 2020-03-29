@@ -4,20 +4,14 @@ import {IonButton, IonAlert} from '@ionic/react';
 import './LoginUser.css';
 import {Link} from 'react-router-dom';
 
+interface ICreds {
+    email: string,
+    password: string
+}
+
 const LoginUser: React.FC = () => {
-    //  My thought process here is that we need to get these creds
-    // over to useStitchAuth() with action.handleUserLoginStub().
-    // My best guess is to use state to store these creds until the
-    // login button is clicked.
-    interface ICreds {
-        email: string,
-        password: string
-    }
 
     const [creds, UpdateCreds] = useState<ICreds>({email: "", password: ""});
-
-    // This will be set to true if a user presses the "create Account" button.
-
     const [showLoginAlert, setShowLoginAlert] = useState(false);
 
     const {
@@ -26,17 +20,10 @@ const LoginUser: React.FC = () => {
     } = useStitchAuth();
 
     const handleLogin = async (email: string, password: string) => {
-        await handleUserLogin(email, password);
-        // TODO find out how to access context here. If the user is not logged in,
-        // display alert
-        // if (!isLoggedIn) {
-        //     setShowLoginAlert(true);
-        //     console.log("failed to log user in ");
-        // }
-        // else
-        // {
-        //     console.log("Successfully logged in");
-        // }
+        const result:boolean = await handleUserLogin(email, password);
+        console.log("logged in bool is ", result);
+        if (!result)
+            setShowLoginAlert(true);
     };
 
     return (
@@ -85,7 +72,7 @@ const LoginUser: React.FC = () => {
             </div>
             <div>
                 <p style={{marginBottom: 10}}>
-                    <Link to={{pathname: "/sign_up"}}>Forgot your password?</Link></p>
+                    <Link to={{pathname: "/reset_password"}}>Forgot your password?</Link></p>
             </div>
             <IonAlert
                 isOpen={showLoginAlert}
@@ -98,6 +85,5 @@ const LoginUser: React.FC = () => {
         </div>
     );
 };
-
 
 export default LoginUser;
