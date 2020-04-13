@@ -42,15 +42,16 @@ const Account: React.FC = () => {
         (async () => {
             const myPet: any = await getPet();
             if (myPet) {
-                setPet(myPet[0]);
-                convertPetDOB(myPet[0]);
+                if (myPet.length > 0) {
+                    setPet(myPet[0]);
+                    convertPetDOB(myPet[0]);
+                }
             }
         })();
     };
 
     useEffect(() => {
         selectPet();
-
     }, []);
 
     return (

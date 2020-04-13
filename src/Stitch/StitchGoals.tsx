@@ -68,7 +68,6 @@ export const insertPet = async (petName: IPet): Promise<string> => {
     petName.date_created = new Date();
     try {
         let res = await petCollection.insertOne(petName);
-        console.log(`Successfully inserted item with _id: ${res.insertedId}`);
         return INSERT_PET_RESULT.pass;
     } catch (err) {
         console.error(`Failed to insert pet: ${err}`);
@@ -297,7 +296,6 @@ export const decreasePetPoints = async (newValue: number, id: any) => {
 export const insertGoal = async (goal: Partial<IGoal>): Promise<string> => {
     try {
         let result = await goalsCollection.insertOne(goal);
-        console.log(`Successfully inserted item with _id: ${result.insertedId}`);
         return INSERT_GOAL_RESULT.pass;
     } catch (err) {
         console.error(`Failed to insert goal: ${err}`);
@@ -442,7 +440,6 @@ export const setGoalLastUpdatedDate = async (id: string | undefined, latest_date
 export const insertEpic = async (epic: Partial<IEpic>): Promise<string> => {
     try {
         let result = await epicCollection.insertOne(epic);
-        console.log(`Successfully inserted item with _id: ${result.insertedId}`);
         return INSERT_EPIC_RESULT.pass;
     } catch (err) {
         console.error(`Failed to insert item: ${err}`);
@@ -482,7 +479,6 @@ export const completeEpic = async (epic: any) => {
 export const insertGoalForEpic = async (goal: Partial<IGoal>): Promise<string> => {
     try {
         let result = await goalsCollection.insertOne(goal);
-        console.log(`Successfully inserted item with _id: ${result.insertedId}`);
         return result.insertedId;
     } catch (err) {
         console.error(`Failed to insert item: ${err}`);

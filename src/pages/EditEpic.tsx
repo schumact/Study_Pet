@@ -176,7 +176,7 @@ export const EditEpic: React.FC<IEditEpic> = ({match}) => {
                         isOpen={showAlert4}
                         onDidDismiss={() => {
                             isMounted.current && setShowAlert4(false);
-                            history.goBack();
+                            window.location.assign("/home");
                         }}
                         header={resultMessage}
                         buttons={["OK"]}

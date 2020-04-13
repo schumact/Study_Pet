@@ -204,6 +204,7 @@ export const AddGoal: React.FC<INewGoal> = (props: INewGoal) => {
                     // close modal if the insert was successful
                     if (resultMessage === INSERT_GOAL_RESULT.pass) {
                         props.modalHandler(false);
+                        window.location.reload();
                     }
                 }}
                 header={resultMessage}

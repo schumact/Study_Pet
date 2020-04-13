@@ -133,6 +133,7 @@ export const AddEpic:React.FC<INewEpic> = (props:INewEpic) => {
                     {
                         props.modalHandler(false);
                         StudyPetService.sendAppEvent({increment: 0});
+                        window.location.assign("/home");
                     }
                 }}
                 header={resultMessage}

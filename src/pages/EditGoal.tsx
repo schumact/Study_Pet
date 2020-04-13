@@ -192,8 +192,8 @@ export const EditGoal: React.FC<IEditGoal> = ({match}) => {
                         isOpen={showAlert4}
                         onDidDismiss={() => {
                             setShowAlert4(false);
-                            console.log("Going back in history");
-                            history.goBack();
+                            // history.goBack();
+                            window.location.assign("/home");
                         }}
                         header={resultMessage}
                         buttons={["OK"]}
