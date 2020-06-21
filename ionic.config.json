@@ -1,0 +1,7 @@
+{
+  "name": "ionic_purrsistant_pet",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}

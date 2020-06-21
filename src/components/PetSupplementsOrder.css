@@ -1,0 +1,19 @@
+ion-content ion-toolbar {
+    --background: translucent;
+}
+
+.monospace {
+    font-family: monospace;
+}
+
+.monospace2{
+    font-family: "Lucida Console", Courier, monospace;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.itemDetails {
+    font-family: "Lucida Console", Courier, monospace;
+    font-size: 12px;
+    vertical-align: baseline;
+}
